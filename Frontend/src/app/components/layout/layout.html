@@ -1,0 +1,33 @@
+<div class="header-bar">
+  <div class="title">Gestión de Bibliotecas</div>
+  <div class="actions">
+    <span>- + x</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="date">{{ fechaLiteral | uppercase }}</div>
+  <div class="user-actions">
+    <select>
+      <option *ngIf="usuario">{{ usuario.rol }}</option>
+    </select>
+    <div class="user-icon" (click)="logout()">
+      👤 <!-- Placeholder for user icon, clicking it logs out as per B-3 logic -->
+      <span class="tooltip">Desconectar</span>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="sidebar">
+    <div class="logo">⚙️</div>
+    <div class="menu-label">1</div>
+    <div class="menu-vertical-text">MENU PRINCIPAL</div>
+    <div class="menu-label-bottom">3</div>
+  </div>
+  
+  <div class="content-area">
+    <div class="content-label">AREA DE CONTENIDOS</div>
+    <div class="content-badge">2</div>
+  </div>
+</div>
