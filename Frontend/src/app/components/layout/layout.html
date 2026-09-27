@@ -6,7 +6,7 @@
        [ngClass]="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen, 'sm:translate-x-0': true}">
     
     <div class="mb-2">
-      <img src="Logo_BiblioTech.png" alt="Logo" class="h-20 w-auto object-contain">
+      <img src="Logo_BiblioTech.png" alt="Logo" class="h-20 w-auto object-contain" width="160" height="80">
     </div>
     <div class="text-lg font-bold text-gray-700 text-center mb-6 leading-tight">BiblioTech</div>
     
@@ -14,11 +14,11 @@
       
       <div class="border-2 border-gray-300 rounded shadow-sm overflow-hidden">
         <div (click)="toggleGroup(1)" class="bg-gray-100 border-b-2 border-gray-300 px-3 py-2 font-bold text-gray-700 text-sm flex justify-between items-center cursor-pointer hover:bg-gray-200">
-          <span>Nombre Grupo 1</span>
+          <span>Administración</span>
           <span class="text-gray-500 text-xs">{{ activeGroups[1] ? '▼' : '▶' }}</span>
         </div>
         <div *ngIf="activeGroups[1]" class="flex flex-col p-2 gap-2 text-sm text-blue-600 bg-white">
-          <a class="hover:underline cursor-pointer px-2">Opción 1........</a>
+          <a routerLink="/gestion-usuarios" class="hover:underline cursor-pointer px-2">Gestión de Usuarios</a>
           <a class="hover:underline cursor-pointer px-2">Opción 2........</a>
           <a class="hover:underline cursor-pointer px-2">Opción N........</a>
         </div>

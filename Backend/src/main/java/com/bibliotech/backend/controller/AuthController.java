@@ -4,6 +4,8 @@ import com.bibliotech.backend.dto.AuthRequest;
 import com.bibliotech.backend.dto.AuthResponse;
 import com.bibliotech.backend.model.Usuario;
 import com.bibliotech.backend.repository.UsuarioRepository;
+import com.bibliotech.backend.repository.DatoRepository;
+import com.bibliotech.backend.model.Dato;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,9 @@ public class AuthController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private DatoRepository datoRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -58,6 +63,14 @@ public class AuthController {
         // Generar fecha en formato dd-MM-yyyy
         String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         
-        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", nombreCompleto, "Administrativo", user.getLogin(), foto, token, fecha));
+        String cedula = "";
+        if (user.getPersona() != null) {
+            Optional<Dato> datoOpt = datoRepository.findByCodper(user.getPersona().getCodper());
+            if (datoOpt.isPresent()) {
+                cedula = String.valueOf(datoOpt.get().getCi());
+            }
+        }
+        
+        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", nombreCompleto, "Administrativo", user.getLogin(), foto, token, fecha, cedula, user.getLogin(), nombreCompleto));
     }
 }
