@@ -35,6 +35,9 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         Optional<Usuario> userOpt = usuarioRepository.findByLogin(request.getLogin());
@@ -45,7 +48,8 @@ public class AuthController {
 
         Usuario user = userOpt.get();
 
-        if (user.getPasswd() == null || !user.getPasswd().equals(request.getPassword())) {
+        // Check if password matches using BCrypt
+        if (user.getPasswd() == null || !passwordEncoder.matches(request.getPassword(), user.getPasswd())) {
             throw new InvalidCredentialsException("Contraseña incorrecta");
         }
 
@@ -71,6 +75,6 @@ public class AuthController {
             }
         }
         
-        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", nombreCompleto, "Administrativo", user.getLogin(), foto, token, fecha, cedula, user.getLogin(), nombreCompleto));
+        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", fecha, cedula, nombreCompleto, foto, token, user.getLogin(), "Administrativo"));
     }
 }

@@ -5,15 +5,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export interface AuthResponse {
   success: boolean;
   message: string;
-  nombreCompleto?: string;
-  rol?: string;
-  login?: string;
-  foto?: string;
-  token?: string;
   fecha?: string;
   cedula?: string;
   user?: string;
+  foto?: string;
+  token?: string;
   username?: string;
+  rol?: string;
 }
 
 @Injectable({

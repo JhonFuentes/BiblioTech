@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PersonaService, Persona, Acceso } from '../../services/persona.service';
 import { VentanaDialogo } from '../ventana-dialogo/ventana-dialogo';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-gestion-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, VentanaDialogo],
+  imports: [CommonModule, FormsModule, VentanaDialogo, LucideAngularModule],
   templateUrl: './gestion-usuarios.html',
   styleUrls: ['./gestion-usuarios.css']
 })
@@ -69,6 +70,13 @@ export class GestionUsuarios implements OnInit {
   get personasPaginadas() {
     const start = (this.paginaActual - 1) * this.itemsPorPagina;
     return this.personasFiltradas.slice(start, start + this.itemsPorPagina);
+  }
+
+  getFotoUrl(p: Persona): string {
+    if (p.foto) {
+      return `http://localhost:8080/fotos/${p.foto}`;
+    }
+    return 'assets/default-user.png';
   }
 
   // ACCIONES PERSONA

@@ -4,19 +4,19 @@
     <div class="header-controls">
       <div class="filter-group">
         <div class="input-wrapper">
-          <i class="search-icon">🔍</i>
-          <input type="text" class="styled-input" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Buscar por Nombre...">
+          <lucide-icon name="search" class="search-icon w-4 h-4"></lucide-icon>
+          <input type="text" class="styled-input search-input" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Buscar por Nombre...">
         </div>
         
         <select class="styled-select" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()">
-          <option value="Todos">👥 Todos</option>
-          <option value="Activos">🟢 Activos</option>
-          <option value="Bajas">🔴 Bajas</option>
+          <option value="Todos">Todos</option>
+          <option value="Activos">Activos</option>
+          <option value="Bajas">Bajas</option>
         </select>
       </div>
       
       <button class="btn-premium" (click)="abrirAdicionar()">
-        <span class="btn-icon">✨</span> Nuevo Personal
+        <lucide-icon name="plus" class="btn-icon w-4 h-4 mr-2"></lucide-icon> Nuevo Personal
       </button>
     </div>
   </div>
@@ -35,7 +35,7 @@
         <tr *ngFor="let p of personasPaginadas" class="table-row-hover">
           <td>
             <div class="avatar-wrapper">
-              <img [src]="p.foto || 'assets/default-user.png'" class="avatar-img" alt="foto">
+              <img [src]="getFotoUrl(p)" class="avatar-img" alt="foto">
             </div>
           </td>
           <td class="font-semibold text-dark">{{ p.nombre }} {{ p.ap }} {{ p.am }}</td>
@@ -45,13 +45,13 @@
             </span>
           </td>
           <td class="actions-cell">
-            <button class="action-btn edit-btn" (click)="abrirModificar(p)" title="Modificar">✏️</button>
-            <button *ngIf="p.estado===1" class="action-btn delete-btn" (click)="eliminar(p)" title="Dar de baja">🗑️</button>
-            <button *ngIf="p.estado===0" class="action-btn activate-btn" (click)="habilitar(p)" title="Habilitar">✅</button>
+            <button class="action-btn edit-btn" (click)="abrirModificar(p)" title="Modificar"><lucide-icon name="pencil" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.estado===1" class="action-btn delete-btn" (click)="eliminar(p)" title="Dar de baja"><lucide-icon name="trash" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.estado===0" class="action-btn activate-btn" (click)="habilitar(p)" title="Habilitar"><lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon></button>
             
-            <button *ngIf="!p.hasLogin" class="action-btn access-btn" (click)="abrirAsignarAcceso(p)" title="Asignar Acceso">🔑</button>
-            <button *ngIf="p.hasLogin" class="action-btn access-edit-btn" (click)="abrirModificarAcceso(p)" title="Modificar Acceso">🔐</button>
-            <button class="action-btn view-btn" title="Ver">👁️</button>
+            <button *ngIf="!p.hasLogin" class="action-btn access-btn" (click)="abrirAsignarAcceso(p)" title="Asignar Acceso"><lucide-icon name="key" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.hasLogin" class="action-btn access-edit-btn" (click)="abrirModificarAcceso(p)" title="Modificar Acceso"><lucide-icon name="lock" class="w-4 h-4"></lucide-icon></button>
+            <button class="action-btn view-btn" title="Ver"><lucide-icon name="eye" class="w-4 h-4"></lucide-icon></button>
           </td>
         </tr>
         <tr *ngIf="personasPaginadas.length === 0">
@@ -92,8 +92,8 @@
       <div class="form-group">
         <label>Género</label>
         <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="genero" value="M" [(ngModel)]="currentPersona.genero"> 👨 Masculino</label>
-          <label class="radio-label"><input type="radio" name="genero" value="F" [(ngModel)]="currentPersona.genero"> 👩 Femenino</label>
+          <label class="radio-label"><input type="radio" name="genero" value="M" [(ngModel)]="currentPersona.genero"> Masculino</label>
+          <label class="radio-label"><input type="radio" name="genero" value="F" [(ngModel)]="currentPersona.genero"> Femenino</label>
         </div>
       </div>
       <div class="form-group">
@@ -119,7 +119,7 @@
 <div class="modal-glass-overlay" *ngIf="showAccesoModal">
   <div class="modal-glass-content slide-up small-modal">
     <div class="user-context-banner">
-      <img [src]="currentPersona.foto || 'assets/default-user.png'" class="mini-avatar" alt="foto">
+      <img [src]="getFotoUrl(currentPersona)" class="mini-avatar" alt="foto">
       <div class="user-context-info">
         <span class="user-context-name">{{ currentPersona.nombre }} {{ currentPersona.ap }}</span>
         <span class="user-context-ci">CI: {{ currentPersona.ci || 'N/A' }}</span>

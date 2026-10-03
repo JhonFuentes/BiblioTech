@@ -25,8 +25,8 @@ export class Login {
           /*
           console.log('Token JWT:', res.token);
           */
-          console.log(res.token, res.nombreCompleto, res.message, res.login, res.foto, res.fecha)
-          localStorage.setItem('user', JSON.stringify(res));
+          console.log(res.token, res.user, res.message, res.username, res.foto, res.fecha)
+          this.auth.updateUser(res);
           this.closeModal.emit(true);
         } else {
           this.error = res.message;

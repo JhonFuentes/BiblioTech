@@ -74,8 +74,8 @@ export class ModificarFotos {
     }
 
     const user = this.auth.getUser();
-    if (user && user.login) {
-      this.auth.uploadFoto(user.login, this.selectedFile).subscribe({
+    if (user && user.username) {
+      this.auth.uploadFoto(user.username, this.selectedFile).subscribe({
         next: (res) => {
           this.isError = false;
           this.message = 'Foto modificada correctamente.';

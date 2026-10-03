@@ -8,16 +8,16 @@
     <div class="mb-2">
       <img src="Logo_BiblioTech.png" alt="Logo" class="h-20 w-auto object-contain" width="160" height="80">
     </div>
-    <div class="text-lg font-bold text-gray-700 text-center mb-6 leading-tight">BiblioTech</div>
+    <div class="text-lg font-bold text-brand-500 text-center mb-6 leading-tight">BiblioTech</div>
     
     <div class="w-full px-4 mt-2 flex flex-col gap-4 overflow-y-auto pb-6">
       
       <div class="border-2 border-gray-300 rounded shadow-sm overflow-hidden">
-        <div (click)="toggleGroup(1)" class="bg-gray-100 border-b-2 border-gray-300 px-3 py-2 font-bold text-gray-700 text-sm flex justify-between items-center cursor-pointer hover:bg-gray-200">
+        <div (click)="toggleGroup(1)" class="bg-brand-100 border-b-2 border-gray-300 px-3 py-2 font-bold text-brand-500 text-sm flex justify-between items-center cursor-pointer hover:bg-brand-200">
           <span>Administración</span>
-          <span class="text-gray-500 text-xs">{{ activeGroups[1] ? '▼' : '▶' }}</span>
+          <lucide-icon [name]="activeGroups[1] ? 'chevron-down' : 'chevron-right'" class="w-4 h-4 text-brand-400"></lucide-icon>
         </div>
-        <div *ngIf="activeGroups[1]" class="flex flex-col p-2 gap-2 text-sm text-blue-600 bg-white">
+        <div *ngIf="activeGroups[1]" class="flex flex-col p-2 gap-2 text-sm text-brand-400 bg-white">
           <a routerLink="/gestion-usuarios" class="hover:underline cursor-pointer px-2">Gestión de Usuarios</a>
           <a class="hover:underline cursor-pointer px-2">Opción 2........</a>
           <a class="hover:underline cursor-pointer px-2">Opción N........</a>
@@ -25,11 +25,11 @@
       </div>
       
       <div class="border-2 border-gray-300 rounded shadow-sm overflow-hidden">
-        <div (click)="toggleGroup(2)" class="bg-gray-100 border-b-2 border-gray-300 px-3 py-2 font-bold text-gray-700 text-sm flex justify-between items-center cursor-pointer hover:bg-gray-200">
+        <div (click)="toggleGroup(2)" class="bg-brand-100 border-b-2 border-gray-300 px-3 py-2 font-bold text-brand-500 text-sm flex justify-between items-center cursor-pointer hover:bg-brand-200">
           <span>Nombre Grupo 2</span>
-          <span class="text-gray-500 text-xs">{{ activeGroups[2] ? '▼' : '▶' }}</span>
+          <lucide-icon [name]="activeGroups[2] ? 'chevron-down' : 'chevron-right'" class="w-4 h-4 text-brand-400"></lucide-icon>
         </div>
-        <div *ngIf="activeGroups[2]" class="flex flex-col p-2 gap-2 text-sm text-blue-600 bg-white">
+        <div *ngIf="activeGroups[2]" class="flex flex-col p-2 gap-2 text-sm text-brand-400 bg-white">
           <a class="hover:underline cursor-pointer px-2">Opción 1........</a>
           <a class="hover:underline cursor-pointer px-2">Opción 2........</a>
           <a class="hover:underline cursor-pointer px-2">Opción N........</a>
@@ -44,8 +44,8 @@
     <div class="bg-white border-b-2 border-gray-300 px-4 py-3 flex justify-between items-center shadow-sm z-10">
       
       <div class="flex-1 flex items-center">
-        <button class="sm:hidden text-2xl text-gray-600 focus:outline-none" (click)="toggleSidebar()">
-          ☰
+        <button class="sm:hidden text-gray-600 focus:outline-none hover:text-brand-400 transition-colors" (click)="toggleSidebar()">
+          <lucide-icon name="menu" class="w-6 h-6"></lucide-icon>
         </button>
       </div>
       
@@ -54,7 +54,7 @@
       </div>
       
       <div class="flex-1 flex justify-end items-center gap-4">
-        <select class="border border-gray-400 rounded px-2 py-1 text-sm bg-gray-50 focus:outline-none focus:border-blue-500">
+        <select class="border border-gray-400 rounded px-2 py-1 text-sm bg-gray-50 focus:outline-none focus:border-brand-400">
           <option>Rol 1</option>
           <option>Rol 2</option>
           <option>Rol 3</option>
@@ -64,26 +64,36 @@
 
           <div *ngIf="showMenu" class="fixed inset-0 z-30" (click)="showMenu = false"></div>
           
-          <img [src]="getFotoUrl()" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-blue-600 object-cover bg-gray-200 shadow-sm relative z-40 cursor-pointer" (click)="toggleUserMenu()">
+          <div class="relative inline-block cursor-pointer" (click)="toggleUserMenu()">
+            <img [src]="getFotoUrl()" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-brand-400 object-cover bg-gray-200 shadow-sm relative z-40">
+          </div>
           
           <div *ngIf="showMenu" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-40 flex flex-col cursor-default" (click)="$event.stopPropagation()">
             <div class="flex flex-row p-6 border-b border-gray-200 bg-gray-50 items-center">
               
               <div class="relative w-24 h-24 rounded overflow-hidden border-2 border-gray-300 shadow-sm mr-4 flex-shrink-0 group/foto">
                 <img [src]="getFotoUrl()" alt="Avatar" class="w-full h-full object-cover bg-gray-200">
-                <a *ngIf="usuario" routerLink="/modificar-fotos" (click)="toggleUserMenu()" class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-[10px] text-center py-1.5 cursor-pointer hover:bg-opacity-80 transition-all font-semibold">Cambiar foto</a>
+                <a *ngIf="usuario" routerLink="/modificar-fotos" (click)="toggleUserMenu()" class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center text-white opacity-0 group-hover/foto:opacity-100 transition-opacity cursor-pointer">
+                  <lucide-icon name="camera" class="w-8 h-8"></lucide-icon>
+                </a>
               </div>
               
               <div class="flex flex-col justify-center items-center flex-1 h-full">
                 <div class="text-base font-bold text-gray-800 text-center break-words w-full">
-                  {{ usuario ? usuario.nombreCompleto : 'Invitado' }}
+                  {{ usuario ? usuario.user : 'Invitado' }}
                 </div>
               </div>
             </div>
             
             <div class="p-4 flex justify-center bg-white">
-              <button *ngIf="usuario" (click)="logout(); toggleUserMenu()" class="w-full bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700 text-sm font-medium transition-colors">Desconectar</button>
-              <button *ngIf="!usuario" (click)="openLogin()" class="w-full bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700 text-sm font-medium transition-colors">Conectarse</button>
+              <button *ngIf="usuario" (click)="logout(); toggleUserMenu()" class="w-full bg-brand-400 text-white px-6 py-2 rounded shadow hover:bg-brand-300 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
+                Desconectar
+              </button>
+              <button *ngIf="!usuario" (click)="openLogin()" class="w-full bg-brand-400 text-white px-6 py-2 rounded shadow hover:bg-brand-300 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                <lucide-icon name="log-in" class="w-4 h-4"></lucide-icon>
+                Conectarse
+              </button>
             </div>
           </div>
           

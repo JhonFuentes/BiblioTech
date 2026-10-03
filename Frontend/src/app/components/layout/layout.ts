@@ -3,11 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { Login } from '../login/login';
+import { LucideAngularModule, Menu, ChevronDown, ChevronRight, User, LogOut, LogIn, Camera } from 'lucide-angular';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, Login],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    Login, 
+    LucideAngularModule
+  ],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css']
 })
@@ -59,7 +65,7 @@ export class Layout implements OnInit {
     if (this.usuario && this.usuario.foto) {
       return `http://localhost:8080/fotos/${this.usuario.foto}`;
     }
-    return 'https://ui-avatars.com/api/?name=' + (this.usuario?.nombreCompleto || 'U') + '&background=0D8ABC&color=fff';
+    return 'https://ui-avatars.com/api/?name=' + (this.usuario?.user || 'U') + '&background=0D8ABC&color=fff';
   }
 
   openLogin() {
