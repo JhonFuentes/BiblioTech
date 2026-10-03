@@ -1,0 +1,150 @@
+<div class="gestion-container fade-in">
+  <div class="glass-header mb-4">
+    <h3 class="text-gradient">Gestión Usuarios</h3>
+    <div class="header-controls">
+      <div class="filter-group">
+        <div class="input-wrapper">
+          <lucide-icon name="search" class="search-icon w-4 h-4"></lucide-icon>
+          <input type="text" class="styled-input search-input" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Buscar por Nombre...">
+        </div>
+        
+        <select class="styled-select" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()">
+          <option value="Todos">Todos</option>
+          <option value="Activos">Activos</option>
+          <option value="Bajas">Bajas</option>
+        </select>
+      </div>
+      
+      <button class="btn-premium" (click)="abrirAdicionar()">
+        <lucide-icon name="plus" class="btn-icon w-4 h-4 mr-2"></lucide-icon> Nuevo Personal
+      </button>
+    </div>
+  </div>
+
+  <div class="table-glass-container">
+    <table class="premium-table">
+      <thead>
+        <tr>
+          <th>Perfil</th>
+          <th>Apellidos y Nombres</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of personasPaginadas" class="table-row-hover">
+          <td>
+            <div class="avatar-wrapper">
+              <img [src]="getFotoUrl(p)" class="avatar-img" alt="foto">
+            </div>
+          </td>
+          <td class="font-semibold text-dark">{{ p.nombre }} {{ p.ap }} {{ p.am }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="p.estado === 1 ? 'status-active' : 'status-inactive'">
+              {{ p.estado === 1 ? 'Activo' : 'Baja' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="action-btn edit-btn" (click)="abrirModificar(p)" title="Modificar"><lucide-icon name="pencil" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.estado===1" class="action-btn delete-btn" (click)="eliminar(p)" title="Dar de baja"><lucide-icon name="trash" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.estado===0" class="action-btn activate-btn" (click)="habilitar(p)" title="Habilitar"><lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon></button>
+            
+            <button *ngIf="!p.hasLogin" class="action-btn access-btn" (click)="abrirAsignarAcceso(p)" title="Asignar Acceso"><lucide-icon name="key" class="w-4 h-4"></lucide-icon></button>
+            <button *ngIf="p.hasLogin" class="action-btn access-edit-btn" (click)="abrirModificarAcceso(p)" title="Modificar Acceso"><lucide-icon name="lock" class="w-4 h-4"></lucide-icon></button>
+            <button class="action-btn view-btn" title="Ver"><lucide-icon name="eye" class="w-4 h-4"></lucide-icon></button>
+          </td>
+        </tr>
+        <tr *ngIf="personasPaginadas.length === 0">
+          <td colspan="4" class="text-center py-4 text-muted">No se encontraron usuarios</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-glass mt-4">
+    <button class="page-btn" (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>
+    <span class="page-indicator">Página <span class="page-number">{{ paginaActual }}</span></span>
+    <button class="page-btn" (click)="paginaActual = paginaActual + 1" [disabled]="personasPaginadas.length < itemsPorPagina">Siguiente</button>
+  </div>
+</div>
+
+<!-- Modal Persona -->
+<div class="modal-glass-overlay" *ngIf="showFormModal">
+  <div class="modal-glass-content slide-up">
+    <h4 class="modal-title">{{ editMode ? 'Modificar Persona' : 'Nueva Persona' }}</h4>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Cédula</label>
+        <input type="number" class="styled-input" [(ngModel)]="currentPersona.ci">
+      </div>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" class="styled-input" [(ngModel)]="currentPersona.nombre">
+      </div>
+      <div class="form-group">
+        <label>Ap. Paterno</label>
+        <input type="text" class="styled-input" [(ngModel)]="currentPersona.ap">
+      </div>
+      <div class="form-group">
+        <label>Ap. Materno</label>
+        <input type="text" class="styled-input" [(ngModel)]="currentPersona.am">
+      </div>
+      <div class="form-group">
+        <label>Género</label>
+        <div class="radio-group">
+          <label class="radio-label"><input type="radio" name="genero" value="M" [(ngModel)]="currentPersona.genero"> Masculino</label>
+          <label class="radio-label"><input type="radio" name="genero" value="F" [(ngModel)]="currentPersona.genero"> Femenino</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tipo Personal</label>
+        <select class="styled-select" [(ngModel)]="currentPersona.tipoper">
+          <option value="A">Administrativo</option>
+          <option value="P">Público</option>
+        </select>
+      </div>
+      <div class="form-group full-width">
+        <label>Teléfonos (separados por coma)</label>
+        <input type="text" class="styled-input" [(ngModel)]="telefonosText" placeholder="Ej: 70012345, 60098765">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-premium" (click)="guardarPersona()">{{ editMode ? 'Modificar' : 'Guardar' }}</button>
+      <button class="btn-glass" (click)="showFormModal=false">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Acceso -->
+<div class="modal-glass-overlay" *ngIf="showAccesoModal">
+  <div class="modal-glass-content slide-up small-modal">
+    <div class="user-context-banner">
+      <img [src]="getFotoUrl(currentPersona)" class="mini-avatar" alt="foto">
+      <div class="user-context-info">
+        <span class="user-context-name">{{ currentPersona.nombre }} {{ currentPersona.ap }}</span>
+        <span class="user-context-ci">CI: {{ currentPersona.ci || 'N/A' }}</span>
+      </div>
+    </div>
+    <h4 class="modal-title mt-3">{{ accesoEditMode ? 'Modificar Acceso' : 'Asignar Acceso' }}</h4>
+    
+    <div class="form-group mt-3">
+      <label>Usuario</label>
+      <input type="text" class="styled-input" [(ngModel)]="accesoData.login" [disabled]="accesoEditMode" placeholder="Nombre de usuario">
+    </div>
+    <div class="form-group mt-3">
+      <label>Contraseña</label>
+      <input type="password" class="styled-input" [(ngModel)]="accesoData.password" placeholder="••••••••">
+    </div>
+    <div class="form-group mt-3">
+      <label>Repetir Contraseña</label>
+      <input type="password" class="styled-input" placeholder="••••••••">
+    </div>
+    
+    <div class="modal-actions mt-4">
+      <button class="btn-premium" (click)="guardarAcceso()">Guardar</button>
+      <button class="btn-glass" (click)="showAccesoModal=false">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<app-ventana-dialogo [show]="showConfirmDialog" [mensaje]="confirmMensaje" (confirm)="onConfirmDialog()" (cancel)="onCancelDialog()"></app-ventana-dialogo>

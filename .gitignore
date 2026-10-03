@@ -1,0 +1,38 @@
+# IDEs and Editors
+.idea/
+.vscode/
+*.iml
+*.swp
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Java / Spring Boot Backend
+Backend/target/
+Backend/build/
+Backend/.gradle/
+Backend/bin/
+*.class
+
+# Node / Angular Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+Frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.env
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
