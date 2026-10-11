@@ -11,7 +11,7 @@ export interface AuthResponse {
   foto?: string;
   token?: string;
   username?: string;
-  rol?: string;
+  saludos?: string;
 }
 
 @Injectable({

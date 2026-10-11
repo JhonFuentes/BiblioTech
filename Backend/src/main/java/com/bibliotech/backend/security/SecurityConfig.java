@@ -24,21 +24,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Deshabilitar CSRF (común para APIs REST sin estado)
             .csrf(csrf -> csrf.disable())
-            // Habilitar CORS usando nuestra configuración personalizada
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            // Hacer la API sin estado (no guardar sesión en memoria)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // Configurar reglas de rutas
             .authorizeHttpRequests(auth -> auth
-                // Rutas públicas (Login y endpoints de autenticación)
                 .requestMatchers("/api/auth/**", "/fotos/**").permitAll()
-                // Todas las demás rutas requieren autenticación
                 .anyRequest().authenticated()
             );
 
-        // Agregar nuestro filtro JWT antes del filtro de autenticación por defecto
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -47,11 +40,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitir todos los orígenes (para desarrollo)
         configuration.setAllowedOrigins(Arrays.asList("*"));
-        // Permitir todos los métodos HTTP
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        // Permitir todas las cabeceras
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

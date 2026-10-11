@@ -1,150 +1,392 @@
-<div class="gestion-container fade-in">
-  <div class="glass-header mb-4">
-    <h3 class="text-gradient">Gestión Usuarios</h3>
-    <div class="header-controls">
-      <div class="filter-group">
-        <div class="input-wrapper">
-          <lucide-icon name="search" class="search-icon w-4 h-4"></lucide-icon>
-          <input type="text" class="styled-input search-input" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Buscar por Nombre...">
-        </div>
-        
-        <select class="styled-select" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()">
-          <option value="Todos">Todos</option>
-          <option value="Activos">Activos</option>
-          <option value="Bajas">Bajas</option>
-        </select>
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <div
+    class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+    <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0 shrink-0">Gestión Usuarios</h3>
+
+    <div class="flex flex-wrap xl:flex-nowrap gap-2 items-center w-full xl:w-auto justify-end">
+      <div class="relative w-full sm:w-auto sm:flex-1 min-w-[300px]">
+        <lucide-icon name="search"
+          class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+        <input type="text"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-4 pl-10 text-sm transition-all duration-200 text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+          [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Buscar por Nombre o Apellido...">
       </div>
-      
-      <button class="btn-premium" (click)="abrirAdicionar()">
-        <lucide-icon name="plus" class="btn-icon w-4 h-4 mr-2"></lucide-icon> Nuevo Personal
+<div class="flex gap-2 w-full">
+      <select
+        class="w-full sm:w-auto bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-9 pl-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_8px_center] bg-no-repeat bg-[length:20px]"
+        [(ngModel)]="filtroTipoPer" (change)="aplicarFiltros()">
+        <option value="Todos">Todos</option>
+        <option value="A">Administrativo</option>
+        <option value="P">Público</option>
+      </select>
+
+      <div
+        class="w-full sm:w-auto flex items-center justify-center gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700">
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold"><input type="radio" name="festado"
+            value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Activos</label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold"><input type="radio" name="festado"
+            value="Bajas" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Bajas</label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold"><input type="radio" name="festado"
+            value="Todos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Todos</label>
+      </div>
+</div>
+      <button
+        class="w-full sm:w-auto shrink-0 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-4 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(62,109,156,0.3)] hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(95,176,201,0.4)] flex items-center justify-center gap-2"
+        (click)="abrirAdicionar()">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon> Nuevo Personal
       </button>
     </div>
   </div>
 
-  <div class="table-glass-container">
-    <table class="premium-table">
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0">
+    <table class="w-full border-collapse">
       <thead>
         <tr>
-          <th>Perfil</th>
-          <th>Apellidos y Nombres</th>
-          <th>Estado</th>
-          <th class="text-center">Acciones</th>
+          <th
+            class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center rounded-tl-2xl">
+            Perfil</th>
+          <th
+            class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">
+            Apellidos y Nombres</th>
+          <th
+            class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center">
+            Estado</th>
+          <th
+            class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center rounded-tr-2xl">
+            Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of personasPaginadas" class="table-row-hover">
-          <td>
-            <div class="avatar-wrapper">
-              <img [src]="getFotoUrl(p)" class="avatar-img" alt="foto">
+        <tr *ngFor="let p of personasPaginadas" class="hover:bg-slate-100/50 transition-colors ">
+          <td class="p-4 border-b border-slate-100 align-middle flex items-center justify-center">
+            <div class="w-11 h-11 rounded-xl overflow-hidden border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
+              <img [src]="getFotoUrl(p)" class="w-full h-full object-cover" alt="foto">
             </div>
           </td>
-          <td class="font-semibold text-dark">{{ p.nombre }} {{ p.ap }} {{ p.am }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="p.estado === 1 ? 'status-active' : 'status-inactive'">
+          <td class="p-4 border-b border-slate-100 align-middle font-semibold text-slate-800">{{ p.nombre }} {{ p.ap }}
+            {{ p.am }}</td>
+          <td class="p-4 border-b border-slate-100 align-middle text-center">
+            <span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase"
+              [ngClass]="p.estado === 1 ? 'bg-[#E3F6F5] text-[#3E6D9C] border border-[#A7E0DB]' : 'bg-red-100 text-red-800 border border-red-200'">
               {{ p.estado === 1 ? 'Activo' : 'Baja' }}
             </span>
           </td>
-          <td class="actions-cell">
-            <button class="action-btn edit-btn" (click)="abrirModificar(p)" title="Modificar"><lucide-icon name="pencil" class="w-4 h-4"></lucide-icon></button>
-            <button *ngIf="p.estado===1" class="action-btn delete-btn" (click)="eliminar(p)" title="Dar de baja"><lucide-icon name="trash" class="w-4 h-4"></lucide-icon></button>
-            <button *ngIf="p.estado===0" class="action-btn activate-btn" (click)="habilitar(p)" title="Habilitar"><lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon></button>
-            
-            <button *ngIf="!p.hasLogin" class="action-btn access-btn" (click)="abrirAsignarAcceso(p)" title="Asignar Acceso"><lucide-icon name="key" class="w-4 h-4"></lucide-icon></button>
-            <button *ngIf="p.hasLogin" class="action-btn access-edit-btn" (click)="abrirModificarAcceso(p)" title="Modificar Acceso"><lucide-icon name="lock" class="w-4 h-4"></lucide-icon></button>
-            <button class="action-btn view-btn" title="Ver"><lucide-icon name="eye" class="w-4 h-4"></lucide-icon></button>
+          <td class="p-4 border-b border-slate-100 align-middle">
+
+            <div class="hidden lg:flex flex-wrap gap-2 justify-center">
+              <button
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-blue-50 hover:border-blue-200"
+                (click)="abrirModificar(p)" title="Modificar Datos"><lucide-icon name="pencil"
+                  class="w-4 h-4 text-blue-600"></lucide-icon></button>
+
+              <button *ngIf="p.estado===1"
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-red-50 hover:border-red-200"
+                (click)="eliminar(p)" title="Dar de Baja"><lucide-icon name="trash"
+                  class="w-4 h-4 text-red-600"></lucide-icon></button>
+              <button *ngIf="p.estado===0"
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-green-50 hover:border-green-200"
+                (click)="habilitar(p)" title="Habilitar"><lucide-icon name="refresh-cw"
+                  class="w-4 h-4 text-green-600"></lucide-icon></button>
+
+              <button *ngIf="!p.hasLogin"
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-purple-50 hover:border-purple-200"
+                (click)="abrirAsignarAcceso(p)" title="Asignar Acceso"><lucide-icon name="unlock"
+                  class="w-4 h-4 text-purple-600"></lucide-icon></button>
+              <button *ngIf="p.hasLogin"
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-green-50 hover:border-green-200"
+                (click)="abrirModificarAcceso(p)" title="Modificar Acceso"><lucide-icon name="lock"
+                  class="w-4 h-4 text-green-600"></lucide-icon></button>
+
+              <button
+                class="w-9 h-9 shrink-0 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-gray-50 hover:border-gray-300"
+                (click)="abrirVer(p)" title="Imprimir/Visualizar"><lucide-icon name="printer"
+                  class="w-4 h-4 text-slate-600"></lucide-icon></button>
+            </div>
+
+            <div class="lg:hidden flex justify-center relative">
+              <button
+                class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 transition-colors"
+                (click)="toggleMenuAcciones(p, $event)" title="Opciones">
+                <lucide-icon name="more-vertical" class="w-5 h-5"></lucide-icon>
+              </button>
+
+              <div *ngIf="menuAccionesAbierto === p.codper"
+                class="absolute right-6 top-0 mt-0 w-48 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 z-50 flex flex-col p-2 gap-1 overflow-hidden"
+                (click)="$event.stopPropagation()">
+                <button
+                  class="flex items-center gap-3 p-2.5 hover:bg-blue-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="abrirModificar(p); cerrarMenuAcciones()">
+                  <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon> <span
+                    class="font-medium">Modificar</span>
+                </button>
+
+                <button *ngIf="p.estado===1"
+                  class="flex items-center gap-3 p-2.5 hover:bg-red-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="eliminar(p); cerrarMenuAcciones()">
+                  <lucide-icon name="trash" class="w-4 h-4 text-red-600"></lucide-icon> <span class="font-medium">Dar de
+                    Baja</span>
+                </button>
+                <button *ngIf="p.estado===0"
+                  class="flex items-center gap-3 p-2.5 hover:bg-green-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="habilitar(p); cerrarMenuAcciones()">
+                  <lucide-icon name="refresh-cw" class="w-4 h-4 text-green-600"></lucide-icon> <span
+                    class="font-medium">Habilitar</span>
+                </button>
+
+                <button *ngIf="!p.hasLogin"
+                  class="flex items-center gap-3 p-2.5 hover:bg-purple-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="abrirAsignarAcceso(p); cerrarMenuAcciones()">
+                  <lucide-icon name="unlock" class="w-4 h-4 text-purple-600"></lucide-icon> <span
+                    class="font-medium">Asignar Acceso</span>
+                </button>
+                <button *ngIf="p.hasLogin"
+                  class="flex items-center gap-3 p-2.5 hover:bg-green-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="abrirModificarAcceso(p); cerrarMenuAcciones()">
+                  <lucide-icon name="lock" class="w-4 h-4 text-green-600"></lucide-icon> <span
+                    class="font-medium">Modificar Acceso</span>
+                </button>
+
+                <div class="h-px bg-gray-100 my-1 w-full"></div>
+
+                <button
+                  class="flex items-center gap-3 p-2.5 hover:bg-gray-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="abrirVer(p); cerrarMenuAcciones()">
+                  <lucide-icon name="printer" class="w-4 h-4 text-slate-600"></lucide-icon> <span
+                    class="font-medium">Ver / Imprimir</span>
+                </button>
+              </div>
+            </div>
+
           </td>
         </tr>
         <tr *ngIf="personasPaginadas.length === 0">
-          <td colspan="4" class="text-center py-4 text-muted">No se encontraron usuarios</td>
+          <td colspan="4" class="text-center p-4 text-slate-400">No se encontraron usuarios</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="pagination-glass mt-4">
-    <button class="page-btn" (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>
-    <span class="page-indicator">Página <span class="page-number">{{ paginaActual }}</span></span>
-    <button class="page-btn" (click)="paginaActual = paginaActual + 1" [disabled]="personasPaginadas.length < itemsPorPagina">Siguiente</button>
+  <div
+    class="flex justify-center items-center gap-4 p-4 bg-white/70 backdrop-blur-md rounded-xl border border-white/50 mt-4">
+    <button
+      class="bg-white border border-slate-200 py-2 px-4 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all duration-200 hover:bg-[#E3F6F5] hover:text-[#3E6D9C] hover:border-[#3E6D9C] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-600 disabled:hover:border-slate-200"
+      (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>
+    <span class="text-sm text-[#2A2F63]">Página <span class="font-bold text-[#3E6D9C]">{{ paginaActual }}</span></span>
+    <button
+      class="bg-white border border-slate-200 py-2 px-4 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all duration-200 hover:bg-[#E3F6F5] hover:text-[#3E6D9C] hover:border-[#3E6D9C] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-slate-600 disabled:hover:border-slate-200"
+      (click)="paginaActual = paginaActual + 1"
+      [disabled]="personasPaginadas.length < itemsPorPagina">Siguiente</button>
   </div>
 </div>
 
 <!-- Modal Persona -->
-<div class="modal-glass-overlay" *ngIf="showFormModal">
-  <div class="modal-glass-content slide-up">
-    <h4 class="modal-title">{{ editMode ? 'Modificar Persona' : 'Nueva Persona' }}</h4>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Cédula</label>
-        <input type="number" class="styled-input" [(ngModel)]="currentPersona.ci">
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity"
+  *ngIf="showFormModal">
+  <div
+    class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 w-11/12 max-w-2xl shadow-2xl border border-white/50 transform transition-all translate-y-0">
+    <h4 class="text-xl font-bold text-[#2A2F63] mb-6 text-center">{{ editMode ? 'Modificar Persona' : 'Nueva Persona' }}
+    </h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Cédula</label>
+        <input type="number"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          [(ngModel)]="currentPersona.ci">
       </div>
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" class="styled-input" [(ngModel)]="currentPersona.nombre">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Nombre</label>
+        <input type="text"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+          [(ngModel)]="currentPersona.nombre">
       </div>
-      <div class="form-group">
-        <label>Ap. Paterno</label>
-        <input type="text" class="styled-input" [(ngModel)]="currentPersona.ap">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Ap. Paterno</label>
+        <input type="text"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+          [(ngModel)]="currentPersona.ap">
       </div>
-      <div class="form-group">
-        <label>Ap. Materno</label>
-        <input type="text" class="styled-input" [(ngModel)]="currentPersona.am">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Ap. Materno</label>
+        <input type="text"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+          [(ngModel)]="currentPersona.am">
       </div>
-      <div class="form-group">
-        <label>Género</label>
-        <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="genero" value="M" [(ngModel)]="currentPersona.genero"> Masculino</label>
-          <label class="radio-label"><input type="radio" name="genero" value="F" [(ngModel)]="currentPersona.genero"> Femenino</label>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Género</label>
+        <div class="flex gap-4 items-center h-[42px]">
+          <label class="text-sm flex items-center gap-1.5 cursor-pointer"><input type="radio" name="genero" value="M"
+              [(ngModel)]="currentPersona.genero" class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Masculino</label>
+          <label class="text-sm flex items-center gap-1.5 cursor-pointer"><input type="radio" name="genero" value="F"
+              [(ngModel)]="currentPersona.genero" class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Femenino</label>
         </div>
       </div>
-      <div class="form-group">
-        <label>Tipo Personal</label>
-        <select class="styled-select" [(ngModel)]="currentPersona.tipoper">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Tipo Personal</label>
+        <select
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-9 pl-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_8px_center] bg-no-repeat bg-[length:20px]"
+          [(ngModel)]="currentPersona.tipoper">
           <option value="A">Administrativo</option>
           <option value="P">Público</option>
         </select>
       </div>
-      <div class="form-group full-width">
-        <label>Teléfonos (separados por coma)</label>
-        <input type="text" class="styled-input" [(ngModel)]="telefonosText" placeholder="Ej: 70012345, 60098765">
+      <div class="flex flex-col col-span-1 sm:col-span-2">
+        <label class="text-sm font-semibold text-slate-500 mb-2">Teléfonos</label>
+        <div class="flex gap-2 mb-2">
+          <input type="number"
+            class="flex-1 bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            [(ngModel)]="nuevoTelefono" (keyup.enter)="agregarTelefono()" placeholder="Ej: 70012345">
+          <button (click)="agregarTelefono()" class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">
+            Agregar
+          </button>
+        </div>
+        <div class="border border-slate-200 rounded-lg overflow-hidden bg-white/50" *ngIf="currentPersona.telefonos && currentPersona.telefonos.length > 0">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-100/50 text-slate-600 font-semibold border-b border-slate-200">
+              <tr>
+                <th class="px-4 py-2 w-full">Número</th>
+                <th class="px-4 py-2 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tel of currentPersona.telefonos; let i = index" class="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                <td class="px-4 py-2">{{ tel }}</td>
+                <td class="px-4 py-2 text-center">
+                  <button (click)="eliminarTelefono(i)" class="text-red-500 hover:text-red-700 transition-colors p-1" title="Eliminar teléfono">
+                    <lucide-icon name="trash" class="w-4 h-4"></lucide-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!currentPersona.telefonos || currentPersona.telefonos.length === 0" class="text-xs text-slate-400 italic mt-1">
+          No hay teléfonos registrados.
+        </div>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-premium" (click)="guardarPersona()">{{ editMode ? 'Modificar' : 'Guardar' }}</button>
-      <button class="btn-glass" (click)="showFormModal=false">Cancelar</button>
+    <div class="flex justify-center gap-4 mt-8">
+      <button
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2 px-6 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-md hover:-translate-y-0.5"
+        (click)="guardarPersona()">{{ editMode ? 'Modificar' : 'Guardar' }}</button>
+      <button
+        class="bg-slate-100/80 hover:bg-slate-200 border border-slate-300 text-slate-600 py-2 px-6 rounded-lg font-semibold cursor-pointer transition-all duration-200"
+        (click)="showFormModal=false">Cancelar</button>
     </div>
   </div>
 </div>
 
 <!-- Modal Acceso -->
-<div class="modal-glass-overlay" *ngIf="showAccesoModal">
-  <div class="modal-glass-content slide-up small-modal">
-    <div class="user-context-banner">
-      <img [src]="getFotoUrl(currentPersona)" class="mini-avatar" alt="foto">
-      <div class="user-context-info">
-        <span class="user-context-name">{{ currentPersona.nombre }} {{ currentPersona.ap }}</span>
-        <span class="user-context-ci">CI: {{ currentPersona.ci || 'N/A' }}</span>
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity"
+  *ngIf="showAccesoModal">
+  <div
+    class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 w-11/12 max-w-md shadow-2xl border border-white/50 transform transition-all translate-y-0">
+    <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
+      <img [src]="getFotoUrl(currentPersona)" class="w-12 h-12 rounded-xl object-cover" alt="foto">
+      <div class="flex flex-col">
+        <span class="font-bold text-slate-800">{{ currentPersona.nombre }} {{ currentPersona.ap }}</span>
+        <span class="text-xs text-slate-500 font-semibold">CI: {{ currentPersona.ci || 'N/A' }}</span>
       </div>
     </div>
-    <h4 class="modal-title mt-3">{{ accesoEditMode ? 'Modificar Acceso' : 'Asignar Acceso' }}</h4>
-    
-    <div class="form-group mt-3">
-      <label>Usuario</label>
-      <input type="text" class="styled-input" [(ngModel)]="accesoData.login" [disabled]="accesoEditMode" placeholder="Nombre de usuario">
+    <h4 class="text-xl font-bold text-[#2A2F63] mb-6 text-center mt-3">{{ accesoEditMode ? 'Modificar Acceso' : 'Asignar
+      Acceso' }}</h4>
+
+    <div class="flex flex-col mt-3">
+      <label class="text-sm font-semibold text-slate-500 mb-2">Usuario</label>
+      <input type="text"
+        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20 disabled:bg-slate-100 disabled:text-slate-400"
+        [(ngModel)]="accesoData.login" [disabled]="accesoEditMode" placeholder="Nombre de usuario">
     </div>
-    <div class="form-group mt-3">
-      <label>Contraseña</label>
-      <input type="password" class="styled-input" [(ngModel)]="accesoData.password" placeholder="••••••••">
+    <div class="flex flex-col mt-3">
+      <label class="text-sm font-semibold text-slate-500 mb-2">Contraseña</label>
+      <input type="password"
+        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+        [(ngModel)]="accesoData.password" placeholder="••••••••">
     </div>
-    <div class="form-group mt-3">
-      <label>Repetir Contraseña</label>
-      <input type="password" class="styled-input" placeholder="••••••••">
+    <div class="flex flex-col mt-3">
+      <label class="text-sm font-semibold text-slate-500 mb-2">Repetir Contraseña</label>
+      <input type="password"
+        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+        placeholder="••••••••">
     </div>
-    
-    <div class="modal-actions mt-4">
-      <button class="btn-premium" (click)="guardarAcceso()">Guardar</button>
-      <button class="btn-glass" (click)="showAccesoModal=false">Cancelar</button>
+
+    <div class="flex justify-center gap-4 mt-8">
+      <button
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2 px-6 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-md hover:-translate-y-0.5"
+        (click)="guardarAcceso()">Guardar</button>
+      <button
+        class="bg-slate-100/80 hover:bg-slate-200 border border-slate-300 text-slate-600 py-2 px-6 rounded-lg font-semibold cursor-pointer transition-all duration-200"
+        (click)="showAccesoModal=false">Cancelar</button>
     </div>
   </div>
 </div>
 
-<app-ventana-dialogo [show]="showConfirmDialog" [mensaje]="confirmMensaje" (confirm)="onConfirmDialog()" (cancel)="onCancelDialog()"></app-ventana-dialogo>
+<app-ventana-dialogo [show]="showConfirmDialog" [mensaje]="confirmMensaje" (confirm)="onConfirmDialog()"
+  (cancel)="onCancelDialog()"></app-ventana-dialogo>
+
+<!-- Modal Visualizar/Imprimir -->
+<div
+  class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity print:bg-white print:backdrop-blur-none"
+  *ngIf="showVerModal && personaAver">
+  <div
+    class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 w-11/12 max-w-lg shadow-2xl border border-white/50 transform transition-all translate-y-0 print:shadow-none print:border-none print:w-full print:p-0">
+    <div class="flex justify-between items-center mb-6 print:hidden">
+      <h4 class="text-xl font-bold text-[#2A2F63] m-0">Detalles de la Persona</h4>
+      <button class="text-slate-400 hover:text-slate-600 transition-colors" (click)="showVerModal=false"><lucide-icon
+          name="x" class="w-6 h-6"></lucide-icon></button>
+    </div>
+
+    <div class="flex items-center gap-6 mb-8 border-b border-slate-200 pb-6">
+      <img [src]="getFotoUrl(personaAver)" class="w-24 h-24 rounded-2xl object-cover border border-slate-200 shadow-sm"
+        alt="foto">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-800 m-0">{{ personaAver.nombre }} {{ personaAver.ap }} {{
+          personaAver.am }}</h2>
+        <span
+          class="inline-block mt-2 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold uppercase tracking-wider">CI:
+          {{ personaAver.ci || 'N/A' }}</span>
+        <span class="inline-block mt-2 ml-2 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase"
+          [ngClass]="personaAver.estado === 1 ? 'bg-[#E3F6F5] text-[#3E6D9C] border border-[#A7E0DB]' : 'bg-red-100 text-red-800 border border-red-200'">
+          {{ personaAver.estado === 1 ? 'Activo' : 'Baja' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-y-6 gap-x-4 mb-8 text-sm">
+      <div>
+        <p class="text-slate-500 font-semibold mb-1">Género</p>
+        <p class="text-slate-800 font-medium">{{ personaAver.genero === 'M' ? 'Masculino' : 'Femenino' }}</p>
+      </div>
+      <div>
+        <p class="text-slate-500 font-semibold mb-1">Tipo de Personal</p>
+        <p class="text-slate-800 font-medium">{{ personaAver.tipoper === 'A' ? 'Administrativo' : 'Público' }}</p>
+      </div>
+      <div class="col-span-2">
+        <p class="text-slate-500 font-semibold mb-1">Teléfonos</p>
+        <p class="text-slate-800 font-medium">{{ personaAver.telefonos && personaAver.telefonos.length ?
+          personaAver.telefonos.join(', ') : 'Sin teléfonos registrados' }}</p>
+      </div>
+      <div class="col-span-2">
+        <p class="text-slate-500 font-semibold mb-1">Acceso al Sistema</p>
+        <p class="text-slate-800 font-medium flex items-center gap-2">
+          <lucide-icon [name]="personaAver.hasLogin ? 'lock' : 'unlock'" class="w-4 h-4"
+            [ngClass]="personaAver.hasLogin ? 'text-purple-600' : 'text-slate-400'"></lucide-icon>
+          {{ personaAver.hasLogin ? 'Usuario Asignado (' + personaAver.login + ')' : 'Sin acceso' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4 pt-4 border-t border-slate-100 print:hidden">
+      <button
+        class="bg-slate-100/80 hover:bg-slate-200 border border-slate-300 text-slate-600 py-2.5 px-6 rounded-lg font-semibold cursor-pointer transition-all duration-200"
+        (click)="showVerModal=false">Cerrar</button>
+      <button
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-6 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-md hover:-translate-y-0.5 flex items-center gap-2"
+        (click)="imprimirVista()">
+        <lucide-icon name="printer" class="w-4 h-4"></lucide-icon> Imprimir
+      </button>
+    </div>
+  </div>
+</div>

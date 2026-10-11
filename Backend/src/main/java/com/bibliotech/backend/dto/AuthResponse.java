@@ -16,5 +16,5 @@ public class AuthResponse {
     private String foto;
     private String token;
     private String username;
-    private String rol;
+    private String saludos;
 }

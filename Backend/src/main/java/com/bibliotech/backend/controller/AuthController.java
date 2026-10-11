@@ -48,7 +48,6 @@ public class AuthController {
 
         Usuario user = userOpt.get();
 
-        // Check if password matches using BCrypt
         if (user.getPasswd() == null || !passwordEncoder.matches(request.getPassword(), user.getPasswd())) {
             throw new InvalidCredentialsException("Contraseña incorrecta");
         }
@@ -61,10 +60,8 @@ public class AuthController {
                 user.getPersona().getNombre() + " " + user.getPersona().getAp() : "Usuario";
         String foto = user.getPersona() != null ? user.getPersona().getFoto() : null;
         
-        // Generar el token JWT
         String token = jwtUtil.generateToken(user.getLogin());
 
-        // Generar fecha en formato dd-MM-yyyy
         String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         
         String cedula = "";
@@ -74,7 +71,8 @@ public class AuthController {
                 cedula = String.valueOf(datoOpt.get().getCi());
             }
         }
+        String saludos = "Infor";
         
-        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", fecha, cedula, nombreCompleto, foto, token, user.getLogin(), "Administrativo"));
+        return ResponseEntity.ok(new AuthResponse(true, "Login exitoso", fecha, cedula, nombreCompleto, foto, token, user.getLogin(), saludos));
     }
 }

@@ -15,10 +15,8 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Clave secreta segura generada para la aplicación
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     
-    // Tiempo de expiración del token (ej. 10 horas)
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
 
     public String extractUsername(String token) {

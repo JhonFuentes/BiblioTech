@@ -13,14 +13,13 @@ import { Auth } from '../../services/auth';
         
         <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
           <h2 class="text-gray-700 font-medium">Modificar Foto..</h2>
-          <div class="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow">1</div>
         </div>
 
         <div class="p-6">
           <div class="flex items-center gap-4 mb-6">
             <label class="text-sm font-medium text-gray-700 w-24">Nueva Foto:</label>
             <div class="flex-1">
-              <input type="file" id="fotoFile" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+              <input type="file" id="fotoFile" (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.webp" class="hidden">
               <div class="flex gap-2">
                 <input type="text" readonly [value]="selectedFileName" class="flex-1 border border-gray-300 rounded px-2 py-1 text-sm bg-gray-50 outline-none" placeholder="Seleccione una imagen...">
                 <label for="fotoFile" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium py-1 px-4 border border-gray-400 rounded shadow cursor-pointer transition">
@@ -61,6 +60,18 @@ export class ModificarFotos {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      /*const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      /const extension = file.name.split('.').pop()?.toLowerCase();
+      
+      if (!extension || !allowedExtensions.includes(extension)) {
+        this.isError = true;
+        this.message = 'Solo se permiten imágenes (.jpg, .jpeg, .png, .webp)';
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        return;
+      }*/
+      this.isError = false;
+      this.message = '';
       this.selectedFile = file;
       this.selectedFileName = file.name;
     }
@@ -79,7 +90,6 @@ export class ModificarFotos {
         next: (res) => {
           this.isError = false;
           this.message = 'Foto modificada correctamente.';
-          // Agregar un timestamp para evitar que el navegador use la imagen cacheada anterior
           user.foto = res.foto + '?t=' + new Date().getTime();
           this.auth.updateUser(user);
           
