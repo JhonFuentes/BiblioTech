@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { Login } from '../login/login';
-import { LucideAngularModule, Menu, ChevronDown, ChevronRight, User, LogOut, LogIn, Camera } from 'lucide-angular';
+import { LucideAngularModule, Menu, ChevronDown, ChevronUp, ChevronRight, User, LogOut, LogIn, Camera, LayoutGrid, Box, Heart } from 'lucide-angular';
 
 @Component({
   selector: 'app-layout',
@@ -27,6 +27,7 @@ export class Layout implements OnInit {
   activeGroups: { [key: number]: boolean } = { 1: true, 2: true };
   sidebarOpen: boolean = false;
   showLoginModal: boolean = false;
+  saludos: string ='';
 
   ngOnInit() {
     this.auth.currentUser$.subscribe(user => {
@@ -35,6 +36,11 @@ export class Layout implements OnInit {
         this.formatearFechaLiteral(this.usuario.fecha);
       } else {
         this.generarFechaLocal();
+      }
+      if (this.usuario && this.usuario.saludos) {
+        this.saludos = this.usuario.saludos;
+      } else {
+        this.saludos = '';
       }
     });
   }
@@ -65,7 +71,7 @@ export class Layout implements OnInit {
     if (this.usuario && this.usuario.foto) {
       return `http://localhost:8080/fotos/${this.usuario.foto}`;
     }
-    return 'https://ui-avatars.com/api/?name=' + (this.usuario?.user || 'U') + '&background=0D8ABC&color=fff';
+    return 'default.png';
   }
 
   openLogin() {

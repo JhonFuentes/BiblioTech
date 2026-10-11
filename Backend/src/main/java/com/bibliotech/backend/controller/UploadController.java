@@ -53,12 +53,15 @@ public class UploadController {
             String originalFilename = file.getOriginalFilename();
             String extension = "";
             if (originalFilename != null && originalFilename.lastIndexOf(".") > 0) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            }
+
+            if (!extension.equals(".jpg") && !extension.equals(".jpeg") && !extension.equals(".png") && !extension.equals(".webp")) {
+                return ResponseEntity.badRequest().body("{\"success\":false, \"message\":\"Solo se permiten archivos de imagen (.jpg, .jpeg, .png, .webp).\"}");
             }
 
             String fileName = persona.getCodper() + extension;
             
-            // Eliminar foto anterior si tiene un nombre distinto (distinta extensión)
             if (persona.getFoto() != null) {
                 File oldFile = new File(UPLOAD_DIR + persona.getFoto());
                 if (oldFile.exists() && !persona.getFoto().equals(fileName)) {

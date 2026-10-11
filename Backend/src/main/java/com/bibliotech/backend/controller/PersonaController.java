@@ -35,36 +35,62 @@ public class PersonaController {
 
     @GetMapping
     public ResponseEntity<List<PersonaDTO>> listarPersonas() {
-        List<PersonaDTO> lista = personaRepository.findAll().stream().map(p -> {
-            PersonaDTO dto = new PersonaDTO();
-            dto.setCodper(p.getCodper());
-            dto.setNombre(p.getNombre());
-            dto.setAp(p.getAp());
-            dto.setAm(p.getAm());
-            dto.setGenero(p.getGenero());
-            dto.setEstado(p.getEstado());
-            dto.setTipoper(p.getTipoper());
-            dto.setFoto(p.getFoto());
-
-            datoRepository.findByCodper(p.getCodper()).ifPresent(d -> dto.setCi(d.getCi()));
-
-            List<String> tels = telefonoRepository.findByCodper(p.getCodper())
-                .stream().map(Telefono::getNumero).collect(Collectors.toList());
-            dto.setTelefonos(tels);
-
-            // Fetch user (assuming list is small or this is for demonstration. In prod, better to use joins)
-            Optional<Usuario> userOpt = usuarioRepository.findAll().stream()
-                .filter(u -> u.getPersona() != null && u.getPersona().getCodper().equals(p.getCodper())).findFirst();
-            if (userOpt.isPresent()) {
-                dto.setHasLogin(true);
-                dto.setLogin(userOpt.get().getLogin());
-            } else {
-                dto.setHasLogin(false);
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
+        List<PersonaDTO> lista = personaRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<org.springframework.data.domain.Page<PersonaDTO>> listarPersonasPaginado(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size,
+            @RequestParam(required = false) String filtroNombre,
+            @RequestParam(required = false) Integer filtroEstado,
+            @RequestParam(required = false) String filtroTipoPer) {
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        
+        // Handle empty strings as nulls for the query
+        String nombre = (filtroNombre != null && !filtroNombre.trim().isEmpty()) ? filtroNombre : null;
+        String tipo = (filtroTipoPer != null && !filtroTipoPer.trim().isEmpty() && !filtroTipoPer.equals("Todos")) ? filtroTipoPer : null;
+        Integer estado = null;
+        if (filtroEstado != null && filtroEstado != -1) {
+             estado = filtroEstado; // -1 can mean Todos if we send from frontend
+        }
+
+        org.springframework.data.domain.Page<PersonaDTO> pagedResult = personaRepository
+                .findByFilters(nombre, estado, tipo, pageable)
+                .map(this::mapToDTO);
+        
+        return ResponseEntity.ok(pagedResult);
+    }
+
+    private PersonaDTO mapToDTO(Persona p) {
+        PersonaDTO dto = new PersonaDTO();
+        dto.setCodper(p.getCodper());
+        dto.setNombre(p.getNombre());
+        dto.setAp(p.getAp());
+        dto.setAm(p.getAm());
+        dto.setGenero(p.getGenero());
+        dto.setEstado(p.getEstado());
+        dto.setTipoper(p.getTipoper());
+        dto.setFoto(p.getFoto());
+
+        datoRepository.findByCodper(p.getCodper()).ifPresent(d -> dto.setCi(d.getCi()));
+
+        List<String> tels = telefonoRepository.findByCodper(p.getCodper())
+            .stream().map(Telefono::getNumero).collect(Collectors.toList());
+        dto.setTelefonos(tels);
+
+        Optional<Usuario> userOpt = usuarioRepository.findAll().stream()
+            .filter(u -> u.getPersona() != null && u.getPersona().getCodper().equals(p.getCodper())).findFirst();
+        if (userOpt.isPresent()) {
+            dto.setHasLogin(true);
+            dto.setLogin(userOpt.get().getLogin());
+        } else {
+            dto.setHasLogin(false);
+        }
+
+        return dto;
     }
 
     @PostMapping
@@ -151,14 +177,22 @@ public class PersonaController {
         return ResponseEntity.ok().build();
     }
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @PostMapping("/{id}/acceso")
     public ResponseEntity<?> asignarAcceso(@PathVariable Integer id, @RequestBody AccesoDTO acceso) {
         Optional<Persona> pOpt = personaRepository.findById(id);
         if (pOpt.isEmpty()) return ResponseEntity.notFound().build();
         
+        Optional<Usuario> userOpt = usuarioRepository.findByLogin(acceso.getLogin());
+        if (userOpt.isPresent()) {
+            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de usuario ya está en uso\"}");
+        }
+        
         Usuario u = new Usuario();
         u.setLogin(acceso.getLogin());
-        u.setPasswd(acceso.getPassword());
+        u.setPasswd(passwordEncoder.encode(acceso.getPassword()));
         u.setEstado(1);
         u.setPersona(pOpt.get());
         usuarioRepository.save(u);
@@ -167,13 +201,14 @@ public class PersonaController {
     
     @PutMapping("/{id}/acceso")
     public ResponseEntity<?> modificarAcceso(@PathVariable Integer id, @RequestBody AccesoDTO acceso) {
-        // En un caso real buscariamos por login o el usuario asociado a persona
         Optional<Usuario> userOpt = usuarioRepository.findAll().stream()
                 .filter(u -> u.getPersona() != null && u.getPersona().getCodper().equals(id)).findFirst();
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
         
         Usuario u = userOpt.get();
-        u.setPasswd(acceso.getPassword());
+        if (acceso.getPassword() != null && !acceso.getPassword().isEmpty()) {
+            u.setPasswd(passwordEncoder.encode(acceso.getPassword()));
+        }
         usuarioRepository.save(u);
         return ResponseEntity.ok().build();
     }
