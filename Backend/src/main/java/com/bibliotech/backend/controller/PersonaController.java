@@ -114,7 +114,13 @@ public class PersonaController {
         }
 
         if (dto.getTelefonos() != null) {
+            java.util.Set<String> uniqueTels = new java.util.LinkedHashSet<>();
             for (String tel : dto.getTelefonos()) {
+                if (tel != null && !tel.trim().isEmpty()) {
+                    uniqueTels.add(tel.trim());
+                }
+            }
+            for (String tel : uniqueTels) {
                 Telefono t = new Telefono(p.getCodper(), tel);
                 telefonoRepository.save(t);
             }
@@ -127,7 +133,7 @@ public class PersonaController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<PersonaDTO> modificarPersona(@PathVariable Integer id, @RequestBody PersonaDTO dto) {
+    public ResponseEntity<?> modificarPersona(@PathVariable Integer id, @RequestBody PersonaDTO dto) {
         Optional<Persona> pOpt = personaRepository.findById(id);
         if (pOpt.isEmpty()) return ResponseEntity.notFound().build();
         Persona p = pOpt.get();
@@ -136,25 +142,54 @@ public class PersonaController {
         p.setAm(dto.getAm());
         p.setGenero(dto.getGenero());
         p.setTipoper(dto.getTipoper());
+        if (dto.getFoto() != null && !dto.getFoto().trim().isEmpty()) {
+            p.setFoto(dto.getFoto());
+        }
         personaRepository.save(p);
 
-        datoRepository.findByCodper(id).ifPresent(datoRepository::delete);
+        // Actualizar Cédula de Identidad (Dato)
+        Optional<Dato> dOpt = datoRepository.findByCodper(id);
         if (dto.getCi() != null) {
-            Dato d = new Dato();
-            d.setCi(dto.getCi());
-            d.setCodper(id);
-            datoRepository.save(d);
+            if (dOpt.isPresent()) {
+                Dato existing = dOpt.get();
+                if (!existing.getCi().equals(dto.getCi())) {
+                    datoRepository.delete(existing);
+                    datoRepository.flush();
+                    Dato d = new Dato(dto.getCi(), id);
+                    datoRepository.save(d);
+                }
+            } else {
+                Dato d = new Dato(dto.getCi(), id);
+                datoRepository.save(d);
+            }
+        } else {
+            if (dOpt.isPresent()) {
+                datoRepository.delete(dOpt.get());
+                datoRepository.flush();
+            }
         }
 
-        telefonoRepository.deleteByCodper(id);
+        // Actualizar Teléfonos
+        List<Telefono> existingTels = telefonoRepository.findByCodper(id);
+        if (!existingTels.isEmpty()) {
+            telefonoRepository.deleteAll(existingTels);
+            telefonoRepository.flush();
+        }
+
         if (dto.getTelefonos() != null) {
+            java.util.Set<String> uniqueTels = new java.util.LinkedHashSet<>();
             for (String tel : dto.getTelefonos()) {
+                if (tel != null && !tel.trim().isEmpty()) {
+                    uniqueTels.add(tel.trim());
+                }
+            }
+            for (String tel : uniqueTels) {
                 Telefono t = new Telefono(id, tel);
                 telefonoRepository.save(t);
             }
         }
         
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(mapToDTO(p));
     }
 
     @DeleteMapping("/{id}")

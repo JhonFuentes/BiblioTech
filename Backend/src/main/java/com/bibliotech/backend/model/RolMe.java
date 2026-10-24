@@ -1,7 +1,16 @@
 package com.bibliotech.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "ROLME")
 @IdClass(RolMeId.class)
@@ -15,23 +24,24 @@ public class RolMe {
     @Column(name = "codm")
     private Integer codm;
 
-    @ManyToOne
+    // Cardinalidad N a 1: Pertenece a un Rol
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "codr", insertable = false, updatable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Rol rol;
 
-    @ManyToOne
+    // Cardinalidad N a 1: Pertenece a un Menú
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "codm", insertable = false, updatable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Menu menu;
 
-    public Integer getCodr() { return codr; }
-    public void setCodr(Integer codr) { this.codr = codr; }
-
-    public Integer getCodm() { return codm; }
-    public void setCodm(Integer codm) { this.codm = codm; }
-
-    public Rol getRol() { return rol; }
-    public void setRol(Rol rol) { this.rol = rol; }
-
-    public Menu getMenu() { return menu; }
-    public void setMenu(Menu menu) { this.menu = menu; }
+    public RolMe(Integer codr, Integer codm) {
+        this.codr = codr;
+        this.codm = codm;
+    }
 }

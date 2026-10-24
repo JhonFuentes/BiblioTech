@@ -94,8 +94,12 @@ export class ModificarFotos {
           this.auth.updateUser(user);
           
           setTimeout(() => {
-            this.router.navigate(['/']);
-          }, 1500);
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              this.router.navigate(['/']);
+            }
+          }, 1200);
         },
         error: (err) => {
           this.isError = true;
@@ -107,6 +111,10 @@ export class ModificarFotos {
   }
 
   cancel() {
-    this.router.navigate(['/']);
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

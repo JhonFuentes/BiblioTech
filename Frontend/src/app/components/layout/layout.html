@@ -14,88 +14,43 @@
     <div class="w-full px-4 mt-2 flex flex-col gap-2 overflow-y-auto pb-6">
 
       <a routerLink="/inicio"
-        class="flex items-center gap-3 px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors text-gray-800 font-semibold text-sm"
-        routerLinkActive="bg-gray-100" [routerLinkActiveOptions]="{exact: true}">
-        <lucide-icon name="home" class="w-5 h-5 text-gray-500"></lucide-icon>
+        class="flex items-center gap-3 px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors text-slate-800 font-semibold text-sm"
+        routerLinkActive="bg-[#E3F6F5] text-[#3E6D9C]" [routerLinkActiveOptions]="{exact: true}">
+        <lucide-icon name="home" class="w-5 h-5 text-[#3E6D9C]"></lucide-icon>
         <span>Inicio</span>
       </a>
 
-      <div class="flex flex-col gap-1">
-        <div (click)="toggleGroup(1)"
-          class="flex items-center justify-between px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors"
-          [ngClass]="{'bg-gray-100': activeGroups[1]}">
-          <div class="flex items-center gap-3 text-gray-800 font-semibold text-sm">
-            <lucide-icon name="layout-grid" class="w-5 h-5 text-gray-500"></lucide-icon>
-            <span>Administración</span>
+      <!-- Grupos Dinámicos de Menús (B-2) -->
+      <div *ngFor="let m of menus" class="flex flex-col gap-1">
+        <div (click)="toggleGroup(m.codm)"
+          class="flex items-center justify-between px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors"
+          [ngClass]="{'bg-slate-100/90 text-[#2A2F63] font-bold': activeGroups[m.codm], 'text-slate-700': !activeGroups[m.codm]}">
+          <div class="flex items-center gap-3 font-semibold text-sm">
+            <lucide-icon [name]="getMenuIcon(m.nombre)" class="w-5 h-5 text-[#3E6D9C]"></lucide-icon>
+            <span>{{ m.nombre }}</span>
           </div>
-          <lucide-icon [name]="activeGroups[1] ? 'chevron-up' : 'chevron-down'"
-            class="w-4 h-4 text-gray-500"></lucide-icon>
+          <lucide-icon [name]="activeGroups[m.codm] ? 'chevron-up' : 'chevron-down'"
+            class="w-4 h-4 text-slate-400"></lucide-icon>
         </div>
 
-        <div *ngIf="activeGroups[1]" class="relative flex flex-col ml-6 gap-1 py-1">
-          <div class="absolute left-[9px] top-0 bottom-4 w-px bg-gray-200"></div>
+        <!-- Opciones / Procesos del Menú -->
+        <div *ngIf="activeGroups[m.codm]" class="relative flex flex-col ml-6 gap-1 py-1">
+          <div class="absolute left-[9px] top-0 bottom-4 w-px bg-slate-200"></div>
 
-          <a routerLink="/gestion-usuarios"
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
+          <a *ngFor="let p of m.procesos" [routerLink]="p.enlace"
+            class="relative flex items-center gap-2.5 px-3 py-2 text-slate-600 hover:text-[#2A2F63] font-medium text-sm rounded-xl hover:bg-slate-100 transition-colors ml-[26px]"
+            routerLinkActive="bg-[#E3F6F5] text-[#3E6D9C] font-bold">
             <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
+              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-slate-200 rounded-bl-lg h-10 -translate-y-full">
             </div>
-            Gestión de Usuarios
-          </a>
-          <a
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
-            <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
-            </div>
-            Opción 2........
-          </a>
-          <a
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
-            <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
-            </div>
-            Opción N........
+            <lucide-icon [name]="getProcesoIcon(p.enlace)" class="w-4 h-4 text-[#3E6D9C] shrink-0"></lucide-icon>
+            <span class="truncate">{{ p.nombre }}</span>
           </a>
         </div>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <div (click)="toggleGroup(2)"
-          class="flex items-center justify-between px-4 py-2.5 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors"
-          [ngClass]="{'bg-gray-100': activeGroups[2]}">
-          <div class="flex items-center gap-3 text-gray-800 font-semibold text-sm">
-            <lucide-icon name="box" class="w-5 h-5 text-gray-500"></lucide-icon>
-            <span>More Options</span>
-          </div>
-          <lucide-icon [name]="activeGroups[2] ? 'chevron-up' : 'chevron-down'"
-            class="w-4 h-4 text-gray-500"></lucide-icon>
-        </div>
-
-        <div *ngIf="activeGroups[2]" class="relative flex flex-col ml-6 gap-1 py-1">
-          <div class="absolute left-[9px] top-0 bottom-4 w-px bg-gray-200"></div>
-
-          <a
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
-            <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
-            </div>
-            Opción 1........
-          </a>
-          <a
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
-            <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
-            </div>
-            Opción 2........
-          </a>
-          <a
-            class="relative flex items-center px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm rounded-2xl hover:bg-gray-100 transition-colors ml-[26px]">
-            <div
-              class="absolute -left-[17px] top-1/2 w-4 border-b border-l border-gray-200 rounded-bl-lg h-10 -translate-y-full">
-            </div>
-            Opción N........
-          </a>
-        </div>
+      <div *ngIf="menus.length === 0" class="p-4 text-center text-xs text-slate-400 italic">
+        No hay opciones disponibles para este rol.
       </div>
 
     </div>
@@ -103,26 +58,33 @@
 
   <div class="flex flex-col flex-1 overflow-hidden w-full h-full">
 
-    <div class="bg-white border-b-2 border-gray-300 px-4 py-3 flex justify-between items-center shadow-sm z-10">
+    <div class="bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center shadow-sm z-10">
 
-      <div class="flex-1 flex items-center">
-        <button class="sm:hidden text-gray-600 focus:outline-none hover:text-brand-400 transition-colors"
+      <div class="flex-1 flex items-center gap-3">
+        <button class="sm:hidden text-slate-600 focus:outline-none hover:text-[#3E6D9C] transition-colors"
           (click)="toggleSidebar()">
           <lucide-icon name="menu" class="w-6 h-6"></lucide-icon>
         </button>
+        <span class="hidden md:inline-block text-xs font-bold text-slate-400 uppercase tracking-wider">
+          Gestión de Bibliotecas
+        </span>
       </div>
 
-      <div class="flex-1 text-center text-xs text-gray-600 font-bold uppercase tracking-wide">
-        {{ fechaLiteral }} / {{saludos}}
+      <div class="flex-1 text-center text-xs text-slate-600 font-bold uppercase tracking-wide">
+        {{ fechaLiteral }} {{ saludos ? ' / ' + saludos : '' }}
       </div>
 
-      <div class="flex-1 flex justify-end items-center gap-4">
-        <select
-          class="border border-gray-400 rounded px-2 py-1 text-sm bg-gray-50 focus:outline-none focus:border-brand-400">
-          <option>Rol 1</option>
-          <option>Rol 2</option>
-          <option>Rol 3</option>
-        </select>
+      <div class="flex-1 flex justify-end items-center gap-3">
+        <!-- Selector de Roles Activos (B-1) -->
+        <div class="flex items-center gap-1.5" *ngIf="roles.length > 0">
+          <label class="hidden lg:inline-block text-xs font-bold text-slate-500 uppercase">Rol:</label>
+          <select
+            [value]="selectedRolId"
+            (change)="onRolChange($event)"
+            class="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm font-semibold bg-slate-50 text-slate-700 hover:border-[#3E6D9C] focus:outline-none focus:ring-2 focus:ring-[#3E6D9C]/20 shadow-sm cursor-pointer transition-colors">
+            <option *ngFor="let r of roles" [value]="r.codr">{{ r.nombre }}</option>
+          </select>
+        </div>
 
         <div class="relative group ">
 
