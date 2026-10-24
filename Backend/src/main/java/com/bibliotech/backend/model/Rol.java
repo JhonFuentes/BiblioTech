@@ -1,7 +1,18 @@
 package com.bibliotech.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "ROLES")
 public class Rol {
@@ -16,12 +27,23 @@ public class Rol {
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
 
-    public Integer getCodr() { return codr; }
-    public void setCodr(Integer codr) { this.codr = codr; }
+    // Cardinalidad 1 a N: Un rol asignado a usuarios en ROLUSU
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<RolUsu> rolUsus;
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    // Cardinalidad 1 a N: Un rol asignado a menús en ROLME
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<RolMe> rolMes;
 
-    public Integer getEstado() { return estado; }
-    public void setEstado(Integer estado) { this.estado = estado; }
+    public Rol(Integer codr, String nombre, Integer estado) {
+        this.codr = codr;
+        this.nombre = nombre;
+        this.estado = estado;
+    }
 }

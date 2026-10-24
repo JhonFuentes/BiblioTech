@@ -1,9 +1,16 @@
 package com.bibliotech.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "datos")
 public class Dato {
@@ -14,7 +21,16 @@ public class Dato {
     @Column(name = "codper")
     private Integer codper;
 
-    @OneToOne
-    @JoinColumn(name = "codper", insertable = false, updatable = false)
+    // Cardinalidad 1 a 1 con Persona
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "codper", referencedColumnName = "codper", insertable = false, updatable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Persona persona;
+
+    public Dato(Integer ci, Integer codper) {
+        this.ci = ci;
+        this.codper = codper;
+    }
 }

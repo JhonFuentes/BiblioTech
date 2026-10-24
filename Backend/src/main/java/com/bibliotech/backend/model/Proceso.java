@@ -1,7 +1,18 @@
 package com.bibliotech.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "PROCESOS")
 public class Proceso {
@@ -19,15 +30,17 @@ public class Proceso {
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
 
-    public Integer getCodp() { return codp; }
-    public void setCodp(Integer codp) { this.codp = codp; }
+    // Cardinalidad 1 a N: Un proceso puede estar en varios menús a través de MEPRO
+    @OneToMany(mappedBy = "proceso", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<MePro> mePros;
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getEnlace() { return enlace; }
-    public void setEnlace(String enlace) { this.enlace = enlace; }
-
-    public Integer getEstado() { return estado; }
-    public void setEstado(Integer estado) { this.estado = estado; }
+    public Proceso(Integer codp, String nombre, String enlace, Integer estado) {
+        this.codp = codp;
+        this.nombre = nombre;
+        this.enlace = enlace;
+        this.estado = estado;
+    }
 }

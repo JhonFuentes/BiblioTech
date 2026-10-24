@@ -1,6 +1,17 @@
 package com.bibliotech.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
 
 @Entity
 @Table(name = "MENUS")
@@ -16,12 +27,23 @@ public class Menu {
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
 
-    public Integer getCodm() { return codm; }
-    public void setCodm(Integer codm) { this.codm = codm; }
+    // Cardinalidad 1 a N: Un menú asignado a roles en ROLME
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<RolMe> rolMes;
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    // Cardinalidad 1 a N: Un menú agrupa procesos en MEPRO
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<MePro> mePros;
 
-    public Integer getEstado() { return estado; }
-    public void setEstado(Integer estado) { this.estado = estado; }
+    public Menu(Integer codm, String nombre, Integer estado) {
+        this.codm = codm;
+        this.nombre = nombre;
+        this.estado = estado;
+    }
 }

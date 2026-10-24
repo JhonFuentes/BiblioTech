@@ -1,0 +1,225 @@
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <!-- Cabecera y Filtros (B-7) -->
+  <div
+    class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+        <lucide-icon name="building" class="w-5 h-5"></lucide-icon>
+      </div>
+      <div>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión Editoriales</h3>
+        <p class="text-xs text-slate-500 m-0">Casas editoriales y sellos de publicación</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-3 items-stretch sm:items-center w-full xl:w-auto justify-end">
+      <!-- Filtro [1] Nombre de la Editorial con Enter -->
+      <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
+        <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+        <input type="text"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-4 pl-10 text-sm transition-all duration-200 text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+          [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Filtrar por Nombre de Editorial [Enter]...">
+      </div>
+
+      <!-- Filtro [2] Estado (Activos, Bajas, Todos) -->
+      <div class="flex items-center justify-around sm:justify-start gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700 w-full sm:w-auto">
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festadoEd" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Activos
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festadoEd" value="Bajas" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Bajas
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festadoEd" value="Todos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
+            class="text-[#3E6D9C] focus:ring-[#3E6D9C]"> Todos
+        </label>
+      </div>
+
+      <!-- Botón (+) Nueva Editorial -->
+      <button
+        class="w-full sm:w-auto shrink-0 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-4 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(62,109,156,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+        (click)="abrirAdicionar()">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon> Nueva Editorial
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla de Editoriales -->
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0 overflow-hidden min-h-[300px]">
+    <div class="overflow-x-auto w-full">
+      <table class="w-full border-collapse min-w-[500px] md:min-w-full">
+      <thead>
+        <tr>
+          <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left rounded-tl-2xl">
+            Nombre de la Editorial
+          </th>
+          <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-36">
+            Estado
+          </th>
+          <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center rounded-tr-2xl w-36 sm:w-48">
+            Acciones
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of editorialesPaginadas" class="hover:bg-slate-100/50 transition-colors border-b border-slate-100">
+          <td class="p-4 align-middle font-semibold text-slate-800">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full" [ngClass]="e.estado === 1 ? 'bg-emerald-500' : 'bg-red-400'"></span>
+              <span>{{ e.nombre }}</span>
+            </div>
+          </td>
+          <td class="p-4 align-middle text-center">
+            <span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase inline-flex items-center gap-1.5"
+              [ngClass]="e.estado === 1 ? 'bg-[#E3F6F5] text-[#3E6D9C] border border-[#A7E0DB]' : 'bg-red-100 text-red-800 border border-red-200'">
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="e.estado === 1 ? 'bg-[#3E6D9C]' : 'bg-red-500'"></span>
+              {{ e.estado === 1 ? 'Activo' : 'Baja' }}
+            </span>
+          </td>
+          <td class="p-4 align-middle text-center relative">
+            <!-- Modo Pantalla Grande: Botones en fila -->
+            <div class="hidden sm:flex items-center justify-center gap-2">
+              <!-- [M] Modificar -->
+              <button
+                class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-blue-50 hover:border-blue-200"
+                (click)="abrirModificar(e)" title="Modificar Datos de la Editorial (M)">
+                <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon>
+              </button>
+
+              <!-- [B] Baja / Eliminar lógico -->
+              <button *ngIf="e.estado === 1"
+                class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-red-50 hover:border-red-200"
+                (click)="eliminar(e)" title="Dar de Baja / Eliminar Editorial (B)">
+                <lucide-icon name="trash" class="w-4 h-4 text-red-600"></lucide-icon>
+              </button>
+
+              <!-- [H] Habilitar editorial dada de baja -->
+              <button *ngIf="e.estado === 0"
+                class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-emerald-50 hover:border-emerald-200"
+                (click)="habilitar(e)" title="Habilitar Editorial (H)">
+                <lucide-icon name="refresh-cw" class="w-4 h-4 text-emerald-600"></lucide-icon>
+              </button>
+            </div>
+
+            <!-- Modo Móvil: Menú con 3 puntos (more-vertical) -->
+            <div class="sm:hidden flex justify-center relative">
+              <button
+                class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 transition-colors"
+                (click)="toggleMenuAcciones(e, $event)" title="Opciones">
+                <lucide-icon name="more-vertical" class="w-5 h-5"></lucide-icon>
+              </button>
+
+              <div *ngIf="menuAccionesAbierto === e.code"
+                class="absolute right-0 top-10 w-44 bg-white/95 backdrop-blur-md rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-slate-200 z-50 flex flex-col p-1.5 gap-1 text-left"
+                (click)="$event.stopPropagation()">
+                <button
+                  class="flex items-center gap-2.5 p-2 hover:bg-blue-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="abrirModificar(e); cerrarMenuAcciones()">
+                  <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon>
+                  <span class="font-medium">Modificar</span>
+                </button>
+
+                <button *ngIf="e.estado === 1"
+                  class="flex items-center gap-2.5 p-2 hover:bg-red-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="eliminar(e); cerrarMenuAcciones()">
+                  <lucide-icon name="trash" class="w-4 h-4 text-red-600"></lucide-icon>
+                  <span class="font-medium">Dar de Baja</span>
+                </button>
+
+                <button *ngIf="e.estado === 0"
+                  class="flex items-center gap-2.5 p-2 hover:bg-emerald-50 rounded-lg text-sm text-left w-full text-slate-700 transition-colors"
+                  (click)="habilitar(e); cerrarMenuAcciones()">
+                  <lucide-icon name="refresh-cw" class="w-4 h-4 text-emerald-600"></lucide-icon>
+                  <span class="font-medium">Habilitar</span>
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="editorialesPaginadas.length === 0">
+          <td colspan="3" class="text-center p-8 text-slate-400">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <lucide-icon name="building" class="w-8 h-8 text-slate-300"></lucide-icon>
+              <span>No se encontraron editoriales registradas con los filtros actuales</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- [3] Paginador Adaptativo según dispositivo -->
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl border border-white/50 mt-4 text-sm text-[#2A2F63]">
+    <div class="text-xs sm:text-sm font-medium">
+      Mostrando <span class="font-bold text-[#3E6D9C]">{{ editorialesPaginadas.length }}</span> de <span class="font-bold text-[#3E6D9C]">{{ editorialesFiltradas.length }}</span> editoriales
+      <span class="text-slate-400 text-xs ml-1">({{ itemsPorPagina }} por pág.)</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button
+        class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all hover:bg-[#E3F6F5] hover:text-[#3E6D9C] disabled:opacity-40 disabled:cursor-not-allowed text-xs sm:text-sm"
+        (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">
+        &laquo; Anterior
+      </button>
+      <span class="px-2 font-bold text-[#3E6D9C] text-xs sm:text-sm">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button
+        class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all hover:bg-[#E3F6F5] hover:text-[#3E6D9C] disabled:opacity-40 disabled:cursor-not-allowed text-xs sm:text-sm"
+        (click)="paginaActual = paginaActual + 1" [disabled]="paginaActual >= totalPaginas">
+        Siguiente &raquo;
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Adicionar / Modificar Editorial (B-7.1 y B-7.2) -->
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity"
+  *ngIf="showFormModal">
+  <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 w-11/12 max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50 transform transition-all text-left">
+    <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+      <h4 class="text-xl font-bold text-[#2A2F63] m-0">
+        {{ editMode ? 'Modificar Datos de la Editorial..' : 'Adicionar Editoriales..' }}
+      </h4>
+      <button (click)="cerrarModal()" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
+        &times;
+      </button>
+    </div>
+
+    <div class="flex flex-col mb-6">
+      <label class="text-sm font-semibold text-slate-600 mb-2">Nombre de la Editorial:</label>
+      <input type="text" maxlength="40"
+        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+        [(ngModel)]="currentEditorial.nombre" placeholder="Ej: McGraw-Hill" (keyup.enter)="solicitarGuardar()">
+    </div>
+    <div class="flex flex-col mb-6">
+      <label class="text-sm font-semibold text-slate-600 mb-2">Nivel de la Editorial:</label>
+      <input type="number" maxlength="40"
+        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
+        [(ngModel)]="currentEditorial.nivel" placeholder="Ej: 23" (keyup.enter)="solicitarGuardar()">
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-6 rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-md hover:-translate-y-0.5"
+        (click)="solicitarGuardar()">
+        {{ editMode ? 'Modificar' : 'Guardar' }}
+      </button>
+      <button
+        class="bg-slate-100/80 hover:bg-slate-200 border border-slate-300 text-slate-600 py-2.5 px-6 rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200"
+        (click)="cerrarModal()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Diálogo General de Confirmación y Avisos (B-5) -->
+<app-ventana-dialogo
+  [show]="showConfirmDialog"
+  [tipo]="dialogTipo"
+  [soloAceptar]="dialogSoloAceptar"
+  [mensaje]="confirmMensaje"
+  (confirm)="onConfirmDialog()"
+  (cancel)="onCancelDialog()">
+</app-ventana-dialogo>
