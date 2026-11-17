@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/editoriales")
@@ -50,15 +51,21 @@ public class EditorialController {
 
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Editorial editorial) {
-        /*if (editorial.getNombre() == null || editorial.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de la editorial es requerido\"}");
-        }*/
-    	if (editorial.getNombre() == null || editorial.getNombre().trim().isEmpty() || editorial.getNivel() == null ) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de la editorial y el nivel son requerido\"}");
+        if (editorial.getNombre() == null || editorial.getNombre().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre de la editorial es requerido"));
         }
-        editorial.setNombre(editorial.getNombre().trim());
+        String nombre = editorial.getNombre().trim();
+        List<Editorial> existentes = editorialRepository.findByNombreIgnoreCaseTrimmed(nombre);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(e -> e.getEstado() != null && e.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe una editorial activa con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe una editorial con el nombre '" + nombre + "', pero se encuentra dada de baja. Puede habilitarla en el listado."));
+            }
+        }
+        editorial.setNombre(nombre);
         editorial.setEstado(1);
-        editorial.setNivel(editorial.getNivel());
         Editorial guardada = editorialRepository.save(editorial);
         return ResponseEntity.ok(guardada);
     }
@@ -70,10 +77,20 @@ public class EditorialController {
             return ResponseEntity.notFound().build();
         }
         if (editorial.getNombre() == null || editorial.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de la editorial es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre de la editorial es requerido"));
+        }
+        String nombre = editorial.getNombre().trim();
+        List<Editorial> existentes = editorialRepository.findByNombreIgnoreCaseTrimmedAndCodeNot(nombre, id);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(e -> e.getEstado() != null && e.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otra editorial activa con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otra editorial con el nombre '" + nombre + "', pero se encuentra dada de baja."));
+            }
         }
         Editorial actual = opt.get();
-        actual.setNombre(editorial.getNombre().trim());
+        actual.setNombre(nombre);
         if (editorial.getEstado() != null) {
             actual.setEstado(editorial.getEstado());
         }

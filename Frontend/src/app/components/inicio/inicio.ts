@@ -14,154 +14,57 @@ import { Auth } from '../../services/auth';
       <div class="bg-gradient-to-r from-[#2A2F63] via-[#3E6D9C] to-[#5FB0C9] rounded-3xl p-8 md:p-10 text-white shadow-xl relative overflow-hidden mb-8">
         <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
         <div class="relative z-10 max-w-3xl">
-         
           <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
             Bienvenido, {{ usuario?.user || 'Invitado' }}
           </h1>
           <p class="text-white/80 text-sm md:text-base leading-relaxed mb-6">
-            Plataforma centralizada para el inventario, control de usuarios, áreas temáticas, editoriales, formatos bibliográficos y catálogo de autores.
+            Plataforma integral de gestión bibliotecaria: administración de usuarios y roles (RBAC), catálogo bibliográfico, inventario de ejemplares físicos y digitales, préstamos y devoluciones.
           </p>
           <div class="flex flex-wrap gap-3">
-            <a routerLink="/gestion-usuarios" 
+            <a routerLink="/catalogo-digital" 
               class="bg-white text-[#2A2F63] hover:bg-[#E3F6F5] font-bold text-sm px-5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2">
-              <lucide-icon name="users" class="w-4 h-4 text-[#3E6D9C]"></lucide-icon> Gestión Usuarios
+              <lucide-icon name="book-open" class="w-4 h-4 text-[#3E6D9C]"></lucide-icon> Búsqueda Digital (B-20)
             </a>
-            <a routerLink="/gestion-areas" 
+            <a routerLink="/gestion-prestamos" 
               class="bg-white/15 hover:bg-white/25 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition border border-white/20 flex items-center gap-2">
-              <lucide-icon name="folder" class="w-4 h-4"></lucide-icon> Catálogo Bibliográfico
+              <lucide-icon name="calendar" class="w-4 h-4"></lucide-icon> Préstamos de Ejemplares (B-12)
+            </a>
+            <a routerLink="/gestion-textos" 
+              class="bg-white/15 hover:bg-white/25 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition border border-white/20 flex items-center gap-2">
+              <lucide-icon name="file-text" class="w-4 h-4"></lucide-icon> Gestión de Textos (B-10)
             </a>
           </div>
         </div>
       </div>
 
-      <!-- Módulos de la Presentación 4 -->
+      <!-- Módulos del Sistema (B-4 a B-20.1) -->
       <div class="mb-4">
-        <h2 class="text-xl font-bold text-[#2A2F63] m-0">Módulos del Sistema</h2>
-        <p class="text-xs text-slate-500 m-0 mt-1">Acceso directo a las interfaces de administración y catálogo</p>
+        <h2 class="text-xl font-bold text-[#2A2F63] m-0">Módulos del Sistema Web (B-1 a B-20.1)</h2>
+        <p class="text-xs text-slate-500 m-0 mt-1">Acceso directo a todos los procesos de administración, catálogo, circulación y seguridad</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- B-4 Gestión Usuarios -->
-        <a routerLink="/gestion-usuarios" 
-          class="group bg-white/80 hover:bg-white backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 block">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <lucide-icon name="users" class="w-6 h-6"></lucide-icon>
-            </div>
-            <span class="text-xs font-bold text-purple-600 bg-purple-100/70 px-2.5 py-1 rounded-full uppercase">B-4</span>
-          </div>
-          <h3 class="text-lg font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
-            Gestión de Usuarios
-          </h3>
-          <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-            Administración de personal (administrativos y público), teléfonos, credenciales y estados.
-          </p>
-          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
-            <span>Ingresar al módulo</span>
-            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
-          </div>
-        </a>
-
-        <!-- B-6 Gestión Áreas -->
-        <a routerLink="/gestion-areas" 
-          class="group bg-white/80 hover:bg-white backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 block">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <lucide-icon name="folder" class="w-6 h-6"></lucide-icon>
-            </div>
-            <span class="text-xs font-bold text-cyan-600 bg-cyan-100/70 px-2.5 py-1 rounded-full uppercase">B-6</span>
-          </div>
-          <h3 class="text-lg font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
-            Gestión de Áreas
-          </h3>
-          <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-            Clasificación temática del material bibliográfico, filtrado y altas/bajas lógicas.
-          </p>
-          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
-            <span>Ingresar al módulo</span>
-            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
-          </div>
-        </a>
-
-        <!-- B-7 Gestión Editoriales -->
-        <a routerLink="/gestion-editoriales" 
-          class="group bg-white/80 hover:bg-white backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 block">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <lucide-icon name="building" class="w-6 h-6"></lucide-icon>
-            </div>
-            <span class="text-xs font-bold text-emerald-600 bg-emerald-100/70 px-2.5 py-1 rounded-full uppercase">B-7</span>
-          </div>
-          <h3 class="text-lg font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
-            Gestión de Editoriales
-          </h3>
-          <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-            Registro de editoriales y sellos de publicación, control de estados y paginación.
-          </p>
-          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
-            <span>Ingresar al módulo</span>
-            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
-          </div>
-        </a>
-
-        <!-- B-8 Gestión Tipos -->
-        <a routerLink="/gestion-tipos" 
-          class="group bg-white/80 hover:bg-white backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 block">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <lucide-icon name="layers" class="w-6 h-6"></lucide-icon>
-            </div>
-            <span class="text-xs font-bold text-amber-600 bg-amber-100/70 px-2.5 py-1 rounded-full uppercase">B-8</span>
-          </div>
-          <h3 class="text-lg font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
-            Gestión de Tipos
-          </h3>
-          <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-            Tipos de texto físicos y digitales, control del flag digital (SW: Con Documento).
-          </p>
-          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
-            <span>Ingresar al módulo</span>
-            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
-          </div>
-        </a>
-
-        <!-- B-9 Gestión Autores -->
-        <a routerLink="/gestion-autores" 
-          class="group bg-white/80 hover:bg-white backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 block">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <lucide-icon name="book" class="w-6 h-6"></lucide-icon>
-            </div>
-            <span class="text-xs font-bold text-blue-600 bg-blue-100/70 px-2.5 py-1 rounded-full uppercase">B-9</span>
-          </div>
-          <h3 class="text-lg font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
-            Gestión de Autores
-          </h3>
-          <p class="text-xs text-slate-500 mb-4 line-clamp-2">
-            Registro de autores, nombres, apellidos, género, ficha de impresión y control de baja lógica.
-          </p>
-          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
-            <span>Ingresar al módulo</span>
-            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
-          </div>
-        </a>
-
-        <!-- B-5 Diálogos & B-3 Sesión -->
-        <div class="bg-gradient-to-br from-slate-50 to-[#E3F6F5]/50 p-6 rounded-2xl border border-slate-200/80 flex flex-col justify-between">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <a *ngFor="let mod of modulos" [routerLink]="mod.ruta"
+          class="group bg-white/80 hover:bg-white backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-xl bg-slate-200/60 text-[#3E6D9C] flex items-center justify-center mb-4">
-              <lucide-icon name="shield-check" class="w-6 h-6"></lucide-icon>
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] text-[#3E6D9C] flex items-center justify-center group-hover:scale-105 transition-transform">
+                <lucide-icon [name]="mod.icono" class="w-5 h-5"></lucide-icon>
+              </div>
+              <span class="text-[11px] font-bold text-[#2A2F63] bg-[#A7E0DB]/50 px-2.5 py-0.5 rounded-full uppercase">{{ mod.codigo }}</span>
             </div>
-            <h3 class="text-lg font-bold text-[#2A2F63] mb-1">Seguridad & Confirmaciones</h3>
-            <p class="text-xs text-slate-500">
-              Validación general B-5 en altas, bajas y modificaciones. Autenticación con JWT (B-3.1) y actualización de fotos de perfil (B-3.2).
+            <h3 class="text-base font-bold text-[#2A2F63] group-hover:text-[#3E6D9C] transition-colors mb-1">
+              {{ mod.titulo }}
+            </h3>
+            <p class="text-xs text-slate-500 mb-3 line-clamp-2">
+              {{ mod.descripcion }}
             </p>
           </div>
-          <div class="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-500 font-medium flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Sistema conectado y validado</span>
+          <div class="flex items-center text-xs font-semibold text-[#3E6D9C] gap-1 group-hover:gap-2 transition-all">
+            <span>Abrir módulo</span>
+            <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   `
@@ -169,6 +72,24 @@ import { Auth } from '../../services/auth';
 export class InicioComponent implements OnInit {
   private auth = inject(Auth);
   usuario: any = null;
+
+  modulos = [
+    { codigo: 'B-4', titulo: 'Gestión de Usuarios', descripcion: 'Registro de personal, teléfonos, fotos y cuentas de acceso.', ruta: '/gestion-usuarios', icono: 'users' },
+    { codigo: 'B-6', titulo: 'Gestión de Áreas', descripcion: 'Clasificación temática del material bibliográfico.', ruta: '/gestion-areas', icono: 'folder' },
+    { codigo: 'B-7', titulo: 'Gestión de Editoriales', descripcion: 'Administración de sellos editoriales y estado.', ruta: '/gestion-editoriales', icono: 'building' },
+    { codigo: 'B-8', titulo: 'Gestión de Tipos', descripcion: 'Formatos bibliográficos físicos y digitales (SW).', ruta: '/gestion-tipos', icono: 'layers' },
+    { codigo: 'B-9', titulo: 'Gestión de Autores', descripcion: 'Catálogo de autores y ficha de impresión.', ruta: '/gestion-autores', icono: 'book' },
+    { codigo: 'B-10', titulo: 'Gestión de Textos', descripcion: 'Obras bibliográficas, autores múltiples y carga digital PDF.', ruta: '/gestion-textos', icono: 'file-text' },
+    { codigo: 'B-11', titulo: 'Gestión de Ejemplares', descripcion: 'Inventario por código de inventario y disponibilidad.', ruta: '/gestion-ejemplares', icono: 'archive' },
+    { codigo: 'B-12', titulo: 'Préstamos de Ejemplares', descripcion: 'Registro, anulación e impresión de préstamos bibliotecarios.', ruta: '/gestion-prestamos', icono: 'calendar' },
+    { codigo: 'B-13/14', titulo: 'Devoluciones y Anulación', descripcion: 'Recepción de ejemplares prestados y reversión de devoluciones.', ruta: '/gestion-devoluciones', icono: 'rotate-ccw' },
+    { codigo: 'B-15', titulo: 'Gestión de Roles', descripcion: 'Perfiles de acceso y seguridad del sistema.', ruta: '/gestion-roles', icono: 'shield' },
+    { codigo: 'B-16', titulo: 'Gestión de Menús', descripcion: 'Grupos de navegación principal del sistema.', ruta: '/gestion-menus', icono: 'menu' },
+    { codigo: 'B-17', titulo: 'Asignar Procesos (MEPRO)', descripcion: 'Vinculación interactiva de procesos a menús.', ruta: '/asignar-mepro', icono: 'sliders' },
+    { codigo: 'B-18', titulo: 'Asignar Menús (ROLME)', descripcion: 'Vinculación interactiva de menús a roles.', ruta: '/asignar-rolme', icono: 'shield-check' },
+    { codigo: 'B-19', titulo: 'Asignar Roles (ROLUSU)', descripcion: 'Asignación de roles a usuarios con acceso.', ruta: '/asignar-rolusu', icono: 'user-check' },
+    { codigo: 'B-20', titulo: 'Catálogo Digital', descripcion: 'Búsqueda pública y visor embebido de documentos digitales.', ruta: '/catalogo-digital', icono: 'book-open' }
+  ];
 
   ngOnInit() {
     this.auth.currentUser$.subscribe(u => this.usuario = u);

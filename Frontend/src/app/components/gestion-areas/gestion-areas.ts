@@ -158,6 +158,21 @@ export class GestionAreas implements OnInit {
       return;
     }
 
+    const nombreNormalizado = this.currentArea.nombre.trim().toLowerCase();
+    const duplicado = this.areas.find(a => 
+      a.nombre.trim().toLowerCase() === nombreNormalizado &&
+      (!this.editMode || a.coda !== this.currentArea.coda)
+    );
+
+    if (duplicado) {
+      if (duplicado.estado === 1) {
+        this.mostrarAviso(`Ya existe un área activa con el nombre "${this.currentArea.nombre.trim()}"`);
+      } else {
+        this.mostrarAviso(`Ya existe un área con el nombre "${this.currentArea.nombre.trim()}", pero se encuentra dada de baja. Puede habilitarla en el listado.`);
+      }
+      return;
+    }
+
     const mensaje = this.editMode 
       ? '¿Seguro de Modificar los Datos del Área?' 
       : '¿Seguro de Adicionar la Nueva Área?';
@@ -173,7 +188,10 @@ export class GestionAreas implements OnInit {
           this.showFormModal = false;
           this.cargarAreas();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al modificar área')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al modificar área');
+          this.mostrarError(msg);
+        }
       });
     } else {
       this.areaService.crear(this.currentArea).subscribe({
@@ -181,7 +199,10 @@ export class GestionAreas implements OnInit {
           this.showFormModal = false;
           this.cargarAreas();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al guardar área')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al guardar área');
+          this.mostrarError(msg);
+        }
       });
     }
   }

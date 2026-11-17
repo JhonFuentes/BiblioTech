@@ -6,7 +6,6 @@ export interface Editorial {
   code?: number;
   nombre: string;
   estado?: number;
-  nivel?:number;
 }
 
 @Injectable({

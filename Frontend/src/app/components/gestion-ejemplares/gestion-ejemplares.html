@@ -1,0 +1,183 @@
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <!-- Cabecera (B-11) -->
+  <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+        <lucide-icon name="bookmark" class="w-5 h-5"></lucide-icon>
+      </div>
+      <div>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión de Ejemplares</h3>
+        <p class="text-xs text-slate-500 m-0">Control de copias físicas por título, disponibilidad e inventario</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full xl:w-auto">
+      <!-- Selector de Texto para asociar ejemplares -->
+      <div class="min-w-[280px]">
+        <select [(ngModel)]="selectedCodt" (change)="cargarEjemplares()"
+          class="bg-white border border-slate-300 rounded-lg py-2.5 px-3 text-xs font-semibold text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C]">
+          <option [ngValue]="null">Seleccione un Texto...</option>
+          <option *ngFor="let t of textos" [value]="t.codt">{{ t.titulo }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Estado: Activos / Bajas -->
+      <div class="flex items-center gap-3 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-700">
+        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+          <input type="radio" name="festEj" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Activos
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+          <input type="radio" name="festEj" value="Bajas" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Bajas
+        </label>
+      </div>
+
+      <!-- Botón Nuevo Ejemplar -->
+      <button [disabled]="!selectedCodt" (click)="abrirAdicionar()"
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white py-2.5 px-4 rounded-lg font-semibold text-xs shadow flex items-center justify-center gap-1.5 disabled:opacity-40">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon> Nuevo Ejemplar
+      </button>
+    </div>
+  </div>
+
+  <!-- Banner del Texto seleccionado -->
+  <div *ngIf="selectedTexto" class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/60 rounded-xl p-3 mb-4 flex items-center justify-between text-xs">
+    <div>
+      <span class="text-blue-600 font-bold uppercase tracking-wider text-[10px]">Texto Seleccionado</span>
+      <div class="font-bold text-slate-800 text-sm">{{ selectedTexto.titulo }}</div>
+      <div class="text-slate-500">Área: {{ selectedTexto.areaNombre }} • Editorial: {{ selectedTexto.editorialNombre }} • Edición: {{ selectedTexto.edicion }}</div>
+    </div>
+    <div class="text-right">
+      <span class="text-xs font-extrabold text-[#2A2F63] bg-white px-3 py-1 rounded-full shadow-sm">
+        {{ ejemplaresFiltrados.length }} Ejemplares
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabla de Ejemplares -->
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0 overflow-hidden min-h-[300px]">
+    <div class="overflow-x-auto w-full">
+      <table class="w-full border-collapse min-w-[600px]">
+        <thead>
+          <tr>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Nro. Inventario</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center">Disponibilidad</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Responsable Alta</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Anulado Por</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-28">Estado</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-24">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of ejemplaresPaginados"
+            class="border-b border-slate-100 hover:bg-[#E3F6F5]/40 transition-colors"
+            [class.opacity-60]="e.estado === 0">
+            <td class="p-3 font-mono font-bold text-slate-800 text-sm">
+              #{{ e.codinv }}
+            </td>
+            <td class="p-3 text-center">
+              <span *ngIf="e.disponible === 1" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Libre
+              </span>
+              <span *ngIf="e.disponible === 0" class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Prestado / Ocupado
+              </span>
+            </td>
+            <td class="p-3 text-xs text-slate-600 font-medium">
+              {{ e.per_resp }}
+            </td>
+            <td class="p-3 text-xs text-slate-400">
+              {{ e.per_anula || '-' }}
+            </td>
+            <td class="p-3 text-center">
+              <span *ngIf="e.estado === 1" class="text-xs font-bold text-emerald-600">Activo</span>
+              <span *ngIf="e.estado === 0" class="text-xs font-bold text-red-500">Baja</span>
+            </td>
+            <td class="p-3 text-center relative">
+              <button (click)="toggleMenuAcciones(e, $event)"
+                class="bg-transparent border border-slate-200 hover:border-slate-300 p-1.5 rounded-lg text-slate-600 hover:bg-slate-50 transition">
+                <lucide-icon name="more-vertical" class="w-4 h-4"></lucide-icon>
+              </button>
+
+              <div *ngIf="menuAccionesAbierto === e.codinv"
+                class="absolute right-4 top-10 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 text-left">
+                <button (click)="abrirModificar(e)" class="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                  <lucide-icon name="pencil" class="w-3.5 h-3.5 text-amber-500"></lucide-icon> Modificar
+                </button>
+                <button *ngIf="e.estado === 1" (click)="eliminar(e)" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2">
+                  <lucide-icon name="trash" class="w-3.5 h-3.5 text-red-500"></lucide-icon> Dar de Baja
+                </button>
+                <button *ngIf="e.estado === 0" (click)="habilitar(e)" class="w-full text-left px-3 py-2 text-xs text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
+                  <lucide-icon name="refresh-cw" class="w-3.5 h-3.5 text-emerald-500"></lucide-icon> Habilitar
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="ejemplaresFiltrados.length === 0">
+            <td colspan="6" class="p-8 text-center text-slate-400 text-xs">
+              {{ selectedCodt ? 'No hay ejemplares registrados para este texto.' : 'Seleccione un texto para visualizar sus ejemplares.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginador -->
+    <div *ngIf="totalPaginas > 1" class="flex justify-between items-center px-4 py-3 border-t border-slate-100 bg-white/50 text-xs text-slate-500">
+      <div>Página {{ paginaActual }} de {{ totalPaginas }}</div>
+      <div class="flex items-center gap-1">
+        <button [disabled]="paginaActual === 1" (click)="paginaActual = paginaActual - 1"
+          class="px-2 py-0.5 rounded border border-slate-200 bg-white disabled:opacity-40">Ant.</button>
+        <span class="px-2 font-bold">{{ paginaActual }}</span>
+        <button [disabled]="paginaActual === totalPaginas" (click)="paginaActual = paginaActual + 1"
+          class="px-2 py-0.5 rounded border border-slate-200 bg-white disabled:opacity-40">Sig.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar / Modificar Ejemplar (B-11.1 & B-11.2) -->
+  <div *ngIf="showFormModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div class="bg-[#2A2F63] px-5 py-3.5 flex justify-between items-center text-white">
+        <h4 class="font-bold text-sm m-0">{{ editMode ? 'Modificar Ejemplar' : 'Adicionar Ejemplar' }}</h4>
+        <button (click)="cerrarModal()" class="text-white/80 hover:text-white"><lucide-icon name="x" class="w-4 h-4"></lucide-icon></button>
+      </div>
+      <div class="p-5 space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Texto Asignado</label>
+          <div class="bg-slate-100 p-2 rounded text-slate-800 font-semibold">{{ selectedTexto?.titulo }}</div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nro. de Inventario (Opcional, autogenerado si vacío)</label>
+          <input type="number" [(ngModel)]="currentEjemplar.codinv" [disabled]="editMode"
+            class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:outline-none" placeholder="Automático">
+        </div>
+
+        <div *ngIf="editMode">
+          <label class="block font-bold text-slate-700 mb-1">Disponibilidad</label>
+          <select [(ngModel)]="currentEjemplar.disponible" class="w-full border border-slate-300 rounded-lg p-2 text-xs">
+            <option [value]="1">Libre</option>
+            <option [value]="0">Ocupado / Prestado</option>
+          </select>
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+        <button (click)="cerrarModal()" class="px-3 py-1.5 border border-slate-300 rounded text-slate-600 text-xs font-bold">Cancelar</button>
+        <button (click)="solicitarGuardar()" class="px-4 py-1.5 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white rounded text-xs font-bold shadow">
+          {{ editMode ? 'Modificar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diálogo B-5 Universal Modal -->
+  <app-ventana-dialogo
+    [isOpen]="showConfirmDialog"
+    [tipo]="dialogTipo"
+    [mensaje]="confirmMensaje"
+    [soloAceptar]="dialogSoloAceptar"
+    (confirm)="onConfirmDialog()"
+    (cancel)="onCancelDialog()">
+  </app-ventana-dialogo>
+</div>

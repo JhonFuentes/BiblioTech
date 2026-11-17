@@ -1,0 +1,146 @@
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <!-- Cabecera y Filtros (B-15) -->
+  <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+        <lucide-icon name="shield" class="w-5 h-5"></lucide-icon>
+      </div>
+      <div>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión de Roles</h3>
+        <p class="text-xs text-slate-500 m-0">Perfiles de acceso y seguridad del sistema bibliotecario</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full xl:w-auto">
+      <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
+        <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+        <input type="text" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-4 pl-10 text-sm text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C]"
+          placeholder="Filtrar por Nombre de Rol [Enter]...">
+      </div>
+
+      <div class="flex items-center gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700">
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festRol" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Activos
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festRol" value="Bajas" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Bajas
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+          <input type="radio" name="festRol" value="Todos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Todos
+        </label>
+      </div>
+
+      <button (click)="abrirAdicionar()"
+        class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white py-2.5 px-4 rounded-lg font-semibold text-sm shadow flex items-center justify-center gap-2">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon> Nuevo Rol
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla de Roles -->
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0 overflow-hidden min-h-[300px]">
+    <div class="overflow-x-auto w-full">
+      <table class="w-full border-collapse min-w-[500px]">
+        <thead>
+          <tr>
+            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Nombre del Rol</th>
+            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-36">Estado</th>
+            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-28">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of rolesPaginados"
+            class="border-b border-slate-100 hover:bg-[#E3F6F5]/40 transition-colors"
+            [class.opacity-60]="r.estado === 0">
+            <td class="p-4 font-bold text-slate-800 text-sm">
+              <div class="flex items-center gap-2.5">
+                <lucide-icon name="shield-check" class="w-4 h-4 text-[#3E6D9C]"></lucide-icon>
+                <span>{{ r.nombre }}</span>
+              </div>
+            </td>
+            <td class="p-4 text-center">
+              <span *ngIf="r.estado === 1" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Activo
+              </span>
+              <span *ngIf="r.estado === 0" class="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-100/70 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span> Baja
+              </span>
+            </td>
+            <td class="p-4 text-center relative">
+              <button (click)="toggleMenuAcciones(r, $event)"
+                class="bg-transparent border border-slate-200 hover:border-slate-300 p-2 rounded-lg text-slate-600 hover:bg-slate-50 transition">
+                <lucide-icon name="more-vertical" class="w-4 h-4"></lucide-icon>
+              </button>
+
+              <div *ngIf="menuAccionesAbierto === r.codr"
+                class="absolute right-4 top-12 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 text-left">
+                <button (click)="abrirModificar(r)" class="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                  <lucide-icon name="pencil" class="w-3.5 h-3.5 text-amber-500"></lucide-icon> Modificar
+                </button>
+                <button *ngIf="r.estado === 1" (click)="eliminar(r)" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2">
+                  <lucide-icon name="trash" class="w-3.5 h-3.5 text-red-500"></lucide-icon> Dar de Baja
+                </button>
+                <button *ngIf="r.estado === 0" (click)="habilitar(r)" class="w-full text-left px-3 py-2 text-xs text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
+                  <lucide-icon name="refresh-cw" class="w-3.5 h-3.5 text-emerald-500"></lucide-icon> Habilitar
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="rolesFiltrados.length === 0">
+            <td colspan="3" class="p-8 text-center text-slate-400 text-sm">
+              No se encontraron roles registrados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginador -->
+    <div *ngIf="totalPaginas > 1" class="flex justify-between items-center px-4 py-3 border-t border-slate-100 bg-white/50 text-xs text-slate-500">
+      <div>Página {{ paginaActual }} de {{ totalPaginas }}</div>
+      <div class="flex items-center gap-1">
+        <button [disabled]="paginaActual === 1" (click)="paginaActual = paginaActual - 1"
+          class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">Ant.</button>
+        <span class="px-2 font-bold">{{ paginaActual }}</span>
+        <button [disabled]="paginaActual === totalPaginas" (click)="paginaActual = paginaActual + 1"
+          class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">Sig.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar / Modificar (B-15.1 & B-15.2) -->
+  <div *ngIf="showFormModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div class="bg-[#2A2F63] px-5 py-3.5 flex justify-between items-center text-white">
+        <h4 class="font-bold text-sm m-0">{{ editMode ? 'Modificar Rol' : 'Adicionar Rol' }}</h4>
+        <button (click)="cerrarModal()" class="text-white/80 hover:text-white"><lucide-icon name="x" class="w-4 h-4"></lucide-icon></button>
+      </div>
+      <div class="p-5 space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nombre del Rol *</label>
+          <input type="text" [(ngModel)]="currentRol.nombre"
+            class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:border-[#3E6D9C]"
+            placeholder="Ej. Operador">
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+        <button (click)="cerrarModal()" class="px-3 py-1.5 border border-slate-300 rounded text-slate-600 text-xs font-bold">Cancelar</button>
+        <button (click)="solicitarGuardar()" class="px-4 py-1.5 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white rounded text-xs font-bold shadow">
+          {{ editMode ? 'Modificar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diálogo B-5 Universal Modal -->
+  <app-ventana-dialogo
+    [isOpen]="showConfirmDialog"
+    [tipo]="dialogTipo"
+    [mensaje]="confirmMensaje"
+    [soloAceptar]="dialogSoloAceptar"
+    (confirm)="onConfirmDialog()"
+    (cancel)="onCancelDialog()">
+  </app-ventana-dialogo>
+</div>

@@ -31,4 +31,26 @@ public interface AutorRepository extends JpaRepository<Autor, Integer> {
             @Param("filtro") String filtro,
             @Param("estado") Integer estado
     );
+
+    @Query("SELECT a FROM Autor a WHERE " +
+           "LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre)) AND " +
+           "LOWER(TRIM(COALESCE(a.ap, ''))) = LOWER(TRIM(COALESCE(:ap, ''))) AND " +
+           "LOWER(TRIM(COALESCE(a.am, ''))) = LOWER(TRIM(COALESCE(:am, '')))")
+    List<Autor> findDuplicate(
+            @Param("nombre") String nombre,
+            @Param("ap") String ap,
+            @Param("am") String am
+    );
+
+    @Query("SELECT a FROM Autor a WHERE " +
+           "LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre)) AND " +
+           "LOWER(TRIM(COALESCE(a.ap, ''))) = LOWER(TRIM(COALESCE(:ap, ''))) AND " +
+           "LOWER(TRIM(COALESCE(a.am, ''))) = LOWER(TRIM(COALESCE(:am, ''))) AND " +
+           "a.coda != :coda")
+    List<Autor> findDuplicateExcludingCoda(
+            @Param("nombre") String nombre,
+            @Param("ap") String ap,
+            @Param("am") String am,
+            @Param("coda") Integer coda
+    );
 }

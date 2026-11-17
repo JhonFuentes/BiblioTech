@@ -1,0 +1,234 @@
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <!-- Cabecera y Filtros (B-12) -->
+  <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col gap-4 mb-4">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+          <lucide-icon name="book" class="w-5 h-5"></lucide-icon>
+        </div>
+        <div>
+          <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión de Préstamos</h3>
+          <p class="text-xs text-slate-500 m-0">Préstamos de ejemplares en sala y a domicilio para estudiantes y público</p>
+        </div>
+      </div>
+
+      <!-- Botón Nuevo Préstamo -->
+      <button (click)="abrirAdicionar()"
+        class="w-full sm:w-auto bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white py-2.5 px-4 rounded-lg font-semibold text-xs shadow flex items-center justify-center gap-1.5">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon> Nuevo Préstamo
+      </button>
+    </div>
+
+    <!-- Barra de Filtros -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center">
+      <!-- Búsqueda Estudiante -->
+      <div class="relative lg:col-span-2">
+        <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+        <input type="text" [(ngModel)]="filtroEstudiante" (keyup.enter)="aplicarFiltros()"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2 pr-3 pl-9 text-xs text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C]"
+          placeholder="Buscar por Estudiante o CI [Enter]...">
+      </div>
+
+      <!-- Fecha Inicio -->
+      <div>
+        <input type="date" [(ngModel)]="fechaInicio" (change)="aplicarFiltros()"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2 px-3 text-xs text-slate-700 w-full focus:outline-none">
+      </div>
+
+      <!-- Fecha Fin -->
+      <div>
+        <input type="date" [(ngModel)]="fechaFin" (change)="aplicarFiltros()"
+          class="bg-white/90 border border-slate-300 rounded-lg py-2 px-3 text-xs text-slate-700 w-full focus:outline-none">
+      </div>
+
+      <!-- Filtro Estado -->
+      <div class="flex items-center justify-around gap-2 bg-white/90 border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700">
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input type="radio" name="fEstPres" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Activos
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input type="radio" name="fEstPres" value="Bajas" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Bajas
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input type="radio" name="fEstPres" value="Todos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"> Todos
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Préstamos -->
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0 overflow-hidden min-h-[350px]">
+    <div class="overflow-x-auto w-full">
+      <table class="w-full border-collapse min-w-[750px]">
+        <thead>
+          <tr>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Nro. / Fecha</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Estudiante / Lector</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center">Vigencia</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Ejemplares Prestados</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-24">Tipo</th>
+            <th class="bg-[#A7E0DB] p-3 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-20">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of prestamosPaginados"
+            class="border-b border-slate-100 hover:bg-[#E3F6F5]/40 transition-colors"
+            [class.opacity-60]="p.estado === 0">
+            <td class="p-3">
+              <span class="font-mono font-bold text-slate-800 text-sm">Préstamo #{{ p.codp }}</span>
+              <div class="text-[11px] text-slate-500">{{ p.fecha }}</div>
+              <div class="text-[10px] text-slate-400">Atendido por: {{ p.login }}</div>
+            </td>
+            <td class="p-3 text-xs">
+              <div class="font-bold text-slate-800">{{ p.estudianteNombre }}</div>
+              <div class="text-slate-500 font-mono">CI: {{ p.ci }}</div>
+            </td>
+            <td class="p-3 text-center text-xs">
+              <div class="text-slate-600 font-semibold">{{ p.fini }} al {{ p.ffin }}</div>
+            </td>
+            <td class="p-3 text-xs">
+              <ul class="list-disc pl-4 space-y-0.5 text-slate-700">
+                <li *ngFor="let d of p.detalles">
+                  <span class="font-mono font-bold">#{{ d.codinv }}</span>: {{ d.titulo }}
+                  <span *ngIf="d.estado === 0" class="text-emerald-600 font-bold text-[10px] ml-1">(Devuelto)</span>
+                </li>
+              </ul>
+            </td>
+            <td class="p-3 text-center">
+              <span [ngClass]="p.tipopres === 1 ? 'bg-indigo-100 text-indigo-700' : 'bg-teal-100 text-teal-700'"
+                class="text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                {{ p.tipopres === 1 ? 'Domicilio' : 'Sala' }}
+              </span>
+            </td>
+            <td class="p-3 text-center">
+              <button *ngIf="p.estado === 1" (click)="eliminar(p)" title="Eliminar / Anular Préstamo"
+                class="bg-red-50 hover:bg-red-100 text-red-600 p-1.5 rounded-lg border border-red-200 transition">
+                <lucide-icon name="trash" class="w-4 h-4"></lucide-icon>
+              </button>
+              <span *ngIf="p.estado === 0" class="text-[10px] text-red-500 font-bold">Anulado</span>
+            </td>
+          </tr>
+
+          <tr *ngIf="prestamosFiltrados.length === 0">
+            <td colspan="6" class="p-8 text-center text-slate-400 text-xs">
+              No se encontraron préstamos que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginador -->
+    <div *ngIf="totalPaginas > 1" class="flex justify-between items-center px-4 py-3 border-t border-slate-100 bg-white/50 text-xs text-slate-500">
+      <div>Mostrando página {{ paginaActual }} de {{ totalPaginas }}</div>
+      <div class="flex items-center gap-1">
+        <button [disabled]="paginaActual === 1" (click)="paginaActual = paginaActual - 1"
+          class="px-2 py-0.5 rounded border border-slate-200 bg-white disabled:opacity-40">Ant.</button>
+        <span class="px-2 font-bold">{{ paginaActual }}</span>
+        <button [disabled]="paginaActual === totalPaginas" (click)="paginaActual = paginaActual + 1"
+          class="px-2 py-0.5 rounded border border-slate-200 bg-white disabled:opacity-40">Sig.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Préstamo (B-12.1) -->
+  <div *ngIf="showFormModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="bg-[#2A2F63] px-6 py-4 flex justify-between items-center text-white">
+        <h4 class="font-bold text-sm m-0">Registrar Nuevo Préstamo de Libros</h4>
+        <button (click)="cerrarModal()" class="text-white/80 hover:text-white"><lucide-icon name="x" class="w-5 h-5"></lucide-icon></button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 text-xs">
+        <!-- Selección de Persona / CI -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Estudiante / Persona (CI) *</label>
+          <select [(ngModel)]="currentPrestamo.ci" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs focus:outline-none">
+            <option [value]="0">Seleccione un estudiante / lector...</option>
+            <option *ngFor="let p of personas" [value]="p.ci">
+              CI: {{ p.ci }} - {{ p.nombre }} {{ p.ap }} {{ p.am }} ({{ p.tipoper === 'A' ? 'Admin' : 'Público' }})
+            </option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Fecha Préstamo -->
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fecha Registro</label>
+            <input type="date" [(ngModel)]="currentPrestamo.fecha" class="w-full border border-slate-300 rounded-lg p-2 text-xs">
+          </div>
+          <!-- Fecha Inicio -->
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fecha Inicio *</label>
+            <input type="date" [(ngModel)]="currentPrestamo.fini" class="w-full border border-slate-300 rounded-lg p-2 text-xs">
+          </div>
+          <!-- Fecha Fin -->
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fecha Fin *</label>
+            <input type="date" [(ngModel)]="currentPrestamo.ffin" class="w-full border border-slate-300 rounded-lg p-2 text-xs">
+          </div>
+        </div>
+
+        <!-- Tipo de Préstamo -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tipo de Préstamo</label>
+          <div class="flex gap-4 p-2 bg-slate-50 border rounded-lg">
+            <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+              <input type="radio" [value]="1" [(ngModel)]="currentPrestamo.tipopres"> A Domicilio
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+              <input type="radio" [value]="2" [(ngModel)]="currentPrestamo.tipopres"> En Sala de Lectura
+            </label>
+          </div>
+        </div>
+
+        <!-- Tabla dinámica de ejemplares libres -->
+        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/50">
+          <div class="flex justify-between items-center mb-2">
+            <label class="font-bold text-[#2A2F63] flex items-center gap-1.5">
+              <lucide-icon name="bookmark" class="w-4 h-4 text-[#3E6D9C]"></lucide-icon> Ejemplares a Prestar (Solo Libres)
+            </label>
+            <button (click)="agregarFilaEjemplar()" type="button"
+              class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1">
+              <lucide-icon name="plus" class="w-3.5 h-3.5"></lucide-icon> Añadir Ejemplar
+            </button>
+          </div>
+
+          <div class="space-y-2">
+            <div *ngFor="let cod of filasEjemplares; let i = index" class="flex items-center gap-2">
+              <span class="w-6 text-center font-bold text-slate-400">{{ i + 1 }}.</span>
+              <select [(ngModel)]="filasEjemplares[i]" class="flex-1 border border-slate-300 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                <option [value]="0">Seleccione un ejemplar disponible...</option>
+                <option *ngFor="let ej of ejemplaresLibres" [value]="ej.codinv">
+                  #{{ ej.codinv }} - {{ ej.tituloTexto }}
+                </option>
+              </select>
+              <button (click)="quitarFilaEjemplar(i)" [disabled]="filasEjemplares.length === 1"
+                class="p-2 text-red-500 hover:bg-red-50 rounded disabled:opacity-30">
+                <lucide-icon name="trash" class="w-4 h-4"></lucide-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones Modal -->
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+        <button (click)="cerrarModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 text-xs font-bold">Cancelar</button>
+        <button (click)="solicitarGuardar()" class="px-5 py-2 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white rounded-lg text-xs font-bold shadow">
+          Registrar Préstamo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diálogo B-5 Universal Modal -->
+  <app-ventana-dialogo
+    [isOpen]="showConfirmDialog"
+    [tipo]="dialogTipo"
+    [mensaje]="confirmMensaje"
+    [soloAceptar]="dialogSoloAceptar"
+    (confirm)="onConfirmDialog()"
+    (cancel)="onCancelDialog()">
+  </app-ventana-dialogo>
+</div>

@@ -23,6 +23,4 @@ public class Editorial {
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
     
-    @Column(name = "nivel" ,nullable = false)
-    private Integer nivel = 0;
 }

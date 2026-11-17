@@ -13,7 +13,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-3 items-stretch sm:items-center w-full xl:w-auto justify-end">
-      <!-- Filtro [1] Nombre de la Editorial con Enter -->
+      <!-- Filtro Nombre -->
       <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
         <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
         <input type="text"
@@ -21,7 +21,7 @@
           [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Filtrar por Nombre de Editorial [Enter]...">
       </div>
 
-      <!-- Filtro [2] Estado (Activos, Bajas, Todos) -->
+      <!-- Filtro Estado  -->
       <div class="flex items-center justify-around sm:justify-start gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700 w-full sm:w-auto">
         <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
           <input type="radio" name="festadoEd" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
@@ -37,7 +37,7 @@
         </label>
       </div>
 
-      <!-- Botón (+) Nueva Editorial -->
+      <!-- Botón Nueva Editorial -->
       <button
         class="w-full sm:w-auto shrink-0 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-4 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(62,109,156,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
         (click)="abrirAdicionar()">
@@ -79,7 +79,7 @@
             </span>
           </td>
           <td class="p-4 align-middle text-center relative">
-            <!-- Modo Pantalla Grande: Botones en fila -->
+
             <div class="hidden sm:flex items-center justify-center gap-2">
               <!-- [M] Modificar -->
               <button
@@ -103,7 +103,7 @@
               </button>
             </div>
 
-            <!-- Modo Móvil: Menú con 3 puntos (more-vertical) -->
+            <!-- Modo Móvil-->
             <div class="sm:hidden flex justify-center relative">
               <button
                 class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 transition-colors"
@@ -151,7 +151,7 @@
     </div>
   </div>
 
-  <!-- [3] Paginador Adaptativo según dispositivo -->
+
   <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl border border-white/50 mt-4 text-sm text-[#2A2F63]">
     <div class="text-xs sm:text-sm font-medium">
       Mostrando <span class="font-bold text-[#3E6D9C]">{{ editorialesPaginadas.length }}</span> de <span class="font-bold text-[#3E6D9C]">{{ editorialesFiltradas.length }}</span> editoriales
@@ -191,12 +191,6 @@
       <input type="text" maxlength="40"
         class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
         [(ngModel)]="currentEditorial.nombre" placeholder="Ej: McGraw-Hill" (keyup.enter)="solicitarGuardar()">
-    </div>
-    <div class="flex flex-col mb-6">
-      <label class="text-sm font-semibold text-slate-600 mb-2">Nivel de la Editorial:</label>
-      <input type="number" maxlength="40"
-        class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
-        [(ngModel)]="currentEditorial.nivel" placeholder="Ej: 23" (keyup.enter)="solicitarGuardar()">
     </div>
 
     <div class="flex justify-end gap-3 pt-2">

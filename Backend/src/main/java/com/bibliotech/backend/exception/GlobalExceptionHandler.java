@@ -29,7 +29,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<AuthResponse> handleGlobalException(Exception ex) {
-        AuthResponse response = new AuthResponse(false, "Ocurrió un error inesperado", null, null, null, null, null, null, null);
+        ex.printStackTrace();
+        AuthResponse response = new AuthResponse(false, "Ocurrió un error inesperado: " + ex.getMessage(), null, null, null, null, null, null, null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
