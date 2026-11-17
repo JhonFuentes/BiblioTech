@@ -174,6 +174,33 @@ export class GestionAutores implements OnInit {
       this.mostrarAviso('Por favor ingrese el nombre del autor');
       return;
     }
+    if(this.currentAutor.am =='' && this.currentAutor.am == ''){
+      this.mostrarAviso('Por favor ingrese algun apellido');
+      return;
+    }
+
+    const nom = (this.currentAutor.nombre || '').trim().toLowerCase();
+    const ap = (this.currentAutor.ap || '').trim().toLowerCase();
+    const am = (this.currentAutor.am || '').trim().toLowerCase();
+
+    const duplicado = this.autores.find(a => {
+      const aNom = (a.nombre || '').trim().toLowerCase();
+      const aAp = (a.ap || '').trim().toLowerCase();
+      const aAm = (a.am || '').trim().toLowerCase();
+      return aNom === nom && aAp === ap && aAm === am &&
+        (!this.editMode || a.coda !== this.currentAutor.coda);
+    });
+
+    if (duplicado) {
+      const nombreCompleto = [this.currentAutor.nombre, this.currentAutor.ap, this.currentAutor.am]
+        .filter(x => x && x.trim()).join(' ');
+      if (duplicado.estado === 1) {
+        this.mostrarAviso(`Ya existe un autor activo con el nombre "${nombreCompleto}"`);
+      } else {
+        this.mostrarAviso(`Ya existe un autor con el nombre "${nombreCompleto}", pero se encuentra dado de baja. Puede habilitarlo en el listado.`);
+      }
+      return;
+    }
 
     const mensaje = this.editMode 
       ? '¿Seguro de Modificar los Datos del Autor?' 
@@ -190,7 +217,10 @@ export class GestionAutores implements OnInit {
           this.showFormModal = false;
           this.cargarAutores();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al modificar autor')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al modificar autor');
+          this.mostrarError(msg);
+        }
       });
     } else {
       this.autorService.crear(this.currentAutor).subscribe({
@@ -198,7 +228,10 @@ export class GestionAutores implements OnInit {
           this.showFormModal = false;
           this.cargarAutores();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al guardar autor')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al guardar autor');
+          this.mostrarError(msg);
+        }
       });
     }
   }

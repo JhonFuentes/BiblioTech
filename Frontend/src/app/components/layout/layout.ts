@@ -119,16 +119,27 @@ export class Layout implements OnInit {
     const n = (nombre || '').toLowerCase();
     if (n.includes('admin')) return 'layout-grid';
     if (n.includes('catálog') || n.includes('catalog') || n.includes('biblio')) return 'book-open';
+    if (n.includes('préstam') || n.includes('prestam') || n.includes('devol')) return 'clipboard-list';
     return 'box';
   }
 
   getProcesoIcon(enlace: string): string {
     const e = (enlace || '').toLowerCase();
     if (e.includes('usuario')) return 'users';
+    if (e.includes('rolusu')) return 'user-check';
+    if (e.includes('rolme')) return 'shield-check';
+    if (e.includes('mepro')) return 'sliders';
+    if (e.includes('roles')) return 'shield';
+    if (e.includes('menus')) return 'menu';
     if (e.includes('area')) return 'folder';
     if (e.includes('editorial')) return 'building';
     if (e.includes('tipo')) return 'layers';
     if (e.includes('autor')) return 'book';
+    if (e.includes('texto')) return 'file-text';
+    if (e.includes('ejemplar')) return 'archive';
+    if (e.includes('digital')) return 'book-open';
+    if (e.includes('prestamo')) return 'calendar';
+    if (e.includes('devolucion')) return 'rotate-ccw';
     return 'chevron-right';
   }
 

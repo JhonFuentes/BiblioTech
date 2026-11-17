@@ -13,7 +13,7 @@
     </div>
 
     <div class="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-3 items-stretch sm:items-center w-full xl:w-auto justify-end">
-      <!-- Filtro [1] Nombre del Área con Enter -->
+      <!-- Filtro  Nombre del Área  -->
       <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
         <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
         <input type="text"
@@ -21,7 +21,7 @@
           [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Filtrar por Nombre del Área [Enter]...">
       </div>
 
-      <!-- Filtro [2] Estado (Activos, Bajas, Todos) -->
+      <!-- Filtro Estado (Activos, Bajas, Todos) -->
       <div class="flex items-center justify-around sm:justify-start gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700 w-full sm:w-auto">
         <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
           <input type="radio" name="festadoArea" value="Activos" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()"
@@ -37,7 +37,7 @@
         </label>
       </div>
 
-      <!-- Botón (+) Nueva Área -->
+      <!-- Botón Nueva Área -->
       <button
         class="w-full sm:w-auto shrink-0 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white border-none py-2.5 px-4 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(62,109,156,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
         (click)="abrirAdicionar()">
@@ -79,23 +79,23 @@
             </span>
           </td>
           <td class="p-4 align-middle text-center relative">
-            <!-- Modo Pantalla Grande: Botones en fila -->
+
             <div class="hidden sm:flex items-center justify-center gap-2">
-              <!-- [M] Modificar -->
+              <!--  Modificar -->
               <button
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-blue-50 hover:border-blue-200"
                 (click)="abrirModificar(a)" title="Modificar Datos del Área (M)">
                 <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon>
               </button>
 
-              <!-- [B] Baja / Eliminar lógico -->
+              <!--Baja / Eliminar lógico -->
               <button *ngIf="a.estado === 1"
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-red-50 hover:border-red-200"
                 (click)="eliminar(a)" title="Dar de Baja / Eliminar Área (B)">
                 <lucide-icon name="trash" class="w-4 h-4 text-red-600"></lucide-icon>
               </button>
 
-              <!-- [H] Habilitar área dada de baja -->
+              <!-- Habilitar área dada de baja -->
               <button *ngIf="a.estado === 0"
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-emerald-50 hover:border-emerald-200"
                 (click)="habilitar(a)" title="Habilitar Área (H)">
@@ -151,7 +151,7 @@
     </div>
   </div>
 
-  <!-- [3] Paginador Adaptativo según dispositivo -->
+  <!--  Paginador Adaptativo según dispositivo -->
   <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl border border-white/50 mt-4 text-sm text-[#2A2F63]">
     <div class="text-xs sm:text-sm font-medium">
       Mostrando <span class="font-bold text-[#3E6D9C]">{{ areasPaginadas.length }}</span> de <span class="font-bold text-[#3E6D9C]">{{ areasFiltradas.length }}</span> áreas
@@ -173,7 +173,7 @@
   </div>
 </div>
 
-<!-- Modal Adicionar / Modificar Área (B-6.1 y B-6.2) -->
+<!-- Modal Adicionar / Modificar Área  -->
 <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity"
   *ngIf="showFormModal">
   <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 w-11/12 max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50 transform transition-all text-left">
@@ -208,7 +208,7 @@
   </div>
 </div>
 
-<!-- Diálogo General de Confirmación y Avisos (B-5) -->
+<!-- Diálogo General de Confirmación y Avisos -->
 <app-ventana-dialogo
   [show]="showConfirmDialog"
   [tipo]="dialogTipo"

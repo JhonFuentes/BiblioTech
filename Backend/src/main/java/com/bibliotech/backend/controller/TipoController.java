@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tipos")
@@ -51,9 +52,19 @@ public class TipoController {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Tipo tipo) {
         if (tipo.getNombre() == null || tipo.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del tipo es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del tipo es requerido"));
         }
-        tipo.setNombre(tipo.getNombre().trim());
+        String nombre = tipo.getNombre().trim();
+        List<Tipo> existentes = tipoRepository.findByNombreIgnoreCaseTrimmed(nombre);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(t -> t.getEstado() != null && t.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un tipo activo con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un tipo con el nombre '" + nombre + "', pero se encuentra dado de baja. Puede habilitarlo en el listado."));
+            }
+        }
+        tipo.setNombre(nombre);
         tipo.setEstado(1);
         if (tipo.getSw() == null) {
             tipo.setSw(0);
@@ -69,10 +80,20 @@ public class TipoController {
             return ResponseEntity.notFound().build();
         }
         if (tipo.getNombre() == null || tipo.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del tipo es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del tipo es requerido"));
+        }
+        String nombre = tipo.getNombre().trim();
+        List<Tipo> existentes = tipoRepository.findByNombreIgnoreCaseTrimmedAndCodtipoNot(nombre, id);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(t -> t.getEstado() != null && t.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otro tipo activo con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otro tipo con el nombre '" + nombre + "', pero se encuentra dado de baja."));
+            }
         }
         Tipo actual = opt.get();
-        actual.setNombre(tipo.getNombre().trim());
+        actual.setNombre(nombre);
         if (tipo.getSw() != null) {
             actual.setSw(tipo.getSw());
         }

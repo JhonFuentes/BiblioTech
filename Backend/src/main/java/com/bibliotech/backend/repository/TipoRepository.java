@@ -31,4 +31,10 @@ public interface TipoRepository extends JpaRepository<Tipo, Integer> {
             @Param("nombre") String nombre,
             @Param("estado") Integer estado
     );
+
+    @Query("SELECT t FROM Tipo t WHERE LOWER(TRIM(t.nombre)) = LOWER(TRIM(:nombre))")
+    List<Tipo> findByNombreIgnoreCaseTrimmed(@Param("nombre") String nombre);
+
+    @Query("SELECT t FROM Tipo t WHERE LOWER(TRIM(t.nombre)) = LOWER(TRIM(:nombre)) AND t.codtipo != :codtipo")
+    List<Tipo> findByNombreIgnoreCaseTrimmedAndCodtipoNot(@Param("nombre") String nombre, @Param("codtipo") Integer codtipo);
 }

@@ -54,6 +54,13 @@ import { CommonModule } from '@angular/common';
 })
 export class VentanaDialogo {
   @Input() show = false;
+  @Input()
+  set isOpen(val: boolean) {
+    this.show = val;
+  }
+  get isOpen(): boolean {
+    return this.show;
+  }
   @Input() tipo: 'confirm' | 'aviso' | 'error' | 'success' = 'confirm';
   @Input() soloAceptar = false;
   @Input() mensaje = '¿Está seguro de realizar esta operación?';

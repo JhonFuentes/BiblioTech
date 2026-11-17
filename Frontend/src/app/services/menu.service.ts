@@ -44,4 +44,34 @@ export class MenuService {
   getAllMenus(): Observable<Menu[]> {
     return this.http.get<Menu[]>(`${this.apiUrl}/all`);
   }
+
+  listarCrud(filtroNombre?: string, filtroEstado?: number): Observable<Menu[]> {
+    let params: any = {};
+    if (filtroNombre) params.filtroNombre = filtroNombre;
+    if (filtroEstado !== undefined && filtroEstado !== -1) params.filtroEstado = filtroEstado;
+    return this.http.get<Menu[]>(`${this.apiUrl}/crud`, { params });
+  }
+
+  listarCrudPaginado(page: number = 0, size: number = 10, filtroNombre?: string, filtroEstado?: number): Observable<any> {
+    let params: any = { page, size };
+    if (filtroNombre) params.filtroNombre = filtroNombre;
+    if (filtroEstado !== undefined && filtroEstado !== -1) params.filtroEstado = filtroEstado;
+    return this.http.get<any>(`${this.apiUrl}/crud/page`, { params });
+  }
+
+  crearMenu(menu: { nombre: string }): Observable<Menu> {
+    return this.http.post<Menu>(`${this.apiUrl}/crud`, menu);
+  }
+
+  modificarMenu(id: number, menu: { nombre: string; estado?: number }): Observable<Menu> {
+    return this.http.put<Menu>(`${this.apiUrl}/crud/${id}`, menu);
+  }
+
+  eliminarMenu(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/crud/${id}`);
+  }
+
+  activarMenu(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/crud/${id}/activar`, {});
+  }
 }

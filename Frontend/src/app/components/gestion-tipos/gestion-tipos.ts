@@ -161,6 +161,21 @@ export class GestionTipos implements OnInit {
       return;
     }
 
+    const nombreNormalizado = this.currentTipo.nombre.trim().toLowerCase();
+    const duplicado = this.tipos.find(t => 
+      t.nombre.trim().toLowerCase() === nombreNormalizado &&
+      (!this.editMode || t.codtipo !== this.currentTipo.codtipo)
+    );
+
+    if (duplicado) {
+      if (duplicado.estado === 1) {
+        this.mostrarAviso(`Ya existe un tipo activo con el nombre "${this.currentTipo.nombre.trim()}"`);
+      } else {
+        this.mostrarAviso(`Ya existe un tipo con el nombre "${this.currentTipo.nombre.trim()}", pero se encuentra dado de baja. Puede habilitarlo en el listado.`);
+      }
+      return;
+    }
+
     this.currentTipo.sw = this.conDocumentoCheckbox ? 1 : 0;
 
     const mensaje = this.editMode 
@@ -180,7 +195,10 @@ export class GestionTipos implements OnInit {
           this.showFormModal = false;
           this.cargarTipos();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al modificar tipo')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al modificar tipo');
+          this.mostrarError(msg);
+        }
       });
     } else {
       this.tipoService.crear(this.currentTipo).subscribe({
@@ -188,7 +206,10 @@ export class GestionTipos implements OnInit {
           this.showFormModal = false;
           this.cargarTipos();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al guardar tipo')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al guardar tipo');
+          this.mostrarError(msg);
+        }
       });
     }
   }

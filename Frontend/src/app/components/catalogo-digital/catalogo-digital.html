@@ -1,0 +1,154 @@
+<div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
+  <!-- Cabecera y Buscador de Ejemplares Digitales (B-20) -->
+  <div class="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-white/50 mb-5">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+          <lucide-icon name="book-open" class="w-6 h-6"></lucide-icon>
+        </div>
+        <div>
+          <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Búsqueda de Ejemplares Digitales</h3>
+          <p class="text-xs text-slate-500 m-0">Consulte y visualice libros y documentos digitales en línea (B-20 / B-20.1)</p>
+        </div>
+      </div>
+
+      <div class="bg-[#2A2F63] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm">
+        <lucide-icon name="file-text" class="w-4 h-4 text-[#A7E0DB]"></lucide-icon>
+        <span>Total Documentos Encontrados: <strong class="text-[#A7E0DB] text-sm">{{ totalEncontrados }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Barra de Filtros B-20 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+      <div class="lg:col-span-4">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Título o Autor del Documento</label>
+        <div class="relative">
+          <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+          <input type="text" [(ngModel)]="query" (keyup.enter)="buscar()"
+            class="w-full bg-white border border-slate-300 rounded-lg py-2.5 pr-3 pl-9 text-sm focus:outline-none focus:border-[#3E6D9C]"
+            placeholder="Buscar por título, autor o ISBN...">
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Área</label>
+        <select [(ngModel)]="selectedCoda" (change)="buscar()"
+          class="w-full bg-white border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:border-[#3E6D9C]">
+          <option [ngValue]="undefined">-- Todas las Áreas --</option>
+          <option *ngFor="let a of areas" [ngValue]="a.coda">{{ a.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="lg:col-span-2">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Editorial</label>
+        <select [(ngModel)]="selectedCode" (change)="buscar()"
+          class="w-full bg-white border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:border-[#3E6D9C]">
+          <option [ngValue]="undefined">-- Todas --</option>
+          <option *ngFor="let e of editoriales" [ngValue]="e.code">{{ e.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="lg:col-span-2">
+        <label class="block text-xs font-bold text-slate-600 mb-1">Tipo Digital</label>
+        <select [(ngModel)]="selectedCodtipo" (change)="buscar()"
+          class="w-full bg-white border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:border-[#3E6D9C]">
+          <option [ngValue]="undefined">-- Todos --</option>
+          <option *ngFor="let tp of tiposDigitales" [ngValue]="tp.codtipo">{{ tp.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="lg:col-span-2 flex gap-2">
+        <button (click)="buscar()"
+          class="flex-1 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white py-2.5 px-3 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1.5 transition">
+          <lucide-icon name="search" class="w-4 h-4"></lucide-icon> Buscar
+        </button>
+        <button (click)="limpiarFiltros()"
+          class="bg-slate-100 hover:bg-slate-200 text-slate-600 py-2.5 px-3 rounded-lg font-bold text-xs transition"
+          title="Limpiar filtros">
+          <lucide-icon name="rotate-ccw" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grilla de Tarjetas de Libros Digitales -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let t of resultados"
+      class="bg-white/85 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-white/60 hover:shadow-md transition flex flex-col justify-between">
+      <div>
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#E3F6F5] text-[#2A2F63]">
+            {{ t.areaNombre || 'Área General' }}
+          </span>
+          <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <lucide-icon name="file-text" class="w-3 h-3"></lucide-icon> Digital
+          </span>
+        </div>
+
+        <h4 class="text-base font-extrabold text-[#2A2F63] mb-1 line-clamp-2">{{ t.titulo }}</h4>
+        <p class="text-xs text-slate-600 mb-3 line-clamp-2">{{ t.resumen || 'Sin resumen descriptivo registrado.' }}</p>
+
+        <div class="space-y-1 text-xs text-slate-600 border-t border-slate-100 pt-2.5 mb-4">
+          <div><strong class="text-slate-700">Editorial:</strong> {{ t.editorialNombre || 'S/E' }}</div>
+          <div><strong class="text-slate-700">Autores:</strong> {{ t.autoresNombres?.join(', ') || 'Autor Institucional' }}</div>
+          <div class="flex gap-3">
+            <span><strong class="text-slate-700">Edición:</strong> {{ t.edicion || 1 }}ª</span>
+            <span *ngIf="t.isbn"><strong class="text-slate-700">ISBN:</strong> {{ t.isbn }}</span>
+          </div>
+        </div>
+      </div>
+
+      <button (click)="visualizarEjemplar(t)"
+        class="w-full bg-[#2A2F63] hover:bg-[#3E6D9C] text-white py-2.5 px-4 rounded-xl font-bold text-xs shadow flex items-center justify-center gap-2 transition">
+        <lucide-icon name="eye" class="w-4 h-4 text-[#A7E0DB]"></lucide-icon>
+        Visualizar Ejemplar Digital
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && resultados.length === 0"
+    class="bg-white/80 rounded-2xl p-10 text-center text-slate-400 border border-white/50">
+    <lucide-icon name="book-open" class="w-10 h-10 mx-auto mb-2 text-slate-300"></lucide-icon>
+    <p class="text-sm font-semibold text-slate-500 m-0">No se encontraron ejemplares digitales con los criterios seleccionados.</p>
+  </div>
+
+  <!-- Modal Visualizador de Ejemplar Digital (B-20.1) -->
+  <div *ngIf="showViewerModal && textoVisualizando"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-3 md:p-6">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-[88vh] flex flex-col overflow-hidden">
+      <div class="bg-[#2A2F63] px-5 py-3.5 flex justify-between items-center text-white">
+        <div class="flex items-center gap-2.5 truncate">
+          <lucide-icon name="book-open" class="w-5 h-5 text-[#A7E0DB] shrink-0"></lucide-icon>
+          <div class="truncate">
+            <h4 class="font-bold text-sm m-0 truncate">{{ textoVisualizando.titulo }}</h4>
+            <p class="text-[11px] text-[#A7E0DB] m-0 truncate">
+              {{ textoVisualizando.editorialNombre }} — {{ textoVisualizando.autoresNombres?.join(', ') }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <a [href]="rawDocumentUrl" target="_blank" rel="noopener"
+            class="bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 no-underline">
+            <lucide-icon name="external-link" class="w-3.5 h-3.5"></lucide-icon> Abrir en Pestaña
+          </a>
+          <button (click)="cerrarVisor()" class="text-white/80 hover:text-white p-1">
+            <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 bg-slate-800 relative">
+        <iframe *ngIf="safeDocumentUrl" [src]="safeDocumentUrl" class="w-full h-full border-0" title="Visor de Documento Digital"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <app-ventana-dialogo
+    [isOpen]="showConfirmDialog"
+    [tipo]="dialogTipo"
+    [mensaje]="confirmMensaje"
+    [soloAceptar]="true"
+    (confirm)="showConfirmDialog = false"
+    (cancel)="showConfirmDialog = false">
+  </app-ventana-dialogo>
+</div>

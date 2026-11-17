@@ -8,7 +8,10 @@ import {
   Pencil, Trash, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
   RefreshCw, LayoutGrid, Box, Heart, ChevronUp, MoreVertical, Home,
   Folder, FolderX, Building, BookOpen, Book, FileText, Layers, Users, 
-  UserCheck, UserX, Library, Sparkles, ShieldCheck, Image
+  UserCheck, UserX, Library, Sparkles, ShieldCheck, Image,
+  Calendar, RotateCcw, CheckSquare, Square, ExternalLink, Download,
+  Sliders, File, ArrowRight, ArrowLeft, AlertCircle, Shield, Settings, Bookmark,
+  Archive, ClipboardList
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
@@ -26,7 +29,10 @@ export const appConfig: ApplicationConfig = {
       Pencil, Trash, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
       RefreshCw, LayoutGrid, Box, Heart, ChevronUp, MoreVertical, Home,
       Folder, FolderX, Building, BookOpen, Book, FileText, Layers, Users, 
-      UserCheck, UserX, Library, Sparkles, ShieldCheck, Image
+      UserCheck, UserX, Library, Sparkles, ShieldCheck, Image,
+      Calendar, RotateCcw, CheckSquare, Square, ExternalLink, Download,
+      Sliders, File, ArrowRight, ArrowLeft, AlertCircle, Shield, Settings, Bookmark,
+      Archive, ClipboardList
     }))
   ]
 };

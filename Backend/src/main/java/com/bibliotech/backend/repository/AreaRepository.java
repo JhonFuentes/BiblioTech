@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface AreaRepository extends JpaRepository<Area, Integer> {
+	
 
     @Query("SELECT a FROM Area a WHERE " +
            "(cast(:nombre as string) IS NULL OR LOWER(a.nombre) LIKE LOWER(CONCAT('%', cast(:nombre as string), '%'))) AND " +
@@ -31,4 +32,10 @@ public interface AreaRepository extends JpaRepository<Area, Integer> {
             @Param("nombre") String nombre,
             @Param("estado") Integer estado
     );
+
+    @Query("SELECT a FROM Area a WHERE LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre))")
+    List<Area> findByNombreIgnoreCaseTrimmed(@Param("nombre") String nombre);
+
+    @Query("SELECT a FROM Area a WHERE LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre)) AND a.coda != :coda")
+    List<Area> findByNombreIgnoreCaseTrimmedAndCodaNot(@Param("nombre") String nombre, @Param("coda") Integer coda);
 }

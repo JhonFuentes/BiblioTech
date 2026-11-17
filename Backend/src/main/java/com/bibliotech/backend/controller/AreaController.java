@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/areas")
@@ -51,9 +52,19 @@ public class AreaController {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Area area) {
         if (area.getNombre() == null || area.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del área es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del área es requerido"));
         }
-        area.setNombre(area.getNombre().trim());
+        String nombre = area.getNombre().trim();
+        List<Area> existentes = areaRepository.findByNombreIgnoreCaseTrimmed(nombre);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(a -> a.getEstado() != null && a.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un área activa con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un área con el nombre '" + nombre + "', pero se encuentra dada de baja. Puede habilitarla en el listado."));
+            }
+        }
+        area.setNombre(nombre);
         area.setEstado(1);
         Area guardada = areaRepository.save(area);
         return ResponseEntity.ok(guardada);
@@ -66,10 +77,20 @@ public class AreaController {
             return ResponseEntity.notFound().build();
         }
         if (area.getNombre() == null || area.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del área es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del área es requerido"));
+        }
+        String nombre = area.getNombre().trim();
+        List<Area> existentes = areaRepository.findByNombreIgnoreCaseTrimmedAndCodaNot(nombre, id);
+        if (!existentes.isEmpty()) {
+            boolean activa = existentes.stream().anyMatch(a -> a.getEstado() != null && a.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otra área activa con el nombre '" + nombre + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otra área con el nombre '" + nombre + "', pero se encuentra dada de baja."));
+            }
         }
         Area actual = opt.get();
-        actual.setNombre(area.getNombre().trim());
+        actual.setNombre(nombre);
         if (area.getEstado() != null) {
             actual.setEstado(area.getEstado());
         }

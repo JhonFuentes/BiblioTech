@@ -31,4 +31,10 @@ public interface EditorialRepository extends JpaRepository<Editorial, Integer> {
             @Param("nombre") String nombre,
             @Param("estado") Integer estado
     );
+
+    @Query("SELECT e FROM Editorial e WHERE LOWER(TRIM(e.nombre)) = LOWER(TRIM(:nombre))")
+    List<Editorial> findByNombreIgnoreCaseTrimmed(@Param("nombre") String nombre);
+
+    @Query("SELECT e FROM Editorial e WHERE LOWER(TRIM(e.nombre)) = LOWER(TRIM(:nombre)) AND e.code != :code")
+    List<Editorial> findByNombreIgnoreCaseTrimmedAndCodeNot(@Param("nombre") String nombre, @Param("code") Integer code);
 }

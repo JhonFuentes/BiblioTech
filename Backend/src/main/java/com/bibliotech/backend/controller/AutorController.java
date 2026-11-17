@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/autores")
@@ -51,14 +52,29 @@ public class AutorController {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Autor autor) {
         if (autor.getNombre() == null || autor.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del autor es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del autor es requerido"));
         }
+        String nombre = autor.getNombre().trim();
+        String ap = (autor.getAp() != null && !autor.getAp().trim().isEmpty()) ? autor.getAp().trim() : "";
+        String am = (autor.getAm() != null && !autor.getAm().trim().isEmpty()) ? autor.getAm().trim() : "";
+
+        List<Autor> existentes = autorRepository.findDuplicate(nombre, ap, am);
+        if (!existentes.isEmpty()) {
+            String nombreCompleto = String.join(" ", java.util.Arrays.asList(nombre, ap, am).stream().filter(s -> !s.isEmpty()).toList());
+            boolean activa = existentes.stream().anyMatch(a -> a.getEstado() != null && a.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un autor activo con el nombre '" + nombreCompleto + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un autor con el nombre '" + nombreCompleto + "', pero se encuentra dado de baja. Puede habilitarlo en el listado."));
+            }
+        }
+
         if (autor.getGenero() == null || (!autor.getGenero().equals("M") && !autor.getGenero().equals("F"))) {
             autor.setGenero("M");
         }
-        autor.setNombre(autor.getNombre().trim());
-        if (autor.getAp() != null) autor.setAp(autor.getAp().trim());
-        if (autor.getAm() != null) autor.setAm(autor.getAm().trim());
+        autor.setNombre(nombre);
+        autor.setAp(ap.isEmpty() ? null : ap);
+        autor.setAm(am.isEmpty() ? null : am);
         autor.setEstado(1);
         Autor guardado = autorRepository.save(autor);
         return ResponseEntity.ok(guardado);
@@ -71,12 +87,27 @@ public class AutorController {
             return ResponseEntity.notFound().build();
         }
         if (autor.getNombre() == null || autor.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre del autor es requerido\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre del autor es requerido"));
         }
+        String nombre = autor.getNombre().trim();
+        String ap = (autor.getAp() != null && !autor.getAp().trim().isEmpty()) ? autor.getAp().trim() : "";
+        String am = (autor.getAm() != null && !autor.getAm().trim().isEmpty()) ? autor.getAm().trim() : "";
+
+        List<Autor> existentes = autorRepository.findDuplicateExcludingCoda(nombre, ap, am, id);
+        if (!existentes.isEmpty()) {
+            String nombreCompleto = String.join(" ", java.util.Arrays.asList(nombre, ap, am).stream().filter(s -> !s.isEmpty()).toList());
+            boolean activa = existentes.stream().anyMatch(a -> a.getEstado() != null && a.getEstado() == 1);
+            if (activa) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otro autor activo con el nombre '" + nombreCompleto + "'"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Ya existe otro autor con el nombre '" + nombreCompleto + "', pero se encuentra dado de baja."));
+            }
+        }
+
         Autor actual = opt.get();
-        actual.setNombre(autor.getNombre().trim());
-        actual.setAp(autor.getAp() != null ? autor.getAp().trim() : null);
-        actual.setAm(autor.getAm() != null ? autor.getAm().trim() : null);
+        actual.setNombre(nombre);
+        actual.setAp(ap.isEmpty() ? null : ap);
+        actual.setAm(am.isEmpty() ? null : am);
         if (autor.getGenero() != null) {
             actual.setGenero(autor.getGenero());
         }

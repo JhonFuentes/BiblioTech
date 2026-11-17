@@ -45,7 +45,7 @@ export class GestionEditoriales implements OnInit {
 
   showFormModal = false;
   editMode = false;
-  currentEditorial: Editorial = { nombre: '' ,nivel:0};
+  currentEditorial: Editorial = { nombre: '' };
 
 
   showConfirmDialog = false;
@@ -153,8 +153,23 @@ export class GestionEditoriales implements OnInit {
   }
 
   solicitarGuardar() {
-    if (!this.currentEditorial.nombre || !this.currentEditorial.nombre.trim() || !this.currentEditorial.nivel) {
-      this.mostrarAviso('Por favor ingrese el nombre de la editorial y el nivel');
+    if (!this.currentEditorial.nombre || !this.currentEditorial.nombre.trim()) {
+      this.mostrarAviso('Por favor ingrese el nombre de la editorial');
+      return;
+    }
+
+    const nombreNormalizado = this.currentEditorial.nombre.trim().toLowerCase();
+    const duplicado = this.editoriales.find(e => 
+      e.nombre.trim().toLowerCase() === nombreNormalizado &&
+      (!this.editMode || e.code !== this.currentEditorial.code)
+    );
+
+    if (duplicado) {
+      if (duplicado.estado === 1) {
+        this.mostrarAviso(`Ya existe una editorial activa con el nombre "${this.currentEditorial.nombre.trim()}"`);
+      } else {
+        this.mostrarAviso(`Ya existe una editorial con el nombre "${this.currentEditorial.nombre.trim()}", pero se encuentra dada de baja. Puede habilitarla en el listado.`);
+      }
       return;
     }
 
@@ -173,7 +188,10 @@ export class GestionEditoriales implements OnInit {
           this.showFormModal = false;
           this.cargarEditoriales();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al modificar editorial')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al modificar editorial');
+          this.mostrarError(msg);
+        }
       });
     } else {
       this.editorialService.crear(this.currentEditorial).subscribe({
@@ -181,7 +199,10 @@ export class GestionEditoriales implements OnInit {
           this.showFormModal = false;
           this.cargarEditoriales();
         },
-        error: (err) => this.mostrarError(err?.error?.message || 'Error al guardar editorial')
+        error: (err) => {
+          const msg = err?.error?.message || (typeof err?.error === 'string' ? err.error : 'Error al guardar editorial');
+          this.mostrarError(msg);
+        }
       });
     }
   }
