@@ -70,6 +70,10 @@ export class AsignarRolme implements OnInit {
     return Math.max(1, Math.ceil(this.rolesFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasRolesArray(): number[] {
+    return Array.from({ length: this.totalPaginasRoles }, (_, i) => i + 1);
+  }
+
   seleccionarRol(r: Rol) {
     this.selectedRol = r;
     if (r.codr) {
@@ -87,7 +91,7 @@ export class AsignarRolme implements OnInit {
     });
   }
 
-  filtrarMenus() {
+  filtrarMenus(resetPage: boolean = true) {
     let temp = this.menus;
     if (this.filtroMenu && this.filtroMenu.trim()) {
       const q = this.filtroMenu.toLowerCase().trim();
@@ -98,8 +102,12 @@ export class AsignarRolme implements OnInit {
     } else if (this.filtroAsignado === 'NO') {
       temp = temp.filter(m => !m.asignado);
     }
-    this.menusFiltrados = temp;
-    this.paginaMenus = 1;
+    this.menusFiltrados = [...temp];
+    if (resetPage) {
+      this.paginaMenus = 1;
+    } else if (this.paginaMenus > this.totalPaginasMenus) {
+      this.paginaMenus = this.totalPaginasMenus;
+    }
   }
 
   get menusPaginados(): AsignacionItem[] {
@@ -111,17 +119,24 @@ export class AsignarRolme implements OnInit {
     return Math.max(1, Math.ceil(this.menusFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasMenusArray(): number[] {
+    return Array.from({ length: this.totalPaginasMenus }, (_, i) => i + 1);
+  }
+
   toggleMenu(m: AsignacionItem, event: Event) {
     if (!this.selectedRol || !this.selectedRol.codr) return;
     const checked = (event.target as HTMLInputElement).checked;
     const codm = Number(m.id);
+    m.asignado = checked;
+    this.filtrarMenus(false);
     this.asignacionService.toggleRolMe(this.selectedRol.codr, codm, checked).subscribe({
       next: () => {
-        m.asignado = checked;
-        this.filtrarMenus();
+        this.filtrarMenus(false);
       },
       error: (err) => {
+        m.asignado = !checked;
         (event.target as HTMLInputElement).checked = !checked;
+        this.filtrarMenus(false);
         this.mostrarError(err?.error?.message || 'No se pudo actualizar la asignación del menú');
       }
     });

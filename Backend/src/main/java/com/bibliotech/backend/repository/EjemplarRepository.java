@@ -40,4 +40,7 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Integer> {
 
     @Query("SELECT e FROM Ejemplar e WHERE e.disponible = 1 AND e.estado = 1 ORDER BY e.codinv ASC")
     List<Ejemplar> findLibres();
+
+    @Query("SELECT COALESCE(MAX(e.codinv), 0) + 1 FROM Ejemplar e")
+    Integer getNextCodinv();
 }

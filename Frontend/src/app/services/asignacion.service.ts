@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { MenuService } from './menu.service';
 
 export interface AsignacionItem {
   id: string;
@@ -14,6 +15,7 @@ export interface AsignacionItem {
 })
 export class AsignacionService {
   private http = inject(HttpClient);
+  private menuService = inject(MenuService);
   private apiUrl = 'http://localhost:8080/api/asignaciones';
 
   // B-17: MEPRO
@@ -22,7 +24,9 @@ export class AsignacionService {
   }
 
   toggleMePro(codm: number, codp: number, asignar: boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/mepro/toggle`, { codm, codp, asignar });
+    return this.http.post(`${this.apiUrl}/mepro/toggle`, { codm, codp, asignar }).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 
   // B-18: ROLME
@@ -31,7 +35,9 @@ export class AsignacionService {
   }
 
   toggleRolMe(codr: number, codm: number, asignar: boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/rolme/toggle`, { codr, codm, asignar });
+    return this.http.post(`${this.apiUrl}/rolme/toggle`, { codr, codm, asignar }).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 
   // B-19: ROLUSU
@@ -40,6 +46,8 @@ export class AsignacionService {
   }
 
   toggleRolUsu(login: string, codr: number, asignar: boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/rolusu/toggle`, { login, codr, asignar });
+    return this.http.post(`${this.apiUrl}/rolusu/toggle`, { login, codr, asignar }).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 }

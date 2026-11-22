@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EjemplarService, Ejemplar } from '../../services/ejemplar.service';
 import { TextoService, Texto } from '../../services/texto.service';
+import { AreaService, Area } from '../../services/area.service';
+import { EditorialService, Editorial } from '../../services/editorial.service';
+import { TipoService, Tipo } from '../../services/tipo.service';
 import { VentanaDialogo } from '../ventana-dialogo/ventana-dialogo';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -16,22 +19,42 @@ import { LucideAngularModule } from 'lucide-angular';
 export class GestionEjemplares implements OnInit {
   private ejemplarService = inject(EjemplarService);
   private textoService = inject(TextoService);
+  private areaService = inject(AreaService);
+  private editorialService = inject(EditorialService);
+  private tipoService = inject(TipoService);
+
+  // Catálogos para filtros de Textos (Maestro superior B-11)
+  areas: Area[] = [];
+  editoriales: Editorial[] = [];
+  tiposDisponibles: Tipo[] = [];
 
   textos: Texto[] = [];
+  textosFiltrados: Texto[] = [];
+  filtroTexto = '';
+  filtroEditorial: number | null = null;
+  filtroArea: number | null = null;
+  filtroTipo: number | null = null;
+  filtroEstadoTexto = 'Activos'; // Activos, Bajas, Todos
+  paginaTextoActual = 1;
+  itemsTextoPorPagina = 5;
+
   selectedCodt: number | null = null;
   selectedTexto: Texto | null = null;
 
+  // Detalle de Ejemplares (Inferior B-11)
   ejemplares: Ejemplar[] = [];
   ejemplaresFiltrados: Ejemplar[] = [];
-  filtroEstado = 'Activos'; // Activos, Bajas, Todos
+  filtroEstado = 'Activos'; // [1] Activos, Bajas
 
   paginaActual = 1;
-  itemsPorPagina = 10;
+  itemsPorPagina = 10; // [2] 10 elementos por página
   menuAccionesAbierto: number | string | null = null;
 
-  // Modales
+  // Modales B-11.1 y B-11.2
   showFormModal = false;
   editMode = false;
+  datoAnteriorCodinv: number | null = null;
+  nuevoCodinv: number | null = null;
   currentEjemplar: Ejemplar = { codt: 0, disponible: 1, estado: 1 };
 
   // Diálogo B-5
@@ -64,19 +87,75 @@ export class GestionEjemplares implements OnInit {
 
   ngOnInit() {
     this.ajustarItemsPorPagina();
+    this.cargarCatalogos();
     this.cargarTextos();
+  }
+
+  cargarCatalogos() {
+    this.areaService.listar().subscribe(data => this.areas = data.filter(a => a.estado === 1));
+    this.editorialService.listar().subscribe(data => this.editoriales = data.filter(e => e.estado === 1));
+    this.tipoService.listar().subscribe(data => this.tiposDisponibles = data.filter(t => t.estado === 1));
   }
 
   cargarTextos() {
     this.textoService.listar().subscribe({
       next: (data) => {
-        this.textos = data.filter(t => t.estado === 1);
-        if (this.textos.length > 0 && !this.selectedCodt) {
-          this.seleccionarTexto(this.textos[0]);
-        }
+        this.textos = data;
+        this.aplicarFiltrosTexto();
       },
       error: (err) => console.error('Error al cargar textos', err)
     });
+  }
+
+  aplicarFiltrosTexto() {
+    let temp = this.textos;
+    if (this.filtroTexto && this.filtroTexto.trim()) {
+      const q = this.filtroTexto.toLowerCase().trim();
+      temp = temp.filter(t =>
+        t.titulo.toLowerCase().includes(q) ||
+        (t.autoresNombres && t.autoresNombres.some(a => a.toLowerCase().includes(q)))
+      );
+    }
+    if (this.filtroEditorial) {
+      temp = temp.filter(t => t.code === Number(this.filtroEditorial));
+    }
+    if (this.filtroArea) {
+      temp = temp.filter(t => t.coda === Number(this.filtroArea));
+    }
+    if (this.filtroTipo) {
+      temp = temp.filter(t => t.tipos?.some(tt => tt.codtipo === Number(this.filtroTipo)));
+    }
+    if (this.filtroEstadoTexto === 'Activos') {
+      temp = temp.filter(t => t.estado === 1);
+    } else if (this.filtroEstadoTexto === 'Bajas') {
+      temp = temp.filter(t => t.estado === 0);
+    }
+    this.textosFiltrados = temp;
+    this.paginaTextoActual = 1;
+
+    if (this.textosFiltrados.length > 0) {
+      if (!this.selectedCodt || !this.textosFiltrados.some(t => t.codt === this.selectedCodt)) {
+        this.seleccionarTexto(this.textosFiltrados[0]);
+      }
+    } else {
+      this.selectedCodt = null;
+      this.selectedTexto = null;
+      this.ejemplares = [];
+      this.ejemplaresFiltrados = [];
+    }
+  }
+
+  get textosPaginados(): Texto[] {
+    const start = (this.paginaTextoActual - 1) * this.itemsTextoPorPagina;
+    return this.textosFiltrados.slice(start, start + this.itemsTextoPorPagina);
+  }
+
+  get totalPaginasTexto(): number {
+    return Math.max(1, Math.ceil(this.textosFiltrados.length / this.itemsTextoPorPagina));
+  }
+
+  get paginasTextoArray(): number[] {
+    return Array.from({ length: this.totalPaginasTexto }, (_, i) => i + 1);
   }
 
   seleccionarTexto(t: Texto) {
@@ -91,6 +170,8 @@ export class GestionEjemplares implements OnInit {
       this.ejemplaresFiltrados = [];
       return;
     }
+    const found = this.textos.find(t => t.codt === Number(this.selectedCodt));
+    if (found) this.selectedTexto = found;
     this.ejemplarService.listar(this.selectedCodt).subscribe({
       next: (data) => {
         this.ejemplares = data;
@@ -120,9 +201,17 @@ export class GestionEjemplares implements OnInit {
     return Math.max(1, Math.ceil(this.ejemplaresFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   toggleMenuAcciones(e: Ejemplar, event: Event) {
     event.stopPropagation();
     this.menuAccionesAbierto = this.menuAccionesAbierto === e.codinv ? null : e.codinv || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   abrirAdicionar() {
@@ -131,6 +220,8 @@ export class GestionEjemplares implements OnInit {
       return;
     }
     this.editMode = false;
+    this.datoAnteriorCodinv = null;
+    this.nuevoCodinv = null;
     this.currentEjemplar = {
       codt: this.selectedCodt,
       disponible: 1,
@@ -141,11 +232,26 @@ export class GestionEjemplares implements OnInit {
 
   abrirModificar(e: Ejemplar) {
     this.editMode = true;
+    this.datoAnteriorCodinv = e.codinv || null;
+    this.nuevoCodinv = e.codinv || null;
     this.currentEjemplar = { ...e };
     this.showFormModal = true;
   }
 
   solicitarGuardar() {
+    if (this.editMode) {
+      if (!this.nuevoCodinv || Number(this.nuevoCodinv) <= 0) {
+        this.mostrarAviso('Por favor ingrese un Nro. de Inventario Nuevo válido');
+        return;
+      }
+      this.currentEjemplar.codinv = Number(this.nuevoCodinv);
+    } else {
+      if (!this.currentEjemplar.codinv || Number(this.currentEjemplar.codinv) <= 0) {
+        this.mostrarAviso('Por favor ingrese un Nro. de Inventario válido (mayor a 0)');
+        return;
+      }
+    }
+
     const mensaje = this.editMode 
       ? '¿Seguro de Modificar los Datos del Ejemplar?' 
       : '¿Seguro de Adicionar el Nuevo Ejemplar?';
@@ -155,8 +261,8 @@ export class GestionEjemplares implements OnInit {
 
   guardar() {
     this.showConfirmDialog = false;
-    if (this.editMode && this.currentEjemplar.codinv) {
-      this.ejemplarService.modificar(this.currentEjemplar.codinv, this.currentEjemplar).subscribe({
+    if (this.editMode && this.datoAnteriorCodinv) {
+      this.ejemplarService.modificar(this.datoAnteriorCodinv, this.currentEjemplar).subscribe({
         next: () => {
           this.showFormModal = false;
           this.cargarEjemplares();

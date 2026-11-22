@@ -2,13 +2,7 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "DPRESTAMO")
 @IdClass(DprestamoId.class)
@@ -38,5 +32,56 @@ public class Dprestamo {
         this.codp = codp;
         this.codinv = codinv;
         this.estado = estado;
+    }
+
+    public Dprestamo() {
+    }
+
+    public Dprestamo(Integer codp, Integer codinv, Integer estado, Mprestamo prestamo, Ejemplar ejemplar) {
+        this.codp = codp;
+        this.codinv = codinv;
+        this.estado = estado;
+        this.prestamo = prestamo;
+        this.ejemplar = ejemplar;
+    }
+
+    public Integer getCodp() {
+        return codp;
+    }
+
+    public void setCodp(Integer codp) {
+        this.codp = codp;
+    }
+
+    public Integer getCodinv() {
+        return codinv;
+    }
+
+    public void setCodinv(Integer codinv) {
+        this.codinv = codinv;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Mprestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(Mprestamo prestamo) {
+        this.prestamo = prestamo;
+    }
+
+    public Ejemplar getEjemplar() {
+        return ejemplar;
+    }
+
+    public void setEjemplar(Ejemplar ejemplar) {
+        this.ejemplar = ejemplar;
     }
 }

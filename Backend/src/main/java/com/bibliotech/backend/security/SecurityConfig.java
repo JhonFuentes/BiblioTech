@@ -28,7 +28,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/fotos/**", "/documentos/**", "/api/menu/**", "/api/catalogo-digital/**", "/api/areas/**", "/api/editoriales/**", "/api/tipos/**").permitAll()
+                .requestMatchers("/error", "/api/auth/**", "/fotos/**", "/documentos/**", "/api/menu/**", "/api/catalogo-digital/**", "/api/areas/**", "/api/editoriales/**", "/api/tipos/**", "/api/autores/**", "/api/personas/uploadFoto").permitAll()
                 .anyRequest().authenticated()
             );
 
@@ -42,7 +42,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

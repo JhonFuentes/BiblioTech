@@ -2,13 +2,7 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "ESCRIBEN")
 @IdClass(EscribenId.class)
@@ -34,5 +28,47 @@ public class Escriben {
     public Escriben(Integer coda, Integer codt) {
         this.coda = coda;
         this.codt = codt;
+    }
+
+    public Escriben() {
+    }
+
+    public Escriben(Integer coda, Integer codt, Autor autor, Texto texto) {
+        this.coda = coda;
+        this.codt = codt;
+        this.autor = autor;
+        this.texto = texto;
+    }
+
+    public Integer getCoda() {
+        return coda;
+    }
+
+    public void setCoda(Integer coda) {
+        this.coda = coda;
+    }
+
+    public Integer getCodt() {
+        return codt;
+    }
+
+    public void setCodt(Integer codt) {
+        this.codt = codt;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
+    }
+
+    public Texto getTexto() {
+        return texto;
+    }
+
+    public void setTexto(Texto texto) {
+        this.texto = texto;
     }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { DevolucionService, Devolucion } from '../../services/devolucion.service';
 import { Prestamo } from '../../services/prestamo.service';
 import { VentanaDialogo } from '../ventana-dialogo/ventana-dialogo';
@@ -15,37 +16,59 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class GestionDevoluciones implements OnInit {
   private devolucionService = inject(DevolucionService);
+  private route = inject(ActivatedRoute);
 
   activeTab: 'registrar' | 'historial' = 'registrar';
 
   // Tab 1: Registrar Devolución (B-13)
   prestamosPendientes: Prestamo[] = [];
   prestamosFiltrados: Prestamo[] = [];
+  fechaInicioReg = '';
+  fechaFinReg = '';
   filtroEstudianteReg = '';
   filtroCodinvReg: number | null = null;
+  filtroEstadoDetalleReg: number = 1; // [4] 1 = Prestados, 0 = Devueltos
   prestamoSeleccionado: Prestamo | null = null;
   ejemplaresADevolver: { [codinv: number]: boolean } = {};
 
   // Tab 2: Historial y Anulación (B-14)
   devoluciones: Devolucion[] = [];
   devolucionesFiltradas: Devolucion[] = [];
+  fechaInicioHist = '';
+  fechaFinHist = '';
   filtroEstudianteHist = '';
   filtroEstadoHist = 'Activos'; // Activos, Bajas, Todos
+  devolucionSeleccionada: Devolucion | null = null;
 
   paginaActualReg = 1;
   paginaActualHist = 1;
   itemsPorPagina = 10;
+  menuAccionesAbierto: number | string | null = null;
 
-  // Diálogo B-5
+  // Diálogo
   showConfirmDialog = false;
   dialogTipo: 'confirm' | 'aviso' | 'error' | 'success' = 'confirm';
   dialogSoloAceptar = false;
   confirmMensaje = '';
   confirmAccion: () => void = () => {};
 
+  @HostListener('document:click')
+  onClickOutside() {
+    this.menuAccionesAbierto = null;
+  }
+
   @HostListener('window:resize')
   onWindowResize() {
     this.ajustarItemsPorPagina();
+  }
+
+  toggleMenuAcciones(d: Devolucion, event: Event) {
+    event.stopPropagation();
+    this.menuAccionesAbierto = this.menuAccionesAbierto === d.codd ? null : d.codd || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   ajustarItemsPorPagina() {
@@ -59,6 +82,13 @@ export class GestionDevoluciones implements OnInit {
 
   ngOnInit() {
     this.ajustarItemsPorPagina();
+    this.route.data.subscribe(data => {
+      if (data && data['tab'] === 'historial') {
+        this.activeTab = 'historial';
+      } else {
+        this.activeTab = 'registrar';
+      }
+    });
     this.cargarPrestamosPendientes();
     this.cargarHistorialDevoluciones();
   }
@@ -73,20 +103,34 @@ export class GestionDevoluciones implements OnInit {
   // B-13: Registrar Devolución
   // ==========================
   cargarPrestamosPendientes() {
-    this.devolucionService.listarPrestamosPendientes().subscribe({
+    this.devolucionService.listarPrestamosPendientes(
+      this.fechaInicioReg || undefined,
+      this.fechaFinReg || undefined,
+      undefined,
+      undefined,
+      this.filtroEstadoDetalleReg
+    ).subscribe({
       next: (data) => {
         this.prestamosPendientes = data;
         this.aplicarFiltrosReg();
-        if (this.prestamosPendientes.length > 0 && !this.prestamoSeleccionado) {
-          this.seleccionarPrestamo(this.prestamosPendientes[0]);
-        }
       },
       error: (err) => console.error('Error al cargar pendientes', err)
     });
   }
 
+  cambiarEstadoDetalleReg() {
+    this.prestamoSeleccionado = null;
+    this.cargarPrestamosPendientes();
+  }
+
   aplicarFiltrosReg() {
     let temp = this.prestamosPendientes;
+    if (this.fechaInicioReg) {
+      temp = temp.filter(p => p.fecha ? p.fecha >= this.fechaInicioReg : true);
+    }
+    if (this.fechaFinReg) {
+      temp = temp.filter(p => p.fecha ? p.fecha <= this.fechaFinReg : true);
+    }
     if (this.filtroEstudianteReg && this.filtroEstudianteReg.trim()) {
       const q = this.filtroEstudianteReg.toLowerCase().trim();
       temp = temp.filter(p => 
@@ -95,10 +139,20 @@ export class GestionDevoluciones implements OnInit {
       );
     }
     if (this.filtroCodinvReg) {
-      temp = temp.filter(p => p.detalles?.some(d => d.codinv === Number(this.filtroCodinvReg)));
+      const num = Number(this.filtroCodinvReg);
+      temp = temp.filter(p => p.codp === num || p.detalles?.some(d => d.codinv === num));
     }
     this.prestamosFiltrados = temp;
     this.paginaActualReg = 1;
+    if (this.prestamosFiltrados.length > 0) {
+      if (!this.prestamoSeleccionado || !this.prestamosFiltrados.some(p => p.codp === this.prestamoSeleccionado?.codp)) {
+        this.seleccionarPrestamo(this.prestamosFiltrados[0]);
+      } else {
+        this.seleccionarPrestamo(this.prestamosFiltrados.find(p => p.codp === this.prestamoSeleccionado?.codp) || this.prestamosFiltrados[0]);
+      }
+    } else {
+      this.prestamoSeleccionado = null;
+    }
   }
 
   seleccionarPrestamo(p: Prestamo) {
@@ -120,6 +174,10 @@ export class GestionDevoluciones implements OnInit {
 
   get totalPaginasReg(): number {
     return Math.max(1, Math.ceil(this.prestamosFiltrados.length / this.itemsPorPagina));
+  }
+
+  get paginasRegArray(): number[] {
+    return Array.from({ length: this.totalPaginasReg }, (_, i) => i + 1);
   }
 
   solicitarGuardarDevolucion() {
@@ -148,6 +206,7 @@ export class GestionDevoluciones implements OnInit {
           this.mostrarAviso('Devolución registrada con éxito. Los ejemplares han sido liberados.');
           this.prestamoSeleccionado = null;
           this.cargarPrestamosPendientes();
+          this.cargarHistorialDevoluciones();
         },
         error: (err) => this.mostrarError(err?.error?.message || 'Error al registrar la devolución')
       });
@@ -169,6 +228,12 @@ export class GestionDevoluciones implements OnInit {
 
   aplicarFiltrosHist() {
     let temp = this.devoluciones;
+    if (this.fechaInicioHist) {
+      temp = temp.filter(d => d.fecha ? d.fecha >= this.fechaInicioHist : true);
+    }
+    if (this.fechaFinHist) {
+      temp = temp.filter(d => d.fecha ? d.fecha <= this.fechaFinHist : true);
+    }
     if (this.filtroEstudianteHist && this.filtroEstudianteHist.trim()) {
       const q = this.filtroEstudianteHist.toLowerCase().trim();
       temp = temp.filter(d => 
@@ -183,6 +248,19 @@ export class GestionDevoluciones implements OnInit {
     }
     this.devolucionesFiltradas = temp;
     this.paginaActualHist = 1;
+    if (this.devolucionesFiltradas.length > 0) {
+      if (!this.devolucionSeleccionada || !this.devolucionesFiltradas.some(d => d.codd === this.devolucionSeleccionada?.codd)) {
+        this.devolucionSeleccionada = this.devolucionesFiltradas[0];
+      } else {
+        this.devolucionSeleccionada = this.devolucionesFiltradas.find(d => d.codd === this.devolucionSeleccionada?.codd) || this.devolucionesFiltradas[0];
+      }
+    } else {
+      this.devolucionSeleccionada = null;
+    }
+  }
+
+  seleccionarDevolucion(d: Devolucion) {
+    this.devolucionSeleccionada = d;
   }
 
   get devolucionesPaginadas(): Devolucion[] {
@@ -194,6 +272,10 @@ export class GestionDevoluciones implements OnInit {
     return Math.max(1, Math.ceil(this.devolucionesFiltradas.length / this.itemsPorPagina));
   }
 
+  get paginasHistArray(): number[] {
+    return Array.from({ length: this.totalPaginasHist }, (_, i) => i + 1);
+  }
+
   solicitarAnularDevolucion(d: Devolucion) {
     this.confirmar('¿Seguro de Anular la Devolución? Los ejemplares devueltos volverán al estado prestado / pendiente.', () => {
       this.showConfirmDialog = false;
@@ -202,6 +284,7 @@ export class GestionDevoluciones implements OnInit {
           next: () => {
             this.mostrarAviso('Devolución anulada. Ejemplares restaurados a pendientes.');
             this.cargarHistorialDevoluciones();
+            this.cargarPrestamosPendientes();
           },
           error: (err) => this.mostrarError(err?.error?.message || 'Error al anular devolución')
         });

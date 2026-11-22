@@ -3,15 +3,9 @@ package com.bibliotech.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
 
 @Entity
 @Table(name = "MENUS")
@@ -29,15 +23,11 @@ public class Menu {
 
     // Cardinalidad 1 a N: Un menú asignado a roles en ROLME
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private List<RolMe> rolMes;
 
     // Cardinalidad 1 a N: Un menú agrupa procesos en MEPRO
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private List<MePro> mePros;
 
@@ -45,5 +35,48 @@ public class Menu {
         this.codm = codm;
         this.nombre = nombre;
         this.estado = estado;
+    }
+
+    public Menu() {
+    }
+
+    public Integer getCodm() {
+        return codm;
+    }
+
+    public void setCodm(Integer codm) {
+        this.codm = codm;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public List<RolMe> getRolMes() {
+        return rolMes;
+    }
+
+    public void setRolMes(List<RolMe> rolMes) {
+        this.rolMes = rolMes;
+    }
+
+    public List<MePro> getMePros() {
+        return mePros;
+    }
+
+    public void setMePros(List<MePro> mePros) {
+        this.mePros = mePros;
     }
 }

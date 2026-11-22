@@ -92,9 +92,17 @@ export class GestionMenus implements OnInit {
     return Math.max(1, Math.ceil(this.menusFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   toggleMenuAcciones(m: Menu, event: Event) {
     event.stopPropagation();
     this.menuAccionesAbierto = this.menuAccionesAbierto === m.codm ? null : m.codm;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   abrirAdicionar() {

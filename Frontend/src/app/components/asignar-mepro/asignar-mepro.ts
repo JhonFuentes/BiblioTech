@@ -70,6 +70,10 @@ export class AsignarMepro implements OnInit {
     return Math.max(1, Math.ceil(this.menusFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasMenusArray(): number[] {
+    return Array.from({ length: this.totalPaginasMenus }, (_, i) => i + 1);
+  }
+
   seleccionarMenu(m: Menu) {
     this.selectedMenu = m;
     this.cargarProcesos(m.codm);
@@ -85,7 +89,7 @@ export class AsignarMepro implements OnInit {
     });
   }
 
-  filtrarProcesos() {
+  filtrarProcesos(resetPage: boolean = true) {
     let temp = this.procesos;
     if (this.filtroProceso && this.filtroProceso.trim()) {
       const q = this.filtroProceso.toLowerCase().trim();
@@ -96,8 +100,12 @@ export class AsignarMepro implements OnInit {
     } else if (this.filtroAsignado === 'NO') {
       temp = temp.filter(p => !p.asignado);
     }
-    this.procesosFiltrados = temp;
-    this.paginaProcesos = 1;
+    this.procesosFiltrados = [...temp];
+    if (resetPage) {
+      this.paginaProcesos = 1;
+    } else if (this.paginaProcesos > this.totalPaginasProcesos) {
+      this.paginaProcesos = this.totalPaginasProcesos;
+    }
   }
 
   get procesosPaginados(): AsignacionItem[] {
@@ -109,17 +117,24 @@ export class AsignarMepro implements OnInit {
     return Math.max(1, Math.ceil(this.procesosFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasProcesosArray(): number[] {
+    return Array.from({ length: this.totalPaginasProcesos }, (_, i) => i + 1);
+  }
+
   toggleProceso(proc: AsignacionItem, event: Event) {
     if (!this.selectedMenu) return;
     const checked = (event.target as HTMLInputElement).checked;
     const codp = Number(proc.id);
+    proc.asignado = checked;
+    this.filtrarProcesos(false);
     this.asignacionService.toggleMePro(this.selectedMenu.codm, codp, checked).subscribe({
       next: () => {
-        proc.asignado = checked;
-        this.filtrarProcesos();
+        this.filtrarProcesos(false);
       },
       error: (err) => {
+        proc.asignado = !checked;
         (event.target as HTMLInputElement).checked = !checked;
+        this.filtrarProcesos(false);
         this.mostrarError(err?.error?.message || 'No se pudo actualizar la asignación del proceso');
       }
     });

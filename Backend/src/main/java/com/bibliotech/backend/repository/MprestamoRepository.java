@@ -4,6 +4,7 @@ import com.bibliotech.backend.model.Mprestamo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,12 @@ import java.util.List;
 
 @Repository
 public interface MprestamoRepository extends JpaRepository<Mprestamo, Integer> {
+
+    List<Mprestamo> findByCi(Integer ci);
+
+    @Modifying
+    @Query(value = "UPDATE mprestamo SET ci = :nuevoCi WHERE ci = :oldCi", nativeQuery = true)
+    void actualizarCi(@Param("oldCi") Integer oldCi, @Param("nuevoCi") Integer nuevoCi);
 
     @Query("""
         SELECT DISTINCT m FROM Mprestamo m

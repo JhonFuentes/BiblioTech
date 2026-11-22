@@ -148,6 +148,10 @@ export class GestionTextos implements OnInit {
     return Math.max(1, Math.ceil(this.textosFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   getEmptyTexto(): Texto {
     return {
       titulo: '',
@@ -166,6 +170,10 @@ export class GestionTextos implements OnInit {
   toggleMenuAcciones(t: Texto, event: Event) {
     event.stopPropagation();
     this.menuAccionesAbierto = this.menuAccionesAbierto === t.codt ? null : t.codt || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   abrirAdicionar() {
@@ -257,17 +265,36 @@ export class GestionTextos implements OnInit {
       return;
     }
 
+    if (this.autorSeleccionadoId) {
+      this.agregarAutor();
+    }
+
+    if (!this.currentTexto.autorIds || this.currentTexto.autorIds.length === 0) {
+      this.mostrarAviso('Por favor agregue por lo menos un autor al texto');
+      return;
+    }
+
     // Armar lista de tipos seleccionados
     const tiposList: TipoTexto[] = [];
     for (const t of this.tiposDisponibles) {
       if (t.codtipo && this.tiposSeleccionados[t.codtipo]) {
+        const doc = this.documentosPorTipo[t.codtipo] || '';
+        if (t.sw === 1 && !doc.trim()) {
+          this.mostrarAviso(`Debe subir un archivo PDF para el tipo digital "${t.nombre}"`);
+          return;
+        }
         tiposList.push({
           codtipo: t.codtipo,
           tipoNombre: t.nombre,
           sw: t.sw,
-          docum: this.documentosPorTipo[t.codtipo] || ''
+          docum: doc
         });
       }
+    }
+
+    if (tiposList.length === 0) {
+      this.mostrarAviso('Por favor seleccione por lo menos un tipo de formato para el texto');
+      return;
     }
     this.currentTexto.tipos = tiposList;
 

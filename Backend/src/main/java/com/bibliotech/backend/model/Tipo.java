@@ -2,11 +2,7 @@ package com.bibliotech.backend.model;
 
 import jakarta.persistence.*;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 
 @Entity
 @Table(name = "TIPOS")
@@ -25,4 +21,39 @@ public class Tipo {
 
     @Column(name = "sw", nullable = false)
     private Integer sw = 0; // 1=Que suba el libro digital, 0=Es por defecto
+
+    public Tipo() {
+    }
+
+    public Integer getCodtipo() {
+        return codtipo;
+    }
+
+    public void setCodtipo(Integer codtipo) {
+        this.codtipo = codtipo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Integer getSw() {
+        return sw;
+    }
+
+    public void setSw(Integer sw) {
+        this.sw = sw;
+    }
 }

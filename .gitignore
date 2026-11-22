@@ -16,11 +16,16 @@ Backend/.gradle/
 Backend/bin/
 *.class
 
-# Node / Angular Frontend
+# Node / Angular Frontend & Mobile (Ionic)
 Frontend/node_modules/
 Frontend/dist/
 Frontend/.angular/
 Frontend/coverage/
+movil/node_modules/
+movil/www/
+movil/dist/
+movil/.angular/
+movil/coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -5,6 +5,7 @@ import com.bibliotech.backend.model.*;
 import com.bibliotech.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,6 +39,51 @@ public class TextoController {
     private TipoRepository tipoRepository;
 
     private static final String DOCS_DIR = "uploads/documentos/";
+    private static final String BAJAS_FILE = "uploads/.textos_bajas.txt";
+    private static final Set<Integer> TEXTOS_BAJAS = ConcurrentHashMap.newKeySet();
+
+    static {
+        cargarBajas();
+    }
+
+    private static synchronized void cargarBajas() {
+        try {
+            Path p = Paths.get(BAJAS_FILE);
+            if (Files.exists(p)) {
+                for (String line : Files.readAllLines(p)) {
+                    String s = line.trim();
+                    if (!s.isEmpty()) {
+                        TEXTOS_BAJAS.add(Integer.parseInt(s));
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static synchronized void guardarBajas() {
+        try {
+            File dir = new File("uploads");
+            if (!dir.exists()) dir.mkdirs();
+            List<String> lines = TEXTOS_BAJAS.stream().map(String::valueOf).collect(Collectors.toList());
+            Files.write(Paths.get(BAJAS_FILE), lines);
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static int obtenerEstadoTexto(Integer codt) {
+        return (codt != null && TEXTOS_BAJAS.contains(codt)) ? 0 : 1;
+    }
+
+    public static void actualizarEstadoTexto(Integer codt, int estado) {
+        if (codt == null) return;
+        if (estado == 0) {
+            TEXTOS_BAJAS.add(codt);
+        } else {
+            TEXTOS_BAJAS.remove(codt);
+        }
+        guardarBajas();
+    }
 
     @GetMapping
     public ResponseEntity<List<TextoDTO>> listar(
@@ -48,8 +95,11 @@ public class TextoController {
 
         String f = (filtro != null && !filtro.trim().isEmpty()) ? filtro.trim() : null;
         Integer est = (estado != null && estado != -1) ? estado : null;
-        List<TextoDTO> dtos = textoRepository.findListByFilters(f, coda, code, codtipo, est)
-                .stream().map(this::mapToDTO).collect(Collectors.toList());
+        List<TextoDTO> dtos = textoRepository.findListByFilters(f, coda, code, codtipo)
+                .stream()
+                .map(this::mapToDTO)
+                .filter(dto -> est == null || Objects.equals(dto.getEstado(), est))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
@@ -67,8 +117,19 @@ public class TextoController {
         String f = (filtro != null && !filtro.trim().isEmpty()) ? filtro.trim() : null;
         Integer est = (estado != null && estado != -1) ? estado : null;
 
-        Page<TextoDTO> paged = textoRepository.findByFilters(f, coda, code, codtipo, est, pageable)
-                .map(this::mapToDTO);
+        List<TextoDTO> filtrados = textoRepository.findListByFilters(f, coda, code, codtipo)
+                .stream()
+                .map(this::mapToDTO)
+                .filter(dto -> est == null || Objects.equals(dto.getEstado(), est))
+                .collect(Collectors.toList());
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtrados.size());
+        List<TextoDTO> pageContent = (start <= end && start < filtrados.size())
+                ? filtrados.subList(start, end)
+                : Collections.emptyList();
+
+        Page<TextoDTO> paged = new PageImpl<>(pageContent, pageable, filtrados.size());
         return ResponseEntity.ok(paged);
     }
 
@@ -91,14 +152,15 @@ public class TextoController {
         dto.setAreaNombre(t.getArea() != null ? t.getArea().getNombre() : "");
         dto.setCode(t.getCode());
         dto.setEditorialNombre(t.getEditorial() != null ? t.getEditorial().getNombre() : "");
-        dto.setEstado(t.getEstado());
+        dto.setEstado(obtenerEstadoTexto(t.getCodt()));
 
         // Autores
         List<Escriben> escList = escribenRepository.findByCodt(t.getCodt());
         dto.setAutorIds(escList.stream().map(Escriben::getCoda).collect(Collectors.toList()));
         dto.setAutoresNombres(escList.stream().map(e -> {
             if (e.getAutor() != null) {
-                return (e.getAutor().getNombre() + " " + (e.getAutor().getAp() != null ? e.getAutor().getAp() : "")).trim();
+                Autor a = e.getAutor();
+                return (a.getNombre() + " " + (a.getAp() != null ? a.getAp() : "") + " " + (a.getAm() != null ? a.getAm() : "")).trim().replaceAll("\\s+", " ");
             }
             return "";
         }).collect(Collectors.toList()));
@@ -125,18 +187,24 @@ public class TextoController {
         if (dto.getTitulo() == null || dto.getTitulo().trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "El título del texto es requerido"));
         }
-        if (dto.getCoda() == null) {
+        if (dto.getCoda() == null || dto.getCoda() <= 0) {
             return ResponseEntity.badRequest().body(Map.of("message", "Debe seleccionar un área temática"));
         }
-        if (dto.getCode() == null) {
+        if (dto.getCode() == null || dto.getCode() <= 0) {
             return ResponseEntity.badRequest().body(Map.of("message", "Debe seleccionar una editorial"));
+        }
+        if (dto.getAutorIds() == null || dto.getAutorIds().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Debe asignar por lo menos un autor al texto"));
+        }
+        if (dto.getTipos() == null || dto.getTipos().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Debe seleccionar por lo menos un tipo de formato para el texto"));
         }
 
         String titulo = dto.getTitulo().trim();
         Integer edicion = dto.getEdicion() != null ? dto.getEdicion() : 1;
         List<Texto> existentes = textoRepository.findByTituloAndEdicion(titulo, edicion);
         if (!existentes.isEmpty()) {
-            boolean activo = existentes.stream().anyMatch(x -> x.getEstado() == 1);
+            boolean activo = existentes.stream().anyMatch(x -> obtenerEstadoTexto(x.getCodt()) == 1);
             if (activo) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Ya existe un texto activo con el título '" + titulo + "' y edición " + edicion));
             } else {
@@ -154,6 +222,7 @@ public class TextoController {
         t.setCode(dto.getCode());
         t.setEstado(1);
         t = textoRepository.save(t);
+        actualizarEstadoTexto(t.getCodt(), 1);
 
         guardarRelaciones(t.getCodt(), dto);
 
@@ -185,12 +254,17 @@ public class TextoController {
         t.setFechapub(dto.getFechapub());
         if (dto.getCoda() != null) t.setCoda(dto.getCoda());
         if (dto.getCode() != null) t.setCode(dto.getCode());
-        if (dto.getEstado() != null) t.setEstado(dto.getEstado());
+        if (dto.getEstado() != null) {
+            t.setEstado(dto.getEstado());
+            actualizarEstadoTexto(id, dto.getEstado());
+        }
         t = textoRepository.save(t);
 
         // Actualizar relaciones N a M
         escribenRepository.deleteByCodt(id);
+        escribenRepository.flush();
         tipotexRepository.deleteByCodt(id);
+        tipotexRepository.flush();
         guardarRelaciones(id, dto);
 
         return ResponseEntity.ok(mapToDTO(t));
@@ -198,15 +272,16 @@ public class TextoController {
 
     private void guardarRelaciones(Integer codt, TextoDTO dto) {
         if (dto.getAutorIds() != null) {
-            for (Integer coda : dto.getAutorIds()) {
+            for (Integer coda : new LinkedHashSet<>(dto.getAutorIds())) {
                 if (coda != null) {
                     escribenRepository.save(new Escriben(coda, codt));
                 }
             }
         }
         if (dto.getTipos() != null) {
+            Set<Integer> vistos = new HashSet<>();
             for (TextoDTO.TipoTextoDTO tt : dto.getTipos()) {
-                if (tt.getCodtipo() != null) {
+                if (tt.getCodtipo() != null && vistos.add(tt.getCodtipo())) {
                     tipotexRepository.save(new Tipotex(codt, tt.getCodtipo(), tt.getDocum()));
                 }
             }
@@ -217,9 +292,7 @@ public class TextoController {
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         Optional<Texto> opt = textoRepository.findById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
-        Texto t = opt.get();
-        t.setEstado(0);
-        textoRepository.save(t);
+        actualizarEstadoTexto(id, 0);
         return ResponseEntity.ok().build();
     }
 
@@ -227,9 +300,7 @@ public class TextoController {
     public ResponseEntity<?> activar(@PathVariable Integer id) {
         Optional<Texto> opt = textoRepository.findById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
-        Texto t = opt.get();
-        t.setEstado(1);
-        textoRepository.save(t);
+        actualizarEstadoTexto(id, 1);
         return ResponseEntity.ok().build();
     }
 

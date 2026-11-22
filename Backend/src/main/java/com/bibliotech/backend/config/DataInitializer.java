@@ -84,6 +84,7 @@ public class DataInitializer implements CommandLineRunner {
 
         Proceso pPrestamos = ensureProceso("Gestión de Préstamos", "/gestion-prestamos");
         Proceso pDevoluciones = ensureProceso("Gestión de Devoluciones", "/gestion-devoluciones");
+        Proceso pAnularDevol = ensureProceso("Anulación de Devoluciones", "/anulacion-devoluciones");
 
         // Vincular Procesos a Menús (MEPRO)
         ensureMePro(mAdmin.getCodm(), pUsuarios.getCodp());
@@ -103,6 +104,7 @@ public class DataInitializer implements CommandLineRunner {
 
         ensureMePro(mCirculacion.getCodm(), pPrestamos.getCodp());
         ensureMePro(mCirculacion.getCodm(), pDevoluciones.getCodp());
+        ensureMePro(mCirculacion.getCodm(), pAnularDevol.getCodp());
 
         // Vincular Menús a Rol Administrador (ROLME)
         if (rolAdmin != null) {
@@ -224,14 +226,29 @@ public class DataInitializer implements CommandLineRunner {
                     .findFirst()
                     .orElse(null);
 
-            for (int i = 1; i <= 3; i++) {
-                Ejemplar ej = new Ejemplar();
-                ej.setCodt(textoMuestra.getCodt());
-                ej.setDisponible(1); // Libre
-                ej.setEstado(1);
-                ej.setPer_resp(validLogin);
-                ejemplarRepository.save(ej);
+            if (validLogin != null) {
+                for (int i = 1; i <= 3; i++) {
+                    Ejemplar ej = new Ejemplar();
+                    ej.setCodinv(ejemplarRepository.getNextCodinv());
+                    ej.setCodt(textoMuestra.getCodt());
+                    ej.setDisponible(1); // Libre
+                    ej.setEstado(1);
+                    ej.setPer_resp(validLogin);
+                    ejemplarRepository.save(ej);
+                }
             }
+        }
+
+        // Asegurar archivo PDF de muestra para B-20.1
+        try {
+            java.io.File docsDir = new java.io.File("uploads/documentos");
+            if (!docsDir.exists()) docsDir.mkdirs();
+            java.nio.file.Path samplePdf = java.nio.file.Paths.get("uploads/documentos/clean-code-sample.pdf");
+            if (!java.nio.file.Files.exists(samplePdf)) {
+                String minimalPdf = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000052 00000 n \n0000000101 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n178\n%%EOF\n";
+                java.nio.file.Files.write(samplePdf, minimalPdf.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            }
+        } catch (Exception ignored) {
         }
     }
 

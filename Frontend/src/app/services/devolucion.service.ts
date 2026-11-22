@@ -23,12 +23,13 @@ export class DevolucionService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/devoluciones';
 
-  listarPrestamosPendientes(fechaInicio?: string, fechaFin?: string, filtroEstudiante?: string, codinv?: number): Observable<Prestamo[]> {
+  listarPrestamosPendientes(fechaInicio?: string, fechaFin?: string, filtroEstudiante?: string, codinv?: number, estadoPrestamo?: number): Observable<Prestamo[]> {
     let params = new HttpParams();
     if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
     if (fechaFin) params = params.set('fechaFin', fechaFin);
     if (filtroEstudiante) params = params.set('filtroEstudiante', filtroEstudiante);
     if (codinv) params = params.set('codinv', codinv);
+    if (estadoPrestamo !== undefined) params = params.set('estadoPrestamo', estadoPrestamo);
     return this.http.get<Prestamo[]>(`${this.apiUrl}/prestamos-pendientes`, { params });
   }
 

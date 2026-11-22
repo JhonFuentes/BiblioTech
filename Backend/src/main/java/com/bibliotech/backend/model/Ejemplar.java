@@ -1,17 +1,12 @@
 package com.bibliotech.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "EJEMPLARES")
 public class Ejemplar {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codinv")
     private Integer codinv;
 
@@ -41,4 +36,79 @@ public class Ejemplar {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "per_anula", referencedColumnName = "login", insertable = false, updatable = false)
     private Usuario usuarioAnula;
+
+    public Ejemplar() {
+    }
+
+    public Integer getCodinv() {
+        return codinv;
+    }
+
+    public void setCodinv(Integer codinv) {
+        this.codinv = codinv;
+    }
+
+    public Integer getDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(Integer disponible) {
+        this.disponible = disponible;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Integer getCodt() {
+        return codt;
+    }
+
+    public void setCodt(Integer codt) {
+        this.codt = codt;
+    }
+
+    public String getPer_resp() {
+        return per_resp;
+    }
+
+    public void setPer_resp(String per_resp) {
+        this.per_resp = per_resp;
+    }
+
+    public String getPer_anula() {
+        return per_anula;
+    }
+
+    public void setPer_anula(String per_anula) {
+        this.per_anula = per_anula;
+    }
+
+    public Texto getTexto() {
+        return texto;
+    }
+
+    public void setTexto(Texto texto) {
+        this.texto = texto;
+    }
+
+    public Usuario getUsuarioResp() {
+        return usuarioResp;
+    }
+
+    public void setUsuarioResp(Usuario usuarioResp) {
+        this.usuarioResp = usuarioResp;
+    }
+
+    public Usuario getUsuarioAnula() {
+        return usuarioAnula;
+    }
+
+    public void setUsuarioAnula(Usuario usuarioAnula) {
+        this.usuarioAnula = usuarioAnula;
+    }
 }

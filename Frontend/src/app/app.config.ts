@@ -5,13 +5,13 @@ import { IMAGE_CONFIG } from '@angular/common';
 import { 
   LucideAngularModule, 
   Menu, ChevronDown, ChevronRight, User, LogOut, LogIn, Camera, Search, Plus, 
-  Pencil, Trash, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
+  Pencil, Trash, Trash2, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
   RefreshCw, LayoutGrid, Box, Heart, ChevronUp, MoreVertical, Home,
   Folder, FolderX, Building, BookOpen, Book, FileText, Layers, Users, 
   UserCheck, UserX, Library, Sparkles, ShieldCheck, Image,
   Calendar, RotateCcw, CheckSquare, Square, ExternalLink, Download,
   Sliders, File, ArrowRight, ArrowLeft, AlertCircle, Shield, Settings, Bookmark,
-  Archive, ClipboardList
+  Archive, ClipboardList, ThumbsUp, ThumbsDown, Sun, Moon
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
@@ -26,13 +26,13 @@ export const appConfig: ApplicationConfig = {
     { provide: IMAGE_CONFIG, useValue: { disableImageSizeWarning: true } },
     importProvidersFrom(LucideAngularModule.pick({ 
       Menu, ChevronDown, ChevronRight, User, LogOut, LogIn, Camera, Search, Plus, 
-      Pencil, Trash, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
+      Pencil, Trash, Trash2, CheckCircle, Key, Lock, Eye, Check, X, Printer, Unlock, 
       RefreshCw, LayoutGrid, Box, Heart, ChevronUp, MoreVertical, Home,
       Folder, FolderX, Building, BookOpen, Book, FileText, Layers, Users, 
       UserCheck, UserX, Library, Sparkles, ShieldCheck, Image,
       Calendar, RotateCcw, CheckSquare, Square, ExternalLink, Download,
       Sliders, File, ArrowRight, ArrowLeft, AlertCircle, Shield, Settings, Bookmark,
-      Archive, ClipboardList
+      Archive, ClipboardList, ThumbsUp, ThumbsDown, Sun, Moon
     }))
   ]
 };

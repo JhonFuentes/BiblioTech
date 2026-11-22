@@ -56,4 +56,13 @@ export class PersonaService {
   modificarAcceso(id: number, acceso: Acceso): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/acceso`, acceso);
   }
+
+  uploadFoto(file: File, codper?: number): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (codper !== undefined && codper !== null) {
+      formData.append('codper', String(codper));
+    }
+    return this.http.post(`${this.apiUrl}/uploadFoto`, formData);
+  }
 }

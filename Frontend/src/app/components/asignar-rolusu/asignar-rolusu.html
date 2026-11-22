@@ -6,8 +6,8 @@
         <lucide-icon name="user-check" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Asignación de Roles a Usuarios (ROLUSU)</h3>
-        <p class="text-xs text-slate-500 m-0">Seleccione un usuario con cuenta activa a la izquierda para asignarle roles del sistema (B-19)</p>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0 leading-tight">Asignación de Roles a Usuarios</h3>
+        <p class="text-xs text-slate-500 m-0 mt-1">Seleccione un usuario con cuenta activa a la izquierda para asignarle roles del sistema</p>
       </div>
     </div>
   </div>
@@ -22,11 +22,11 @@
         <span class="text-xs bg-white/20 px-2.5 py-0.5 rounded-full">{{ usuariosFiltrados.length }}</span>
       </div>
 
-      <div class="p-3 border-b border-slate-100 bg-slate-50/70">
+      <div class="p-3 border-b border-slate-200 bg-slate-50/70">
         <div class="relative">
-          <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center"><lucide-icon name="search" class="w-4 h-4"></lucide-icon></span>
           <input type="text" [(ngModel)]="filtroUsuario" (keyup.enter)="filtrarUsuarios()" (input)="filtrarUsuarios()"
-            class="w-full bg-white border border-slate-300 rounded-lg py-2 pr-3 pl-9 text-xs focus:outline-none focus:border-[#3E6D9C]"
+            class="w-full bg-white border border-slate-300 rounded-lg py-2 pr-3 pl-10 text-xs focus:outline-none focus:border-[#3E6D9C]"
             placeholder="Filtrar por Apellidos, Nombres o Login...">
         </div>
       </div>
@@ -43,7 +43,7 @@
           <tbody>
             <tr *ngFor="let u of usuariosPaginados"
               (click)="seleccionarUsuario(u)"
-              class="border-b border-slate-100 cursor-pointer transition-colors"
+              class="border-b border-slate-200 cursor-pointer transition-colors"
               [ngClass]="selectedUsuario?.login === u.login ? 'bg-[#E3F6F5] font-bold text-[#2A2F63]' : 'hover:bg-slate-50'">
               <td class="p-3 text-center">
                 <input type="radio" name="selUsuRolusu" [checked]="selectedUsuario?.login === u.login"
@@ -59,12 +59,12 @@
         </table>
       </div>
 
-      <div *ngIf="totalPaginasUsuarios > 1" class="flex justify-between items-center px-4 py-2.5 border-t border-slate-100 bg-white text-xs text-slate-500">
-        <span>Pág. {{ paginaUsuarios }} / {{ totalPaginasUsuarios }}</span>
-        <div class="flex gap-1">
-          <button [disabled]="paginaUsuarios === 1" (click)="paginaUsuarios = paginaUsuarios - 1" class="px-2 py-1 border rounded disabled:opacity-40">Ant.</button>
-          <button [disabled]="paginaUsuarios === totalPaginasUsuarios" (click)="paginaUsuarios = paginaUsuarios + 1" class="px-2 py-1 border rounded disabled:opacity-40">Sig.</button>
-        </div>
+      <div class="flex justify-center items-center gap-1.5 px-4 py-2.5 border-t border-slate-100 bg-white text-xs text-slate-600">
+        <button [disabled]="paginaUsuarios === 1" (click)="paginaUsuarios = paginaUsuarios - 1" class="px-2 py-1 border rounded disabled:opacity-40 font-semibold">&lt;&lt;</button>
+        <button *ngFor="let pag of paginasUsuariosArray" (click)="paginaUsuarios = pag"
+          [ngClass]="paginaUsuarios === pag ? 'bg-[#3E6D9C] text-white border-[#3E6D9C]' : 'bg-white text-slate-600 border-slate-200'"
+          class="border py-1 px-2.5 rounded font-bold cursor-pointer">{{ pag }}</button>
+        <button [disabled]="paginaUsuarios === totalPaginasUsuarios" (click)="paginaUsuarios = paginaUsuarios + 1" class="px-2 py-1 border rounded disabled:opacity-40 font-semibold">&gt;&gt;</button>
       </div>
     </div>
 
@@ -78,11 +78,11 @@
         <span class="text-xs bg-white/20 px-2.5 py-0.5 rounded-full">{{ rolesFiltrados.length }} roles</span>
       </div>
 
-      <div class="p-3 border-b border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
+      <div class="p-3 border-b border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
         <div class="relative flex-1">
-          <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center"><lucide-icon name="search" class="w-4 h-4"></lucide-icon></span>
           <input type="text" [(ngModel)]="filtroRol" (keyup.enter)="filtrarRoles()" (input)="filtrarRoles()"
-            class="w-full bg-white border border-slate-300 rounded-lg py-2 pr-3 pl-9 text-xs focus:outline-none focus:border-[#3E6D9C]"
+            class="w-full bg-white border border-slate-300 rounded-lg py-2 pr-3 pl-10 text-xs focus:outline-none focus:border-[#3E6D9C]"
             placeholder="Filtrar por Nombre de Rol...">
         </div>
 
@@ -109,7 +109,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of rolesPaginados"
-              class="border-b border-slate-100 hover:bg-[#E3F6F5]/40 transition-colors">
+              class="border-b border-slate-200 hover:bg-[#E3F6F5]/40 transition-colors">
               <td class="p-3 text-center">
                 <input type="checkbox" [checked]="r.asignado" (change)="toggleRol(r, $event)"
                   class="w-4 h-4 accent-[#3E6D9C] rounded cursor-pointer">
@@ -125,18 +125,18 @@
         </table>
       </div>
 
-      <div *ngIf="totalPaginasRoles > 1" class="flex justify-between items-center px-4 py-2.5 border-t border-slate-100 bg-white text-xs text-slate-500">
-        <span>Pág. {{ paginaRoles }} / {{ totalPaginasRoles }} (Máx. 10 por página)</span>
-        <div class="flex gap-1">
-          <button [disabled]="paginaRoles === 1" (click)="paginaRoles = paginaRoles - 1" class="px-2 py-1 border rounded disabled:opacity-40">Ant.</button>
-          <button [disabled]="paginaRoles === totalPaginasRoles" (click)="paginaRoles = paginaRoles + 1" class="px-2 py-1 border rounded disabled:opacity-40">Sig.</button>
-        </div>
+      <div class="flex justify-center items-center gap-1.5 px-4 py-2.5 border-t border-slate-100 bg-white text-xs text-slate-600">
+        <button [disabled]="paginaRoles === 1" (click)="paginaRoles = paginaRoles - 1" class="px-2 py-1 border rounded disabled:opacity-40 font-semibold">&lt;&lt;</button>
+        <button *ngFor="let pag of paginasRolesArray" (click)="paginaRoles = pag"
+          [ngClass]="paginaRoles === pag ? 'bg-[#3E6D9C] text-white border-[#3E6D9C]' : 'bg-white text-slate-600 border-slate-200'"
+          class="border py-1 px-2.5 rounded font-bold cursor-pointer">{{ pag }}</button>
+        <button [disabled]="paginaRoles === totalPaginasRoles" (click)="paginaRoles = paginaRoles + 1" class="px-2 py-1 border rounded disabled:opacity-40 font-semibold">&gt;&gt;</button>
       </div>
     </div>
   </div>
 
   <app-ventana-dialogo
-    [isOpen]="showConfirmDialog"
+    [show]="showConfirmDialog"
     [tipo]="dialogTipo"
     [mensaje]="confirmMensaje"
     [soloAceptar]="dialogSoloAceptar"

@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, Routes } from '@angular/router';
 import { Layout } from './components/layout/layout';
 import { ModificarFotos } from './components/modificar-fotos/modificar-fotos';
 import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios';
@@ -15,8 +16,26 @@ import { GestionMenus } from './components/gestion-menus/gestion-menus';
 import { AsignarMepro } from './components/asignar-mepro/asignar-mepro';
 import { AsignarRolme } from './components/asignar-rolme/asignar-rolme';
 import { AsignarRolusu } from './components/asignar-rolusu/asignar-rolusu';
-import { CatalogoDigital } from './components/catalogo-digital/catalogo-digital';
 import { InicioComponent } from './components/inicio/inicio';
+import { MenuService } from './services/menu.service';
+import { Auth } from './services/auth';
+
+export const rolProcesoGuard: CanActivateFn = (_route, state) => {
+  const auth = inject(Auth);
+  const menuService = inject(MenuService);
+  const router = inject(Router);
+
+  if (!auth.getUser()) {
+    return router.createUrlTree(['/inicio']);
+  }
+
+  // Si los menús del rol activo ya fueron cargados, validar que el enlace pertenezca al rol seleccionado
+  if (menuService.isMenusLoaded() && !menuService.isRutaPermitida(state.url)) {
+    return router.createUrlTree(['/inicio']);
+  }
+
+  return true;
+};
 
 export const routes: Routes = [
   { 
@@ -26,21 +45,21 @@ export const routes: Routes = [
       { path: '', component: InicioComponent },
       { path: 'inicio', component: InicioComponent },
       { path: 'modificar-fotos', component: ModificarFotos },
-      { path: 'gestion-usuarios', component: GestionUsuarios },
-      { path: 'gestion-areas', component: GestionAreas },
-      { path: 'gestion-editoriales', component: GestionEditoriales },
-      { path: 'gestion-tipos', component: GestionTipos },
-      { path: 'gestion-autores', component: GestionAutores },
-      { path: 'gestion-textos', component: GestionTextos },
-      { path: 'gestion-ejemplares', component: GestionEjemplares },
-      { path: 'gestion-prestamos', component: GestionPrestamos },
-      { path: 'gestion-devoluciones', component: GestionDevoluciones },
-      { path: 'gestion-roles', component: GestionRoles },
-      { path: 'gestion-menus', component: GestionMenus },
-      { path: 'asignar-mepro', component: AsignarMepro },
-      { path: 'asignar-rolme', component: AsignarRolme },
-      { path: 'asignar-rolusu', component: AsignarRolusu },
-      { path: 'catalogo-digital', component: CatalogoDigital }
+      { path: 'gestion-usuarios', component: GestionUsuarios, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-areas', component: GestionAreas, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-editoriales', component: GestionEditoriales, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-tipos', component: GestionTipos, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-autores', component: GestionAutores, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-textos', component: GestionTextos, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-ejemplares', component: GestionEjemplares, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-prestamos', component: GestionPrestamos, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-devoluciones', component: GestionDevoluciones, data: { tab: 'registrar' }, canActivate: [rolProcesoGuard] },
+      { path: 'anulacion-devoluciones', component: GestionDevoluciones, data: { tab: 'historial' }, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-roles', component: GestionRoles, canActivate: [rolProcesoGuard] },
+      { path: 'gestion-menus', component: GestionMenus, canActivate: [rolProcesoGuard] },
+      { path: 'asignar-mepro', component: AsignarMepro, canActivate: [rolProcesoGuard] },
+      { path: 'asignar-rolme', component: AsignarRolme, canActivate: [rolProcesoGuard] },
+      { path: 'asignar-rolusu', component: AsignarRolusu, canActivate: [rolProcesoGuard] }
     ]
   },
   { path: '**', redirectTo: '' }

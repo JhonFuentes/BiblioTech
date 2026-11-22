@@ -74,6 +74,25 @@ public class PrestamoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // 8.1 Módulo Aplicación Móvil: Listar préstamos de un usuario con detalle de libros
+    @GetMapping("/usuario/{login}")
+    public ResponseEntity<List<PrestamoDTO>> listarPorUsuario(@PathVariable String login) {
+        Optional<Usuario> uOpt = usuarioRepository.findByLogin(login);
+        Integer ciUsuario = null;
+        if (uOpt.isPresent() && uOpt.get().getPersona() != null) {
+            Optional<Dato> dOpt = datoRepository.findByCodper(uOpt.get().getPersona().getCodper());
+            if (dOpt.isPresent()) {
+                ciUsuario = dOpt.get().getCi();
+            }
+        }
+        final Integer targetCi = ciUsuario;
+        List<PrestamoDTO> dtos = mprestamoRepository.findAll().stream()
+                .filter(m -> (targetCi != null && targetCi.equals(m.getCi())) || login.equalsIgnoreCase(m.getLogin()))
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     private PrestamoDTO mapToDTO(Mprestamo m) {
         PrestamoDTO dto = new PrestamoDTO();
         dto.setCodp(m.getCodp());
@@ -131,14 +150,21 @@ public class PrestamoController {
         if (dto.getFini() == null || dto.getFfin() == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Las fechas de inicio y fin son obligatorias"));
         }
+        if (dto.getFfin().isBefore(dto.getFini())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "La fecha de fin no puede ser anterior a la fecha de inicio"));
+        }
 
         Optional<Dato> datoOpt = datoRepository.findById(dto.getCi());
         if (datoOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "El número de CI " + dto.getCi() + " no está registrado como usuario/lector"));
         }
 
-        // Validar que los ejemplares estén disponibles y activos
+        // Validar que los ejemplares estén disponibles, activos y sin duplicados
+        Set<Integer> codinvsVistos = new HashSet<>();
         for (PrestamoDTO.DetallePrestamoDTO item : dto.getDetalles()) {
+            if (item.getCodinv() == null || !codinvsVistos.add(item.getCodinv())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "No puede incluir el mismo ejemplar más de una vez en el mismo préstamo"));
+            }
             Optional<Ejemplar> ejOpt = ejemplarRepository.findById(item.getCodinv());
             if (ejOpt.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("message", "El ejemplar con código " + item.getCodinv() + " no existe"));

@@ -32,6 +32,14 @@ export class GestionPrestamos implements OnInit {
 
   paginaActual = 1;
   itemsPorPagina = 15;
+  menuAccionesAbierto: number | string | null = null;
+
+  // Préstamo seleccionado para tabla inferior DETALLE DE PRESTAMO
+  selectedPrestamo: Prestamo | null = null;
+
+  // Modal Comprobante de Préstamo (V)
+  showVerModal = false;
+  prestamoAver: Prestamo | null = null;
 
   // Modal Nuevo Préstamo (B-12.1)
   showFormModal = false;
@@ -45,9 +53,23 @@ export class GestionPrestamos implements OnInit {
   confirmMensaje = '';
   confirmAccion: () => void = () => {};
 
+  @HostListener('document:click')
+  onClickOutside() {
+    this.menuAccionesAbierto = null;
+  }
+
   @HostListener('window:resize')
   onWindowResize() {
     this.ajustarItemsPorPagina();
+  }
+
+  toggleMenuAcciones(p: Prestamo, event: Event) {
+    event.stopPropagation();
+    this.menuAccionesAbierto = this.menuAccionesAbierto === p.codp ? null : p.codp || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   ajustarItemsPorPagina() {
@@ -105,6 +127,28 @@ export class GestionPrestamos implements OnInit {
     }
     this.prestamosFiltrados = temp;
     this.paginaActual = 1;
+    if (this.prestamosFiltrados.length > 0) {
+      if (!this.selectedPrestamo || !this.prestamosFiltrados.some(p => p.codp === this.selectedPrestamo?.codp)) {
+        this.selectedPrestamo = this.prestamosFiltrados[0];
+      } else {
+        this.selectedPrestamo = this.prestamosFiltrados.find(p => p.codp === this.selectedPrestamo?.codp) || this.prestamosFiltrados[0];
+      }
+    } else {
+      this.selectedPrestamo = null;
+    }
+  }
+
+  seleccionarPrestamo(p: Prestamo) {
+    this.selectedPrestamo = p;
+  }
+
+  abrirVer(p: Prestamo) {
+    this.prestamoAver = p;
+    this.showVerModal = true;
+  }
+
+  imprimirComprobante() {
+    window.print();
   }
 
   get prestamosPaginados(): Prestamo[] {
@@ -114,6 +158,10 @@ export class GestionPrestamos implements OnInit {
 
   get totalPaginas(): number {
     return Math.max(1, Math.ceil(this.prestamosFiltrados.length / this.itemsPorPagina));
+  }
+
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
   getEmptyPrestamo(): Prestamo {
@@ -153,6 +201,10 @@ export class GestionPrestamos implements OnInit {
     }
     if (!this.currentPrestamo.fini || !this.currentPrestamo.ffin) {
       this.mostrarAviso('Por favor asigne las fechas de inicio y fin del préstamo');
+      return;
+    }
+    if (this.currentPrestamo.ffin < this.currentPrestamo.fini) {
+      this.mostrarAviso('La fecha de fin no puede ser anterior a la fecha de inicio');
       return;
     }
 

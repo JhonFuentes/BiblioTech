@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -24,6 +24,8 @@ export class CatalogoDigital implements OnInit {
   private sanitizer = inject(DomSanitizer);
 
   query = '';
+  filtroTitulo = '';
+  filtroAutor = '';
   selectedCoda?: number;
   selectedCode?: number;
   selectedCodtipo?: number;
@@ -36,7 +38,11 @@ export class CatalogoDigital implements OnInit {
   totalEncontrados = 0;
   cargando = false;
 
-  // B-20.1 Modal Visor de Ejemplar Digital
+  paginaActual = 1;
+  itemsPorPagina = 10;
+  menuAccionesAbierto: number | string | null = null;
+
+  // Modal Visor de Ejemplar Digital
   showViewerModal = false;
   textoVisualizando: Texto | null = null;
   safeDocumentUrl: SafeResourceUrl | null = null;
@@ -45,6 +51,20 @@ export class CatalogoDigital implements OnInit {
   showConfirmDialog = false;
   dialogTipo: 'confirm' | 'aviso' | 'error' | 'success' = 'aviso';
   confirmMensaje = '';
+
+  @HostListener('document:click')
+  onClickOutside() {
+    this.menuAccionesAbierto = null;
+  }
+
+  toggleMenuAcciones(t: Texto, event: Event) {
+    event.stopPropagation();
+    this.menuAccionesAbierto = this.menuAccionesAbierto === t.codt ? null : t.codt || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
+  }
 
   ngOnInit() {
     this.cargarFiltros();
@@ -63,11 +83,14 @@ export class CatalogoDigital implements OnInit {
       this.query.trim() || undefined,
       this.selectedCoda || undefined,
       this.selectedCode || undefined,
-      this.selectedCodtipo || undefined
+      this.selectedCodtipo || undefined,
+      this.filtroTitulo.trim() || undefined,
+      this.filtroAutor.trim() || undefined
     ).subscribe({
       next: (res) => {
         this.resultados = res.items || [];
         this.totalEncontrados = res.total || 0;
+        this.paginaActual = 1;
         this.cargando = false;
       },
       error: () => {
@@ -77,8 +100,23 @@ export class CatalogoDigital implements OnInit {
     });
   }
 
+  get resultadosPaginados(): Texto[] {
+    const start = (this.paginaActual - 1) * this.itemsPorPagina;
+    return this.resultados.slice(start, start + this.itemsPorPagina);
+  }
+
+  get totalPaginas(): number {
+    return Math.max(1, Math.ceil(this.resultados.length / this.itemsPorPagina));
+  }
+
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   limpiarFiltros() {
     this.query = '';
+    this.filtroTitulo = '';
+    this.filtroAutor = '';
     this.selectedCoda = undefined;
     this.selectedCode = undefined;
     this.selectedCodtipo = undefined;

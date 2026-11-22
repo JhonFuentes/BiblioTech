@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { MenuService } from './menu.service';
 
 export interface Rol {
   codr?: number;
@@ -13,6 +14,7 @@ export interface Rol {
 })
 export class RolService {
   private http = inject(HttpClient);
+  private menuService = inject(MenuService);
   private apiUrl = 'http://localhost:8080/api/roles';
 
   listar(filtroNombre?: string, filtroEstado?: number): Observable<Rol[]> {
@@ -30,18 +32,26 @@ export class RolService {
   }
 
   crear(rol: Rol): Observable<Rol> {
-    return this.http.post<Rol>(this.apiUrl, rol);
+    return this.http.post<Rol>(this.apiUrl, rol).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 
   modificar(id: number, rol: Rol): Observable<Rol> {
-    return this.http.put<Rol>(`${this.apiUrl}/${id}`, rol);
+    return this.http.put<Rol>(`${this.apiUrl}/${id}`, rol).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 
   eliminar(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 
   habilitar(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/activar`, {});
+    return this.http.post(`${this.apiUrl}/${id}/activar`, {}).pipe(
+      tap(() => this.menuService.notifyMenuChanges())
+    );
   }
 }

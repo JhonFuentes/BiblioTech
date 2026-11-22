@@ -48,16 +48,32 @@ public class AuthController {
 
         Usuario user = userOpt.get();
 
-        if (user.getPasswd() == null || !passwordEncoder.matches(request.getPassword(), user.getPasswd())) {
+        boolean passwordMatches = false;
+        if (user.getPasswd() != null && request.getPassword() != null) {
+            String stored = user.getPasswd();
+            if (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$")) {
+                passwordMatches = passwordEncoder.matches(request.getPassword(), stored);
+            } else {
+                passwordMatches = request.getPassword().equals(stored) || passwordEncoder.matches(request.getPassword(), stored);
+            }
+        }
+
+        if (!passwordMatches) {
             throw new InvalidCredentialsException("Contraseña incorrecta");
         }
 
-        if (user.getEstado() == null || user.getEstado() != 1) {
+        if (user.getEstado() == null || user.getEstado() != 1
+                || (user.getPersona() != null && user.getPersona().getEstado() != null && user.getPersona().getEstado() != 1)) {
             throw new InactiveUserException("Usuario inactivo");
         }
 
-        String nombreCompleto = user.getPersona() != null ? 
-                user.getPersona().getNombre() + " " + user.getPersona().getAp() : "Usuario";
+        String nombreCompleto = "Usuario";
+        if (user.getPersona() != null) {
+            String nom = user.getPersona().getNombre() != null ? user.getPersona().getNombre() : "";
+            String ap = user.getPersona().getAp() != null ? user.getPersona().getAp() : "";
+            String am = user.getPersona().getAm() != null ? user.getPersona().getAm() : "";
+            nombreCompleto = (nom + " " + ap + " " + am).trim().replaceAll("\\s+", " ");
+        }
         String foto = user.getPersona() != null ? user.getPersona().getFoto() : null;
         
         String token = jwtUtil.generateToken(user.getLogin());

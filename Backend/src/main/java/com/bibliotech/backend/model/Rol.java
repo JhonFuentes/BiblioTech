@@ -2,17 +2,9 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "ROLES")
 public class Rol {
@@ -29,15 +21,11 @@ public class Rol {
 
     // Cardinalidad 1 a N: Un rol asignado a usuarios en ROLUSU
     @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private List<RolUsu> rolUsus;
 
     // Cardinalidad 1 a N: Un rol asignado a menús en ROLME
     @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private List<RolMe> rolMes;
 
@@ -45,5 +33,56 @@ public class Rol {
         this.codr = codr;
         this.nombre = nombre;
         this.estado = estado;
+    }
+
+    public Rol() {
+    }
+
+    public Rol(Integer codr, String nombre, Integer estado, List<RolUsu> rolUsus, List<RolMe> rolMes) {
+        this.codr = codr;
+        this.nombre = nombre;
+        this.estado = estado;
+        this.rolUsus = rolUsus;
+        this.rolMes = rolMes;
+    }
+
+    public Integer getCodr() {
+        return codr;
+    }
+
+    public void setCodr(Integer codr) {
+        this.codr = codr;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public List<RolUsu> getRolUsus() {
+        return rolUsus;
+    }
+
+    public void setRolUsus(List<RolUsu> rolUsus) {
+        this.rolUsus = rolUsus;
+    }
+
+    public List<RolMe> getRolMes() {
+        return rolMes;
+    }
+
+    public void setRolMes(List<RolMe> rolMes) {
+        this.rolMes = rolMes;
     }
 }

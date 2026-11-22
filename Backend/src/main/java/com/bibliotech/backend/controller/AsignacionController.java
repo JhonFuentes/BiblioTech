@@ -58,16 +58,18 @@ public class AsignacionController {
     public ResponseEntity<?> toggleMePro(@RequestBody Map<String, Object> body) {
         Integer codm = Integer.parseInt(body.get("codm").toString());
         Integer codp = Integer.parseInt(body.get("codp").toString());
-        boolean asignar = Boolean.parseBoolean(body.get("asignar").toString());
+        Object val = body.get("asignar") != null ? body.get("asignar") : body.get("asignado");
+        boolean asignar = val != null && Boolean.parseBoolean(val.toString());
 
         MeProId id = new MeProId(codm, codp);
         if (asignar) {
             if (!meProRepository.existsById(id)) {
-                meProRepository.save(new MePro(codm, codp));
+                meProRepository.saveAndFlush(new MePro(codm, codp));
             }
         } else {
             if (meProRepository.existsById(id)) {
                 meProRepository.deleteById(id);
+                meProRepository.flush();
             }
         }
         return ResponseEntity.ok(Map.of("success", true));
@@ -98,16 +100,18 @@ public class AsignacionController {
     public ResponseEntity<?> toggleRolMe(@RequestBody Map<String, Object> body) {
         Integer codr = Integer.parseInt(body.get("codr").toString());
         Integer codm = Integer.parseInt(body.get("codm").toString());
-        boolean asignar = Boolean.parseBoolean(body.get("asignar").toString());
+        Object val = body.get("asignar") != null ? body.get("asignar") : body.get("asignado");
+        boolean asignar = val != null && Boolean.parseBoolean(val.toString());
 
         RolMeId id = new RolMeId(codr, codm);
         if (asignar) {
             if (!rolMeRepository.existsById(id)) {
-                rolMeRepository.save(new RolMe(codr, codm));
+                rolMeRepository.saveAndFlush(new RolMe(codr, codm));
             }
         } else {
             if (rolMeRepository.existsById(id)) {
                 rolMeRepository.deleteById(id);
+                rolMeRepository.flush();
             }
         }
         return ResponseEntity.ok(Map.of("success", true));
@@ -138,16 +142,18 @@ public class AsignacionController {
     public ResponseEntity<?> toggleRolUsu(@RequestBody Map<String, Object> body) {
         String login = body.get("login").toString();
         Integer codr = Integer.parseInt(body.get("codr").toString());
-        boolean asignar = Boolean.parseBoolean(body.get("asignar").toString());
+        Object val = body.get("asignar") != null ? body.get("asignar") : body.get("asignado");
+        boolean asignar = val != null && Boolean.parseBoolean(val.toString());
 
         RolUsuId id = new RolUsuId(codr, login);
         if (asignar) {
             if (!rolUsuRepository.existsById(id)) {
-                rolUsuRepository.save(new RolUsu(codr, login));
+                rolUsuRepository.saveAndFlush(new RolUsu(codr, login));
             }
         } else {
             if (rolUsuRepository.existsById(id)) {
                 rolUsuRepository.deleteById(id);
+                rolUsuRepository.flush();
             }
         }
         return ResponseEntity.ok(Map.of("success", true));

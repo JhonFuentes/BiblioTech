@@ -8,14 +8,23 @@ import com.bibliotech.backend.model.Telefono;
 import com.bibliotech.backend.model.Usuario;
 import com.bibliotech.backend.repository.PersonaRepository;
 import com.bibliotech.backend.repository.DatoRepository;
+import com.bibliotech.backend.repository.MprestamoRepository;
 import com.bibliotech.backend.repository.TelefonoRepository;
 import com.bibliotech.backend.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,11 +41,25 @@ public class PersonaController {
     private TelefonoRepository telefonoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private MprestamoRepository mprestamoRepository;
+
+    private static final String UPLOAD_DIR = "uploads/";
 
     @GetMapping
     public ResponseEntity<List<PersonaDTO>> listarPersonas() {
-        List<PersonaDTO> lista = personaRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+        List<PersonaDTO> lista = personaRepository.findAll().stream()
+                .sorted(Comparator.comparing(Persona::getCodper))
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonaDTO> obtenerPersona(@PathVariable Integer id) {
+        return personaRepository.findById(id)
+                .map(p -> ResponseEntity.ok(this.mapToDTO(p)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/page")
@@ -93,17 +116,86 @@ public class PersonaController {
         return dto;
     }
 
+    @PostMapping("/uploadFoto")
+    public ResponseEntity<?> subirFotoPersona(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "codper", required = false) Integer codper) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Por favor seleccione un archivo de imagen."));
+        }
+        try {
+            File dir = new File(UPLOAD_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.lastIndexOf(".") > 0) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            }
+
+            if (!extension.equals(".jpg") && !extension.equals(".jpeg") && !extension.equals(".png") && !extension.equals(".webp")) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Solo se permiten archivos de imagen (.jpg, .jpeg, .png, .webp)."));
+            }
+
+            String fileName = (codper != null ? codper : ("p" + (System.currentTimeMillis() % 100000000L))) + extension;
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.write(path, file.getBytes());
+
+            if (codper != null) {
+                personaRepository.findById(codper).ifPresent(p -> {
+                    p.setFoto(fileName);
+                    personaRepository.save(p);
+                });
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "foto", fileName));
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Error al subir la foto."));
+        }
+    }
+
+    private String validarDatosPersona(PersonaDTO dto, Integer excludeCodper) {
+        if (dto.getCi() == null || dto.getCi() <= 0) {
+            return "La Cédula de Identidad (CI) es obligatoria";
+        }
+        if (dto.getNombre() == null || dto.getNombre().trim().isEmpty()) {
+            return "El nombre de la persona es obligatorio";
+        }
+        boolean tieneAp = dto.getAp() != null && !dto.getAp().trim().isEmpty();
+        boolean tieneAm = dto.getAm() != null && !dto.getAm().trim().isEmpty();
+        if (!tieneAp && !tieneAm) {
+            return "Debe ingresar por lo menos un apellido (Paterno o Materno)";
+        }
+        List<String> telsValidos = dto.getTelefonos() == null ? List.of() :
+                dto.getTelefonos().stream().filter(t -> t != null && !t.trim().isEmpty()).toList();
+        if (telsValidos.isEmpty()) {
+            return "Debe registrar por lo menos un número de teléfono";
+        }
+        Optional<Dato> porCi = datoRepository.findById(dto.getCi());
+        if (porCi.isPresent() && (excludeCodper == null || !porCi.get().getCodper().equals(excludeCodper))) {
+            return "La cédula " + dto.getCi() + " ya está registrada para otra persona";
+        }
+        return null;
+    }
+
     @PostMapping
     @Transactional
-    public ResponseEntity<PersonaDTO> crearPersona(@RequestBody PersonaDTO dto) {
+    public ResponseEntity<?> crearPersona(@RequestBody PersonaDTO dto) {
+        String errorValidacion = validarDatosPersona(dto, null);
+        if (errorValidacion != null) {
+            return ResponseEntity.badRequest().body(Map.of("message", errorValidacion));
+        }
+
         Persona p = new Persona();
-        p.setNombre(dto.getNombre());
-        p.setAp(dto.getAp());
-        p.setAm(dto.getAm());
-        p.setGenero(dto.getGenero());
+        p.setNombre(dto.getNombre().trim());
+        p.setAp(dto.getAp() != null ? dto.getAp().trim() : "");
+        p.setAm(dto.getAm() != null ? dto.getAm().trim() : "");
+        p.setGenero(dto.getGenero() != null ? dto.getGenero() : "M");
         p.setEstado(1);
-        p.setTipoper(dto.getTipoper());
-        p.setFoto(dto.getFoto());
+        p.setTipoper(dto.getTipoper() != null ? dto.getTipoper() : "P");
+        p.setFoto(dto.getFoto() != null && dto.getFoto().length() > 40 ? dto.getFoto().substring(0, 40) : dto.getFoto());
         p = personaRepository.save(p);
 
         if (dto.getCi() != null) {
@@ -136,14 +228,21 @@ public class PersonaController {
     public ResponseEntity<?> modificarPersona(@PathVariable Integer id, @RequestBody PersonaDTO dto) {
         Optional<Persona> pOpt = personaRepository.findById(id);
         if (pOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        String errorValidacion = validarDatosPersona(dto, id);
+        if (errorValidacion != null) {
+            return ResponseEntity.badRequest().body(Map.of("message", errorValidacion));
+        }
+
         Persona p = pOpt.get();
-        p.setNombre(dto.getNombre());
-        p.setAp(dto.getAp());
-        p.setAm(dto.getAm());
-        p.setGenero(dto.getGenero());
-        p.setTipoper(dto.getTipoper());
+        p.setNombre(dto.getNombre().trim());
+        p.setAp(dto.getAp() != null ? dto.getAp().trim() : "");
+        p.setAm(dto.getAm() != null ? dto.getAm().trim() : "");
+        p.setGenero(dto.getGenero() != null ? dto.getGenero() : p.getGenero());
+        p.setTipoper(dto.getTipoper() != null ? dto.getTipoper() : p.getTipoper());
         if (dto.getFoto() != null && !dto.getFoto().trim().isEmpty()) {
-            p.setFoto(dto.getFoto());
+            String foto = dto.getFoto().trim();
+            p.setFoto(foto.length() > 40 ? foto.substring(0, 40) : foto);
         }
         personaRepository.save(p);
 
@@ -153,10 +252,12 @@ public class PersonaController {
             if (dOpt.isPresent()) {
                 Dato existing = dOpt.get();
                 if (!existing.getCi().equals(dto.getCi())) {
+                    Integer oldCi = existing.getCi();
+                    Dato d = new Dato(dto.getCi(), id);
+                    datoRepository.saveAndFlush(d);
+                    mprestamoRepository.actualizarCi(oldCi, dto.getCi());
                     datoRepository.delete(existing);
                     datoRepository.flush();
-                    Dato d = new Dato(dto.getCi(), id);
-                    datoRepository.save(d);
                 }
             } else {
                 Dato d = new Dato(dto.getCi(), id);
@@ -164,6 +265,10 @@ public class PersonaController {
             }
         } else {
             if (dOpt.isPresent()) {
+                Integer oldCi = dOpt.get().getCi();
+                if (!mprestamoRepository.findByCi(oldCi).isEmpty()) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "No se puede eliminar la cédula porque la persona tiene préstamos registrados"));
+                }
                 datoRepository.delete(dOpt.get());
                 datoRepository.flush();
             }
@@ -222,7 +327,7 @@ public class PersonaController {
         
         Optional<Usuario> userOpt = usuarioRepository.findByLogin(acceso.getLogin());
         if (userOpt.isPresent()) {
-            return ResponseEntity.badRequest().body("{\"message\": \"El nombre de usuario ya está en uso\"}");
+            return ResponseEntity.badRequest().body(Map.of("message", "El nombre de usuario ya está en uso"));
         }
         
         Usuario u = new Usuario();

@@ -157,6 +157,10 @@ export class GestionUsuarios implements OnInit {
     return Math.max(1, Math.ceil(this.personasFiltradas.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   getFotoUrl(p: Persona): string {
     if (p && p.foto) {
       return `http://localhost:8080/fotos/${p.foto}`;
@@ -182,10 +186,19 @@ export class GestionUsuarios implements OnInit {
   }
 
   onFotoSeleccionada(event: any) {
-    const file = event.target.files[0];
+    const file: File = event.target.files[0];
     if (file) {
-      this.selectedFotoNombre = file.name;
-      this.currentPersona.foto = file.name;
+      this.selectedFotoNombre = 'Subiendo ' + file.name + '...';
+      this.personaService.uploadFoto(file, this.currentPersona.codper).subscribe({
+        next: (res) => {
+          this.selectedFotoNombre = file.name;
+          this.currentPersona.foto = res.foto;
+        },
+        error: (err) => {
+          this.selectedFotoNombre = '';
+          this.mostrarError(err?.error?.message || 'Error al subir la foto de la persona');
+        }
+      });
     }
   }
 
@@ -205,8 +218,37 @@ export class GestionUsuarios implements OnInit {
   }
 
   guardarPersona() {
+    if (!this.currentPersona.ci || Number(this.currentPersona.ci) <= 0) {
+      this.mostrarAviso('La Cédula de Identidad (CI) es obligatoria');
+      return;
+    }
     if (!this.currentPersona.nombre || !this.currentPersona.nombre.trim()) {
-      this.mostrarAviso('Por favor ingrese el nombre de la persona');
+      this.mostrarAviso('El nombre de la persona es obligatorio');
+      return;
+    }
+    const tieneApPaterno = !!(this.currentPersona.ap && this.currentPersona.ap.trim());
+    const tieneApMaterno = !!(this.currentPersona.am && this.currentPersona.am.trim());
+    if (!tieneApPaterno && !tieneApMaterno) {
+      this.mostrarAviso('Debe ingresar por lo menos un apellido (Paterno o Materno)');
+      return;
+    }
+
+    if (this.nuevoTelefono !== null && this.nuevoTelefono !== undefined && String(this.nuevoTelefono).trim() !== '') {
+      this.agregarTelefono();
+    }
+
+    const telefonosValidos = (this.currentPersona.telefonos || []).filter(t => t && String(t).trim() !== '');
+    if (telefonosValidos.length === 0) {
+      this.mostrarAviso('Debe registrar por lo menos un número de teléfono');
+      return;
+    }
+    this.currentPersona.telefonos = telefonosValidos;
+
+    // Verificar duplicado de CI en frontend
+    const ciNum = Number(this.currentPersona.ci);
+    const ciDuplicado = this.personas.find(p => p.ci === ciNum && (!this.editMode || p.codper !== this.currentPersona.codper));
+    if (ciDuplicado) {
+      this.mostrarAviso(`La cédula ${ciNum} ya se encuentra registrada para otra persona`);
       return;
     }
 

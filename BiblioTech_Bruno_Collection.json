@@ -1,0 +1,3787 @@
+{
+  "name": "BiblioTech API (Proyecto 2026)",
+  "version": "1",
+  "items": [
+    {
+      "uid": "c84b5da3104244b1a7f65",
+      "name": "01. Autenticación (Login JWT)",
+      "type": "folder",
+      "seq": 1,
+      "items": [
+        {
+          "uid": "0293279ba70748c89759f",
+          "name": "1. Login Admin (Guarda Token Automáticamente)",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/auth/login",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "764007abdd9946029019b",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"admin\",\n  \"password\": \"1234\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": "if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {\n  bru.setEnvVar(\"token\", res.getBody().token);\n  bru.setVar(\"token\", res.getBody().token);\n}"
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b45d0dfe04bd432fbc639",
+          "name": "2. Login JhonFuentes",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/auth/login",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "2b2851b023fa4e69905ea",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"JhonFuentes\",\n  \"password\": \"1234\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": "if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {\n  bru.setEnvVar(\"token\", res.getBody().token);\n  bru.setVar(\"token\", res.getBody().token);\n}"
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "38baaf2f1ef24fea97013",
+          "name": "3. Login Estudiante (juan)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/auth/login",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "aa47e1e673bb40f09ff1c",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"juan\",\n  \"password\": \"123456\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": "if (res.getStatus() === 200 && res.getBody() && res.getBody().token) {\n  bru.setEnvVar(\"token\", res.getBody().token);\n  bru.setVar(\"token\", res.getBody().token);\n}"
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "7ab62e995d124188b849e",
+      "name": "02. Gestión de Usuarios y Personas (B-4)",
+      "type": "folder",
+      "seq": 2,
+      "items": [
+        {
+          "uid": "3614b944e5fa4ac9a6871",
+          "name": "1. Listar Personas",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/personas",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "984286f16e6547099dfb7",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "cddd7caf8bed4389b3ad3",
+          "name": "2. Listar Personas Paginado (Filtro y Tipo)",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/personas/page?filtro=&tipoper=&page=0&size=10",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "cb781f345bf440deb78da",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "ffb3ee4247eb4a9bb4e79",
+          "name": "3. Obtener Persona por ID",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/personas/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "7df745f481554d0f95588",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "6ab3e22691404b238a613",
+          "name": "4. Crear Nueva Persona",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/personas",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "0a0485d4c3624fe68b3f6",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "c59078510b324835938f1",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"ci\": 8112233,\n  \"nombre\": \"Pedro\",\n  \"ap\": \"Alvarado\",\n  \"am\": \"Silva\",\n  \"genero\": \"M\",\n  \"estado\": 1,\n  \"tipoper\": \"P\",\n  \"foto\": null,\n  \"telefonos\": [\n    \"70099887\",\n    \"2211334\"\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "d4a836906867457b95d35",
+          "name": "5. Modificar Persona",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/personas/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "a5f1b7d48d5d4de6a0de4",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "38c65ac843764fe0848ab",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codper\": 1,\n  \"ci\": 8451230,\n  \"nombre\": \"Jhon\",\n  \"ap\": \"Fuentes\",\n  \"am\": \"Mamani\",\n  \"genero\": \"M\",\n  \"estado\": 1,\n  \"tipoper\": \"A\",\n  \"foto\": null,\n  \"telefonos\": [\n    \"70112233\",\n    \"2244556\"\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "567744cf7ebb454fa9c2f",
+          "name": "6.Asignar Credenciales de Acceso (B-4.3)",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/personas/6/acceso",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "6529cf4ac5fc47a6b9bff",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "7d85a85dea604568a7ac5",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"luism\",\n  \"password\": \"1234\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b3e764724ca4428f81b46",
+          "name": "7. Modificar Contraseña de Acceso",
+          "type": "http-request",
+          "seq": 7,
+          "request": {
+            "url": "http://localhost:8080/api/personas/1/acceso",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "bd1513def5754f01ab89b",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "cd23311fa25b45478f124",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"JhonFuentes\",\n  \"password\": \"1234\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "cf9b92dac00143d3aa836",
+          "name": "8. Dar de Baja Persona",
+          "type": "http-request",
+          "seq": 8,
+          "request": {
+            "url": "http://localhost:8080/api/personas/7",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "79d1204502e34be9858a0",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "a8d63d1c9b6a42f38fd6d",
+          "name": "9. Habilitar Persona",
+          "type": "http-request",
+          "seq": 9,
+          "request": {
+            "url": "http://localhost:8080/api/personas/7/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "c5a0d712bede43d0b4f0a",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "8c66db57031140dc9914f",
+      "name": "03. Gestión de Áreas (B-6)",
+      "type": "folder",
+      "seq": 3,
+      "items": [
+        {
+          "uid": "3f58eb0c027645af87950",
+          "name": "1. Listar Áreas",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/areas",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "dde1b0d1c1c54dbeaffab",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "18c4beb4ac3041558067c",
+          "name": "2. Listar Áreas Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/areas/page?filtro=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "2b0649dc7e924bcf80eb9",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "91a7ab0c38984c2b985fe",
+          "name": "3. Crear Área",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/areas",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "0df57f96546e4157b406b",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "f36b6f3ecb6941429b46c",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Inteligencia Artificial\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "aff01695ad1f40d1a6579",
+          "name": "4. Modificar Área",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/areas/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "f109fbed64df44cdb9965",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "0f4f895a4c1f4fb5b74c3",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"coda\": 1,\n  \"nombre\": \"Tecnología e Informática\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "fc4a91a2393141b2af110",
+          "name": "5. Dar de Baja Área",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/areas/8",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "5a18dbee257a431e8d8ee",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "76c1f38b3d0c4cab8c1a9",
+          "name": "6. Habilitar Área",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/areas/8/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "2191da8abcde4b1ab3198",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "cf02c810e2514363b27e0",
+      "name": "04. Gestión de Editoriales (B-7)",
+      "type": "folder",
+      "seq": 4,
+      "items": [
+        {
+          "uid": "2cc0f08abc4b48f1abeb5",
+          "name": "1. Listar Editoriales",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "954550b927034045ad359",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "9be3c57fd2794adb971a5",
+          "name": "2. Listar Editoriales Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales/page?filtro=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "64e6ac784a564efc948bd",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b3e3769dbfeb40019bb19",
+          "name": "3. Crear Editorial",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "487a128ac9a54befb82cf",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "ec6afc257a1845eda37ad",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Springer Nature\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "e2014259d3124064b5d77",
+          "name": "4. Modificar Editorial",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "82dee0eeb20c4d64ae2a3",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "7940426981224093b5758",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"code\": 1,\n  \"nombre\": \"Pearson Educación\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "7bea3b4d67e74605a7901",
+          "name": "5. Dar de Baja Editorial",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales/7",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "60ce3f1b18b146f68bd6d",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "e4f9e104b3894c14b6885",
+          "name": "6. Habilitar Editorial",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/editoriales/7/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "a6969d364d604e15a26a4",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "006534b73f044b0e882bd",
+      "name": "05. Gestión de Tipos (B-8)",
+      "type": "folder",
+      "seq": 5,
+      "items": [
+        {
+          "uid": "83f62bcbdb344b2098d4f",
+          "name": "1. Listar Tipos",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/tipos",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "86a32d8c98284b11b38e6",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "5aa7985ea970483a8244e",
+          "name": "2. Listar Tipos Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/tipos/page?filtro=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "8c7507a20d9f416582998",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b8342c7363244b93a8cf5",
+          "name": "3. Crear Tipo (sw: 0=Físico, 1=Digital)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/tipos",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "52ba58569a4e4214a52a5",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "bd4486b8bf80426d9a047",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Artículo IEEE\",\n  \"estado\": 1,\n  \"sw\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "d2a9180354414b3784786",
+          "name": "4. Modificar Tipo",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/tipos/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "86f3178690b24bbaaa6b7",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "13d7f9adf309421a86e6b",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codtipo\": 1,\n  \"nombre\": \"Libro Impreso\",\n  \"estado\": 1,\n  \"sw\": 0\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "5bcf93a8e4bc4a3198aa8",
+          "name": "5. Dar de Baja Tipo",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/tipos/6",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "0f7005e6e03b436481568",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "fb8057089aa043d9b9568",
+          "name": "6. Habilitar Tipo",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/tipos/6/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "d9b7b433af41435fa0580",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "93edda03add843228abca",
+      "name": "06. Gestión de Autores (B-9)",
+      "type": "folder",
+      "seq": 6,
+      "items": [
+        {
+          "uid": "b6031aee16974d7bbad71",
+          "name": "1. Listar Autores",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/autores",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "3b38afec367040cb8a0c6",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "feb018544468488095ceb",
+          "name": "2. Listar Autores Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/autores/page?filtro=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "35721d2bf7ea4873b41a7",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "c5bdc95a883041cb98a18",
+          "name": "3. Crear Autor",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/autores",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "0e19abaa0ac14b58b47fc",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "f6012070222a4aceb8f0e",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Bjarne\",\n  \"ap\": \"Stroustrup\",\n  \"am\": \"\",\n  \"genero\": \"M\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "d751f5a52a8149278326d",
+          "name": "4. Modificar Autor",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/autores/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "d418c31587a64adabe341",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "5e635a5bc4ca4f76b5735",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"coda\": 1,\n  \"nombre\": \"Robert\",\n  \"ap\": \"Martin\",\n  \"am\": \"Cecil\",\n  \"genero\": \"M\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "240f8074b5634f5fa0f5c",
+          "name": "5. Dar de Baja Autor",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/autores/7",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "7cf18424fa6143bf8d215",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "17f9708b214f4220aa9bc",
+          "name": "6. Habilitar Autor",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/autores/7/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "c469ad2fd4bf4be2bea7c",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "81cadab018894ad8872b2",
+      "name": "07. Gestión de Textos (B-10)",
+      "type": "folder",
+      "seq": 7,
+      "items": [
+        {
+          "uid": "bd5985ca79e14ecead3f8",
+          "name": "1. Listar Textos",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/textos",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "8148ad7357234423bd4e3",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "5ef8f8cd38c141a2bff3c",
+          "name": "2. Listar Textos Paginado (Multifiltro)",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/textos/page?filtro=&coda=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "ff124ede5b0f4fecab31f",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "7b578117557c44c392ac5",
+          "name": "3. Obtener Texto por ID",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/textos/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "4eeb69a331c54ba39fd5b",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "ece8b4fe1b8545a3b8098",
+          "name": "4. Crear Texto con Autores y Tipos",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/textos",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "aa6b3eb30eb246158e522",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "6f5517fdf6bd4193914dc",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"titulo\": \"Arquitectura Limpia\",\n  \"resumen\": \"Estructura y diseño de software para sistemas empresariales.\",\n  \"isbn\": \"978-0134494166\",\n  \"edicion\": 1,\n  \"fechapub\": \"2017-09-20\",\n  \"coda\": 1,\n  \"code\": 1,\n  \"autorIds\": [\n    1\n  ],\n  \"tipos\": [\n    {\n      \"codtipo\": 1,\n      \"docum\": null\n    },\n    {\n      \"codtipo\": 2,\n      \"docum\": \"clean-code-sample.pdf\"\n    }\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "f9b94b43094f4e78b29cf",
+          "name": "5. Modificar Texto",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/textos/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "086cb88483714eaba3fae",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "b3ffc3572a904a47962cb",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codt\": 1,\n  \"titulo\": \"Clean Code: Manual de desarrollo ágil de software\",\n  \"resumen\": \"Principios, patrones y prácticas para escribir código limpio y mantenible.\",\n  \"isbn\": \"978-0132350884\",\n  \"edicion\": 1,\n  \"fechapub\": \"2008-08-01\",\n  \"coda\": 1,\n  \"code\": 1,\n  \"autorIds\": [\n    1\n  ],\n  \"tipos\": [\n    {\n      \"codtipo\": 1,\n      \"docum\": null\n    },\n    {\n      \"codtipo\": 2,\n      \"docum\": \"clean-code-sample.pdf\"\n    }\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "2aa3eb61e1eb4f3eb05ef",
+          "name": "6. Dar de Baja Texto",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/textos/5",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "dee54b48bd2b47758db4d",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "dab61675dde6413f98805",
+          "name": "7. Habilitar Texto",
+          "type": "http-request",
+          "seq": 7,
+          "request": {
+            "url": "http://localhost:8080/api/textos/5/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "870feb09732c4135bc625",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "21be13930021447f9f1aa",
+      "name": "08. Gestión de Ejemplares (B-11)",
+      "type": "folder",
+      "seq": 8,
+      "items": [
+        {
+          "uid": "c1b142b9bcf944069644b",
+          "name": "1. Listar Ejemplares de un Texto",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares?codt=1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "f7435ad33fd94d3683643",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "65f551abf43a47d0a5999",
+          "name": "2. Listar Ejemplares Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares/page?codt=1&estado=1&page=0&size=10",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "cdafa545fad84a138d8d4",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "7826b128b2d44e718c9c7",
+          "name": "3. Listar Ejemplares Libres (Para Préstamos)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares/libres",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "10369c0465b141d59cb24",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "e230cff88d944e6a9471b",
+          "name": "4. Crear Nuevo Ejemplar (B-11.1)",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "35fa151d25524f3e9dead",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "b3324aed2703422e85c84",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codinv\": 1004,\n  \"codt\": 1,\n  \"disponible\": 1,\n  \"estado\": 1,\n  \"per_resp\": \"admin\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "e3f57c7235db47ce8790c",
+          "name": "5. Modificar Nro. Inventario Ejemplar (B-11.2)",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares/1003",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "617abc613bd94d8ca2a87",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "21bfca57c1f645038dbca",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codinv\": 1005,\n  \"codt\": 1,\n  \"disponible\": 1,\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "21f1012b4d5047f3b790f",
+          "name": "6. Dar de Baja Ejemplar",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares/5001",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "c527ceba3a5143e5acf0d",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "4c1d4b61e62247fb9057d",
+          "name": "7. Habilitar Ejemplar",
+          "type": "http-request",
+          "seq": 7,
+          "request": {
+            "url": "http://localhost:8080/api/ejemplares/5001/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "e67c5b78d5b84f33919f5",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "a8a89e4dae054b398a726",
+      "name": "09. Préstamos y Consulta Móvil (B-12 y 8.1)",
+      "type": "folder",
+      "seq": 9,
+      "items": [
+        {
+          "uid": "77351e86a3324db58c1a5",
+          "name": "1. Listar Todos los Préstamos",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "a0a77d3a2df2419484794",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "131b66ace0c14c2388e5b",
+          "name": "2. Listar Préstamos Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos/page?estudiante=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "a096655111704e5481f7f",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "73b3c0027216423b96481",
+          "name": "3. Obtener Préstamo por ID",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "6e973f1c800242869edd1",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "a8a046468531495e85ec8",
+          "name": "4. Consulta Móvil: Préstamos por Usuario Login (Sección 8.1)",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos/usuario/juan",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "d1638b2e06b64e8ab0a31",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "f77e6f97ae284c3187cc0",
+          "name": "5. Registrar Nuevo Préstamo (B-12.1)",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "31ffefa649dc4ba689c86",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "d59115b2a427451c80aa5",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"fecha\": \"2026-11-18\",\n  \"fini\": \"2026-11-18\",\n  \"ffin\": \"2026-11-25\",\n  \"tipopres\": 1,\n  \"ci\": 9123456,\n  \"login\": \"admin\",\n  \"detalles\": [\n    {\n      \"codinv\": 1002\n    }\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "0530d75aa7fd4f3498fb2",
+          "name": "6. Anular / Eliminar Préstamo (Libera Ejemplares)",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/prestamos/1",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "a854a1cdc32b41f78055f",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "453a8c29001f40ed9b467",
+      "name": "10. Devoluciones y Anulación (B-13 y B-14)",
+      "type": "folder",
+      "seq": 10,
+      "items": [
+        {
+          "uid": "b462fdeacb34481ca8a29",
+          "name": "1. Listar Préstamos con Ejemplares Prestados (B-13)",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/devoluciones/prestamos-pendientes?estadoDetalle=1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "1c888959f01a4a42872a2",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "a49558816cff407cb9a2a",
+          "name": "2. Listar Préstamos con Ejemplares Devueltos (B-13)",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/devoluciones/prestamos-pendientes?estadoDetalle=0",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "d9a8823ecb1046d28f7c6",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "c36f722dd24e4af0832c7",
+          "name": "3. Historial de Devoluciones Paginado (B-14)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/devoluciones/page?estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "8fd0b227ea3d46958bc33",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "9232fe673f6f4b02a6c49",
+          "name": "4. Registrar Devolución de Ejemplares (B-13)",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/devoluciones",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "e84368ad2d5c45c997892",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "c4296e8c6f584a5491511",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codp\": 1,\n  \"login\": \"admin\",\n  \"ejemplaresIds\": [\n    1001\n  ]\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b5f443413c3d4f61b06e4",
+          "name": "5. Anular Devolución (Restaura a Prestado B-14)",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/devoluciones/1/anular",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "5403caee1bac4c27bc925",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "7dffbda7bdb2432ca74a0",
+      "name": "11. Gestión de Roles (B-15)",
+      "type": "folder",
+      "seq": 11,
+      "items": [
+        {
+          "uid": "b80fa961611d4aa79ade7",
+          "name": "1. Listar Roles",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/roles",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "841c15d1f3e84863bb436",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "a1da24e801804762a366b",
+          "name": "2. Listar Roles Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/roles/page?filtro=&estado=1&page=0&size=15",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "8b4d59daa6cc470989efa",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "ead4b6793337441eacf99",
+          "name": "3. Crear Rol",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/roles",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "2c87b40e8b704fc2b532e",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "b14f769f201541b1bf044",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Auxiliar de Biblioteca\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "61bc2bd1825c4689ac905",
+          "name": "4. Modificar Rol",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/roles/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "51c08d4ca6f64b51b0ea5",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "26b817a7117d42e4a6b3e",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codr\": 1,\n  \"nombre\": \"Administrador\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "3bf027f9b54c4dfebc650",
+          "name": "5. Dar de Baja Rol",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/roles/3",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "6c8bc945042a4b548f78a",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "0660b14d7c6746bfb74e1",
+          "name": "6. Habilitar Rol",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/roles/3/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "cd991a678c2a40dbb7513",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "19691d3149804ae9936cf",
+      "name": "12. Gestión de Menús y Navegación (B-16)",
+      "type": "folder",
+      "seq": 12,
+      "items": [
+        {
+          "uid": "85fd13a52af24dcba6235",
+          "name": "1. Listar Menús CRUD",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "7c79ffcffe924ae882dad",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "921be850af584cb989c7d",
+          "name": "2. Listar Menús Paginado",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud/page?filtro=&estado=1&page=0&size=10",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "f43299f6301d443cb14c5",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "9aa3012cb77a4dd5b0540",
+          "name": "3. Roles de un Usuario (Barra de Navegación)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/menu/usuario/admin/roles",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "2e8b7ff98c384e0e8e41a",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "8cabbe0bbafd4bce8d758",
+          "name": "4. Menús y Procesos de un Rol",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/menu/rol/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "23fe9d25d0a744249d532",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "b555985a2f054c9ab6d85",
+          "name": "5. Crear Menú",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "c68b2f713ad8426e96b82",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "03061e06cf0d48bc85b89",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"Reportes Estadísticos\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "00191dca98e64a339ebce",
+          "name": "6. Modificar Menú",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud/1",
+            "method": "PUT",
+            "headers": [
+              {
+                "uid": "e1fd8719ee3042aea6463",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "c85f6d38f4464343a5414",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codm\": 1,\n  \"nombre\": \"Administración\",\n  \"estado\": 1\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "3f3dbaf5805a406d85495",
+          "name": "7. Dar de Baja Menú",
+          "type": "http-request",
+          "seq": 7,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud/3",
+            "method": "DELETE",
+            "headers": [
+              {
+                "uid": "1d983c01f577437daa15c",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "909798a3f1264329a1ca7",
+          "name": "8. Habilitar Menú",
+          "type": "http-request",
+          "seq": 8,
+          "request": {
+            "url": "http://localhost:8080/api/menu/crud/3/activar",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "6573fc43ef704293a12b2",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "5ef5dfc4014449aa80dad",
+      "name": "13. Asignaciones RBAC (B-17, B-18, B-19)",
+      "type": "folder",
+      "seq": 13,
+      "items": [
+        {
+          "uid": "139219477524466b92367",
+          "name": "1. Listar Procesos de un Menú (MEPRO B-17)",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/mepro/menu/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "195db57dfeab4a7099db1",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "cc91500df78947b29570e",
+          "name": "2. Asignar/Desasignar Proceso a Menú (MEPRO B-17)",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/mepro/toggle",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "a939ee5e21684de7944ea",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "769fb17eeb044c35adbd4",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codm\": 1,\n  \"codp\": 1,\n  \"asignado\": true\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "71f4f62d58cc4d68908ac",
+          "name": "3. Listar Menús de un Rol (ROLME B-18)",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/rolme/rol/1",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "9094b999b80648ad92360",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "68f6678eeedb4e83b3b0b",
+          "name": "4. Asignar/Desasignar Menú a Rol (ROLME B-18)",
+          "type": "http-request",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/rolme/toggle",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "92ae75023806421da44ed",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "797eb5769b624f8db2319",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"codr\": 1,\n  \"codm\": 1,\n  \"asignado\": true\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "c9f3a0c1b46a459395e76",
+          "name": "5. Listar Roles de un Usuario (ROLUSU B-19)",
+          "type": "http-request",
+          "seq": 5,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/rolusu/usuario/admin",
+            "method": "GET",
+            "headers": [
+              {
+                "uid": "406a902f2c004f4f8db5d",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "f22af0bc04b84f6a8f60d",
+          "name": "6. Asignar/Desasignar Rol a Usuario (ROLUSU B-19)",
+          "type": "http-request",
+          "seq": 6,
+          "request": {
+            "url": "http://localhost:8080/api/asignaciones/rolusu/toggle",
+            "method": "POST",
+            "headers": [
+              {
+                "uid": "254b94db8f044ecf9fd20",
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              },
+              {
+                "uid": "a3d0e60ee21f49e68fbf1",
+                "name": "Authorization",
+                "value": "Bearer {{token}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"login\": \"admin\",\n  \"codr\": 1,\n  \"asignado\": true\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{token}}"
+              }
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    },
+    {
+      "uid": "97836e7a069d458e901ca",
+      "name": "14. Catálogo Digital Público (B-20 / B-20.1)",
+      "type": "folder",
+      "seq": 14,
+      "items": [
+        {
+          "uid": "cd6218a63bb54a278e0b2",
+          "name": "1. Buscar Ejemplares Digitales (Todos)",
+          "type": "http-request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/api/catalogo-digital/busqueda",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "bb76d65ebc2f419782b46",
+          "name": "2. Buscar por Título y Autor",
+          "type": "http-request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/api/catalogo-digital/busqueda?titulo=Clean&autor=Martin",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        },
+        {
+          "uid": "410e85c109454a35a1d1f",
+          "name": "3. Buscar por Área, Editorial y Tipo",
+          "type": "http-request",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/api/catalogo-digital/busqueda?coda=1&code=1&codtipo=2",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "json": null,
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "auth": {
+              "mode": "none",
+              "bearer": null
+            },
+            "script": {
+              "req": null,
+              "res": null
+            },
+            "vars": {
+              "req": [],
+              "res": []
+            },
+            "assertions": [],
+            "tests": null,
+            "docs": ""
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "uid": "69affe0c9155451f92b20",
+      "name": "Local (Spring Boot 8080)",
+      "variables": [
+        {
+          "uid": "fe5a81d4399b44069c62b",
+          "name": "baseUrl",
+          "value": "http://localhost:8080",
+          "type": "text",
+          "enabled": true,
+          "secret": false
+        },
+        {
+          "uid": "a6cebb08101c4a68ab81a",
+          "name": "token",
+          "value": "",
+          "type": "text",
+          "enabled": true,
+          "secret": false
+        }
+      ]
+    }
+  ]
+}

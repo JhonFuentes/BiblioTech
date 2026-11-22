@@ -19,11 +19,11 @@ public interface TextoRepository extends JpaRepository<Texto, Integer> {
         LEFT JOIN Autor a ON a.coda = e.coda
         LEFT JOIN Tipotex tx ON tx.codt = t.codt
         WHERE (cast(:filtro as string) IS NULL OR LOWER(t.titulo) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))
-               OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')))
+               OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))
+               OR LOWER(CONCAT(COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''), ' ', COALESCE(a.nombre, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')))
           AND (:coda IS NULL OR t.coda = :coda)
           AND (:code IS NULL OR t.code = :code)
           AND (:codtipo IS NULL OR tx.codtipo = :codtipo)
-          AND (:estado IS NULL OR t.estado = :estado)
         ORDER BY t.codt ASC
     """)
     Page<Texto> findByFilters(
@@ -31,7 +31,6 @@ public interface TextoRepository extends JpaRepository<Texto, Integer> {
             @Param("coda") Integer coda,
             @Param("code") Integer code,
             @Param("codtipo") Integer codtipo,
-            @Param("estado") Integer estado,
             Pageable pageable
     );
 
@@ -41,19 +40,18 @@ public interface TextoRepository extends JpaRepository<Texto, Integer> {
         LEFT JOIN Autor a ON a.coda = e.coda
         LEFT JOIN Tipotex tx ON tx.codt = t.codt
         WHERE (cast(:filtro as string) IS NULL OR LOWER(t.titulo) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))
-               OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')))
+               OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))
+               OR LOWER(CONCAT(COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''), ' ', COALESCE(a.nombre, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')))
           AND (:coda IS NULL OR t.coda = :coda)
           AND (:code IS NULL OR t.code = :code)
           AND (:codtipo IS NULL OR tx.codtipo = :codtipo)
-          AND (:estado IS NULL OR t.estado = :estado)
         ORDER BY t.codt ASC
     """)
     List<Texto> findListByFilters(
             @Param("filtro") String filtro,
             @Param("coda") Integer coda,
             @Param("code") Integer code,
-            @Param("codtipo") Integer codtipo,
-            @Param("estado") Integer estado
+            @Param("codtipo") Integer codtipo
     );
 
     @Query("SELECT t FROM Texto t WHERE LOWER(TRIM(t.titulo)) = LOWER(TRIM(:titulo)) AND t.edicion = :edicion")

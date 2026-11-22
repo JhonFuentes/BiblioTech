@@ -1,0 +1,8 @@
+{
+  "name": "BiblioTech Movil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
+

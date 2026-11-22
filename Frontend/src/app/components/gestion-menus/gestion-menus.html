@@ -1,22 +1,22 @@
 <div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
   <!-- Cabecera y Filtros (B-16) -->
-  <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+  <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col gap-4 mb-4">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm shrink-0">
         <lucide-icon name="menu" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión de Menús</h3>
-        <p class="text-xs text-slate-500 m-0">Administración de menús de navegación del sistema (B-16)</p>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0 leading-tight">Gestión de Menús</h3>
+        <p class="text-xs text-slate-500 m-0 mt-1">Administración de menús de navegación del sistema</p>
       </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full xl:w-auto">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center w-full justify-between pt-3 border-t border-slate-200/60">
       <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
-        <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
-        <input type="text" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()"
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center"><lucide-icon name="search" class="w-4 h-4"></lucide-icon></span>
+        <input type="text" [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" (input)="aplicarFiltros()"
           class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-4 pl-10 text-sm text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C]"
-          placeholder="Filtrar por Nombre de Menú [Enter]...">
+          placeholder="Filtrar por Nombre de Menú...">
       </div>
 
       <div class="flex items-center gap-4 bg-white/90 border border-slate-300 rounded-lg px-4 py-2.5 text-sm text-slate-700">
@@ -41,49 +41,75 @@
   <!-- Tabla de Menús -->
   <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 relative z-0 overflow-hidden min-h-[300px]">
     <div class="overflow-x-auto w-full">
-      <table class="w-full border-collapse min-w-[500px]">
+      <table class="w-full border-collapse min-w-[420px]">
         <thead>
           <tr>
-            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left">Nombre del Menú</th>
-            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-36">Estado</th>
-            <th class="bg-[#A7E0DB] p-4 text-sm uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-28">Acciones</th>
+            <th class="bg-[#A7E0DB] p-3.5 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-left rounded-tl-2xl">Nombre del Menú</th>
+            <th class="bg-[#A7E0DB] p-3.5 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-32">Estado</th>
+            <th class="bg-[#A7E0DB] p-3.5 text-xs uppercase tracking-wider text-[#2A2F63] border-b-2 border-[#5FB0C9] text-center w-36 rounded-tr-2xl">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let m of menusPaginados"
-            class="border-b border-slate-100 hover:bg-[#E3F6F5]/40 transition-colors"
+            class="border-b border-slate-200 hover:bg-[#E3F6F5]/40 transition-colors"
             [class.opacity-60]="m.estado === 0">
-            <td class="p-4 font-bold text-slate-800 text-sm">
+            <td class="p-3.5 font-bold text-slate-800 text-sm">
               <div class="flex items-center gap-2.5">
                 <lucide-icon name="layers" class="w-4 h-4 text-[#3E6D9C]"></lucide-icon>
                 <span>{{ m.nombre }}</span>
               </div>
             </td>
-            <td class="p-4 text-center">
-              <span *ngIf="m.estado === 1" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Activo
-              </span>
-              <span *ngIf="m.estado === 0" class="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-100/70 px-3 py-1 rounded-full">
-                <span class="w-2 h-2 rounded-full bg-red-500"></span> Baja
+            <td class="p-3.5 text-center">
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full"
+                [ngClass]="m.estado === 1 ? 'text-[#3E6D9C] bg-[#E3F6F5] border border-[#A7E0DB]' : 'text-red-700 bg-red-100 border border-red-200'">
+                <lucide-icon [name]="m.estado === 1 ? 'thumbs-up' : 'thumbs-down'" class="w-3.5 h-3.5"></lucide-icon>
+                {{ m.estado === 1 ? 'Activo' : 'Baja' }}
               </span>
             </td>
-            <td class="p-4 text-center relative">
-              <button (click)="toggleMenuAcciones(m, $event)"
-                class="bg-transparent border border-slate-200 hover:border-slate-300 p-2 rounded-lg text-slate-600 hover:bg-slate-50 transition">
-                <lucide-icon name="more-vertical" class="w-4 h-4"></lucide-icon>
-              </button>
+            <td class="p-3.5 text-center relative">
+              <!-- Botones de Acción en Escritorio -->
+              <div class="hidden sm:flex items-center justify-center gap-2">
+                <button (click)="abrirModificar(m)" title="Modificar Menú"
+                  class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-blue-50 hover:border-blue-200">
+                  <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon>
+                </button>
+                <button *ngIf="m.estado === 1" (click)="eliminar(m)" title="Dar de Baja / Eliminar Menú"
+                  class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-red-50 hover:border-red-200">
+                  <lucide-icon name="trash-2" class="w-4 h-4 text-red-600"></lucide-icon>
+                </button>
+                <button *ngIf="m.estado === 0" (click)="habilitar(m)" title="Habilitar Menú"
+                  class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-emerald-50 hover:border-emerald-200">
+                  <lucide-icon name="refresh-cw" class="w-4 h-4 text-emerald-600"></lucide-icon>
+                </button>
+              </div>
 
-              <div *ngIf="menuAccionesAbierto === m.codm"
-                class="absolute right-4 top-12 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 text-left">
-                <button (click)="abrirModificar(m)" class="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
-                  <lucide-icon name="pencil" class="w-3.5 h-3.5 text-amber-500"></lucide-icon> Modificar
+              <!-- Menú Desplegable 3 Puntos en Móvil -->
+              <div class="sm:hidden flex justify-center relative">
+                <button
+                  class="w-8 h-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 shadow-sm"
+                  (click)="toggleMenuAcciones(m, $event)">
+                  <lucide-icon name="more-vertical" class="w-4 h-4"></lucide-icon>
                 </button>
-                <button *ngIf="m.estado === 1" (click)="eliminar(m)" class="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2">
-                  <lucide-icon name="trash" class="w-3.5 h-3.5 text-red-500"></lucide-icon> Eliminar
-                </button>
-                <button *ngIf="m.estado === 0" (click)="habilitar(m)" class="w-full text-left px-3 py-2 text-xs text-emerald-600 hover:bg-emerald-50 flex items-center gap-2">
-                  <lucide-icon name="refresh-cw" class="w-3.5 h-3.5 text-emerald-500"></lucide-icon> Habilitar
-                </button>
+
+                <div *ngIf="menuAccionesAbierto === m.codm"
+                  (click)="$event.stopPropagation()"
+                  class="absolute right-8 top-0 z-50 w-40 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 text-left animate-fadeIn">
+                  <button
+                    class="w-full px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-blue-50 flex items-center gap-2.5"
+                    (click)="abrirModificar(m); cerrarMenuAcciones()">
+                    <lucide-icon name="pencil" class="w-3.5 h-3.5 text-blue-600"></lucide-icon> Modificar
+                  </button>
+                  <button *ngIf="m.estado === 1"
+                    class="w-full px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2.5"
+                    (click)="eliminar(m); cerrarMenuAcciones()">
+                    <lucide-icon name="trash-2" class="w-3.5 h-3.5 text-red-600"></lucide-icon> Dar de Baja
+                  </button>
+                  <button *ngIf="m.estado === 0"
+                    class="w-full px-3.5 py-2 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2.5"
+                    (click)="habilitar(m); cerrarMenuAcciones()">
+                    <lucide-icon name="refresh-cw" class="w-3.5 h-3.5 text-emerald-600"></lucide-icon> Habilitar
+                  </button>
+                </div>
               </div>
             </td>
           </tr>
@@ -96,47 +122,62 @@
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- Paginador -->
-    <div *ngIf="totalPaginas > 1" class="flex justify-between items-center px-4 py-3 border-t border-slate-100 bg-white/50 text-xs text-slate-500">
-      <div>Página {{ paginaActual }} de {{ totalPaginas }} (Máx. 10 por página)</div>
-      <div class="flex items-center gap-1">
-        <button [disabled]="paginaActual === 1" (click)="paginaActual = paginaActual - 1"
-          class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">Ant.</button>
-        <span class="px-2 font-bold">{{ paginaActual }}</span>
-        <button [disabled]="paginaActual === totalPaginas" (click)="paginaActual = paginaActual + 1"
-          class="px-2.5 py-1 rounded border border-slate-200 bg-white disabled:opacity-40">Sig.</button>
-      </div>
+  <!-- Paginador (10 por página) -->
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl border border-white/50 mt-4 text-sm text-[#2A2F63]">
+    <div class="text-xs sm:text-sm font-medium">
+      Mostrando <span class="font-bold text-[#3E6D9C]">{{ menusPaginados.length }}</span> de <span class="font-bold text-[#3E6D9C]">{{ menusFiltrados.length }}</span> menús
+      <span class="text-slate-400 text-xs ml-1">({{ itemsPorPagina }} por pág.)</span>
+    </div>
+    <div class="flex items-center gap-1.5 flex-wrap justify-center">
+      <button [disabled]="paginaActual === 1" (click)="paginaActual = paginaActual - 1"
+        class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 hover:bg-[#E3F6F5] disabled:opacity-40 text-xs sm:text-sm">&lt;&lt;</button>
+      <button *ngFor="let pag of paginasArray"
+        (click)="paginaActual = pag"
+        [ngClass]="paginaActual === pag ? 'bg-[#3E6D9C] text-white border-[#3E6D9C]' : 'bg-white text-slate-600 border-slate-200 hover:bg-[#E3F6F5]'"
+        class="border py-1.5 px-3 rounded-lg font-bold text-xs sm:text-sm transition-colors cursor-pointer">
+        {{ pag }}
+      </button>
+      <button [disabled]="paginaActual >= totalPaginas" (click)="paginaActual = paginaActual + 1"
+        class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 hover:bg-[#E3F6F5] disabled:opacity-40 text-xs sm:text-sm">&gt;&gt;</button>
     </div>
   </div>
 
-  <!-- Modal Adicionar / Modificar (B-16.1 & B-16.2) -->
-  <div *ngIf="showFormModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-      <div class="bg-[#2A2F63] px-5 py-3.5 flex justify-between items-center text-white">
-        <h4 class="font-bold text-sm m-0">{{ editMode ? 'Modificar Datos del Menú' : 'Adicionar Nuevo Menú' }}</h4>
-        <button (click)="cerrarModal()" class="text-white/80 hover:text-white"><lucide-icon name="x" class="w-4 h-4"></lucide-icon></button>
+  <!-- Modal Adicionar / Modificar -->
+  <div *ngIf="showFormModal" class="fixed inset-0 bg-[#2A2F63]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/50 w-full max-w-md my-auto">
+      <div class="flex items-center justify-between border-b-2 border-[#A7E0DB] pb-3 mb-5">
+        <h3 class="text-xl font-extrabold text-[#2A2F63] m-0 flex items-center gap-2">
+          <lucide-icon [name]="editMode ? 'pencil' : 'menu'" class="w-5 h-5 text-[#3E6D9C]"></lucide-icon>
+          {{ editMode ? 'Modificar Datos del Menú' : 'Adicionar Nuevo Menú' }}
+        </h3>
+        <button (click)="cerrarModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer"><lucide-icon name="x" class="w-5 h-5"></lucide-icon></button>
       </div>
-      <div class="p-5 space-y-3 text-xs">
+      <div class="space-y-4">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Nombre del Menú *</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nombre del Menú <span class="text-red-500 font-bold">*</span></label>
           <input type="text" [(ngModel)]="currentMenu.nombre"
-            class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:outline-none focus:border-[#3E6D9C]"
+            class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
             placeholder="Ej. Préstamos y Devoluciones">
         </div>
       </div>
-      <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
-        <button (click)="cerrarModal()" class="px-3 py-1.5 border border-slate-300 rounded text-slate-600 text-xs font-bold">Cancelar</button>
-        <button (click)="solicitarGuardar()" class="px-4 py-1.5 bg-[#3E6D9C] hover:bg-[#5FB0C9] text-white rounded text-xs font-bold shadow">
-          {{ editMode ? 'Modificar' : 'Guardar' }}
+      <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-slate-200/70">
+        <button (click)="cerrarModal()"
+          class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 px-5 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 text-sm">
+          <lucide-icon name="x" class="w-4 h-4"></lucide-icon> Cancelar
+        </button>
+        <button (click)="solicitarGuardar()"
+          class="bg-gradient-to-r from-[#2A2F63] to-[#3E6D9C] hover:from-[#3E6D9C] hover:to-[#5FB0C9] text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2 text-sm">
+          <lucide-icon name="check" class="w-4 h-4"></lucide-icon> {{ editMode ? 'Modificar' : 'Guardar' }}
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Diálogo B-5 Universal Modal -->
+  <!-- Diálogo Universal Modal -->
   <app-ventana-dialogo
-    [isOpen]="showConfirmDialog"
+    [show]="showConfirmDialog"
     [tipo]="dialogTipo"
     [mensaje]="confirmMensaje"
     [soloAceptar]="dialogSoloAceptar"

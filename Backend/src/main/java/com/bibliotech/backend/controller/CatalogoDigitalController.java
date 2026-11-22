@@ -25,19 +25,45 @@ public class CatalogoDigitalController {
     @GetMapping("/busqueda")
     public ResponseEntity<Map<String, Object>> buscarMaterialDigital(
             @RequestParam(required = false) String query,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) String autor,
             @RequestParam(required = false) Integer coda,
             @RequestParam(required = false) Integer code,
             @RequestParam(required = false) Integer codtipo) {
 
         String q = (query != null && !query.trim().isEmpty()) ? query.trim() : null;
+        String fTitulo = (titulo != null && !titulo.trim().isEmpty()) ? titulo.trim().toLowerCase() : null;
+        String fAutor = (autor != null && !autor.trim().isEmpty()) ? autor.trim().toLowerCase() : null;
 
-        // Obtener textos activos
-        List<Texto> textos = textoRepository.findListByFilters(q, coda, code, codtipo, 1);
+        // Obtener textos que coincidan con los filtros base
+        List<Texto> textos = textoRepository.findListByFilters(q, coda, code, codtipo);
 
         List<TextoDTO> digitales = new ArrayList<>();
         for (Texto t : textos) {
+            if (TextoController.obtenerEstadoTexto(t.getCodt()) != 1) {
+                continue;
+            }
+            if (fTitulo != null && (t.getTitulo() == null || !t.getTitulo().toLowerCase().contains(fTitulo))) {
+                continue;
+            }
+
+            List<Escriben> esc = escribenRepository.findByCodt(t.getCodt());
+            List<String> autoresList = esc.stream().map(e -> {
+                if (e.getAutor() != null) {
+                    Autor a = e.getAutor();
+                    return (a.getNombre() + " " + (a.getAp() != null ? a.getAp() : "") + " " + (a.getAm() != null ? a.getAm() : "")).trim().replaceAll("\\s+", " ");
+                }
+                return "";
+            }).filter(s -> !s.isEmpty()).collect(Collectors.toList());
+
+            if (fAutor != null) {
+                boolean matchAutor = autoresList.stream().anyMatch(a -> a.toLowerCase().contains(fAutor));
+                if (!matchAutor) continue;
+            }
+
             List<Tipotex> txs = tipotexRepository.findByCodt(t.getCodt()).stream()
                     .filter(tx -> tx.getDocum() != null && !tx.getDocum().trim().isEmpty())
+                    .filter(tx -> codtipo == null || Objects.equals(tx.getCodtipo(), codtipo))
                     .toList();
 
             if (!txs.isEmpty()) {
@@ -52,15 +78,8 @@ public class CatalogoDigitalController {
                 dto.setAreaNombre(t.getArea() != null ? t.getArea().getNombre() : "");
                 dto.setCode(t.getCode());
                 dto.setEditorialNombre(t.getEditorial() != null ? t.getEditorial().getNombre() : "");
-                dto.setEstado(t.getEstado());
-
-                List<Escriben> esc = escribenRepository.findByCodt(t.getCodt());
-                dto.setAutoresNombres(esc.stream().map(e -> {
-                    if (e.getAutor() != null) {
-                        return (e.getAutor().getNombre() + " " + (e.getAutor().getAp() != null ? e.getAutor().getAp() : "")).trim();
-                    }
-                    return "";
-                }).collect(Collectors.toList()));
+                dto.setEstado(1);
+                dto.setAutoresNombres(autoresList);
 
                 dto.setTipos(txs.stream().map(tx -> {
                     TextoDTO.TipoTextoDTO tt = new TextoDTO.TipoTextoDTO();

@@ -4,6 +4,8 @@ import com.bibliotech.backend.dto.EjemplarDTO;
 import com.bibliotech.backend.model.Ejemplar;
 import com.bibliotech.backend.model.Texto;
 import com.bibliotech.backend.model.Usuario;
+import com.bibliotech.backend.repository.DdevolRepository;
+import com.bibliotech.backend.repository.DprestamoRepository;
 import com.bibliotech.backend.repository.EjemplarRepository;
 import com.bibliotech.backend.repository.TextoRepository;
 import com.bibliotech.backend.repository.UsuarioRepository;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +35,10 @@ public class EjemplarController {
     private TextoRepository textoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private DprestamoRepository dprestamoRepository;
+    @Autowired
+    private DdevolRepository ddevolRepository;
 
     @GetMapping
     public ResponseEntity<List<EjemplarDTO>> listar(
@@ -109,6 +116,8 @@ public class EjemplarController {
         Ejemplar e = new Ejemplar();
         if (dto.getCodinv() != null) {
             e.setCodinv(dto.getCodinv());
+        } else {
+            e.setCodinv(ejemplarRepository.getNextCodinv());
         }
         e.setCodt(dto.getCodt());
         e.setDisponible(1); // Libre
@@ -120,11 +129,35 @@ public class EjemplarController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> modificar(@PathVariable Integer id, @RequestBody EjemplarDTO dto) {
         Optional<Ejemplar> opt = ejemplarRepository.findById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
 
         Ejemplar e = opt.get();
+
+        // B-11.2: Permitir modificar el Nro. de Inventario (codinv) validando si está repetido
+        if (dto.getCodinv() != null && !dto.getCodinv().equals(id)) {
+            if (ejemplarRepository.existsById(dto.getCodinv())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "El número de inventario " + dto.getCodinv() + " ya está registrado"));
+            }
+
+            Ejemplar nuevo = new Ejemplar();
+            nuevo.setCodinv(dto.getCodinv());
+            nuevo.setCodt(dto.getCodt() != null ? dto.getCodt() : e.getCodt());
+            nuevo.setDisponible(dto.getDisponible() != null ? dto.getDisponible() : e.getDisponible());
+            nuevo.setEstado(dto.getEstado() != null ? dto.getEstado() : e.getEstado());
+            nuevo.setPer_resp(e.getPer_resp());
+            nuevo.setPer_anula(e.getPer_anula());
+
+            Ejemplar guardadoNuevo = ejemplarRepository.saveAndFlush(nuevo);
+            dprestamoRepository.actualizarCodinv(id, dto.getCodinv());
+            ddevolRepository.actualizarCodinv(id, dto.getCodinv());
+            ejemplarRepository.delete(e);
+            ejemplarRepository.flush();
+            return ResponseEntity.ok(mapToDTO(guardadoNuevo));
+        }
+
         if (dto.getDisponible() != null) e.setDisponible(dto.getDisponible());
         if (dto.getEstado() != null) e.setEstado(dto.getEstado());
 

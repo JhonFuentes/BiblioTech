@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { MenuService, Rol, Menu as MenuModel } from '../../services/menu.service';
 import { Login } from '../login/login';
+import { ModificarFotos } from '../modificar-fotos/modificar-fotos';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
@@ -12,7 +13,8 @@ import { LucideAngularModule } from 'lucide-angular';
   imports: [
     CommonModule, 
     RouterModule, 
-    Login, 
+    Login,
+    ModificarFotos,
     LucideAngularModule
   ],
   templateUrl: './layout.html',
@@ -28,6 +30,7 @@ export class Layout implements OnInit {
   showMenu: boolean = false;
   sidebarOpen: boolean = false;
   showLoginModal: boolean = false;
+  showFotoModal: boolean = false;
   saludos: string = '';
 
   // Roles & Menús dinámicos (B-1, B-2)
@@ -35,8 +38,12 @@ export class Layout implements OnInit {
   selectedRolId: number | null = null;
   menus: MenuModel[] = [];
   activeGroups: { [key: number]: boolean } = {};
+  darkMode: boolean = false;
 
   ngOnInit() {
+    this.darkMode = localStorage.getItem('bibliotech_web_theme') === 'dark';
+    this.applyTheme();
+
     this.auth.currentUser$.subscribe(user => {
       this.usuario = user;
       if (this.usuario && this.usuario.fecha) {
@@ -51,9 +58,26 @@ export class Layout implements OnInit {
       }
       this.cargarRolesYMenus();
     });
+
+    // Actualizar roles y menús en tiempo real sin recargar la página cuando cambian asignaciones (ROLUSU, ROLME, MEPRO) o catálogos
+    this.menuService.menuChanges$.subscribe(() => {
+      this.cargarRolesYMenus();
+    });
+  }
+
+  toggleDarkMode() {
+    this.darkMode = !this.darkMode;
+    localStorage.setItem('bibliotech_web_theme', this.darkMode ? 'dark' : 'light');
+    this.applyTheme();
+  }
+
+  private applyTheme() {
+    document.documentElement.classList.toggle('dark-theme', this.darkMode);
+    document.body.classList.toggle('dark-theme', this.darkMode);
   }
 
   cargarRolesYMenus() {
+    // B-2: Las cajas de opciones de menús se visualizan una vez que el usuario ingrese al sistema
     if (this.usuario && this.usuario.username) {
       this.menuService.getRolesUsuario(this.usuario.username).subscribe({
         next: (roles) => {
@@ -65,34 +89,24 @@ export class Layout implements OnInit {
             this.cargarMenusDelRol(this.selectedRolId);
           } else {
             this.menus = [];
+            this.menuService.setActiveRolMenus(null, [], true);
+            this.verificarAccesoRutaActual();
           }
         },
         error: (err) => {
           console.error('Error al cargar roles de usuario', err);
-          this.fallbackRoles();
+          this.roles = [];
+          this.menus = [];
+          this.menuService.setActiveRolMenus(null, [], true);
         }
       });
     } else {
-      this.fallbackRoles();
+      this.roles = [];
+      this.selectedRolId = null;
+      this.menus = [];
+      this.menuService.setActiveRolMenus(null, [], true);
+      this.verificarAccesoRutaActual();
     }
-  }
-
-  fallbackRoles() {
-    this.menuService.getRoles().subscribe({
-      next: (roles) => {
-        this.roles = roles;
-        if (roles.length > 0) {
-          this.selectedRolId = roles[0].codr;
-          this.cargarMenusDelRol(this.selectedRolId);
-        } else {
-          this.menuService.getAllMenus().subscribe(m => this.menus = m);
-        }
-      },
-      error: () => {
-        this.roles = [];
-        this.menus = [];
-      }
-    });
   }
 
   onRolChange(event: any) {
@@ -102,17 +116,35 @@ export class Layout implements OnInit {
   }
 
   cargarMenusDelRol(codr: number) {
+    const rolActual = this.roles.find(r => r.codr === codr) || null;
     this.menuService.getMenusPorRol(codr).subscribe({
       next: (menus) => {
-        this.menus = menus;
-        menus.forEach(m => {
+        // Filtrar cualquier proceso residual de catálogo digital eliminado
+        const menusLimpios = (menus || []).map(m => ({
+          ...m,
+          procesos: (m.procesos || []).filter(p => !this.menuService.normalizarRuta(p.enlace).includes('catalogo-digital'))
+        })).filter(m => m.procesos.length > 0);
+
+        this.menus = menusLimpios;
+        menusLimpios.forEach(m => {
           if (this.activeGroups[m.codm] === undefined) {
             this.activeGroups[m.codm] = true;
           }
         });
+        this.menuService.setActiveRolMenus(rolActual, menusLimpios, true);
+        this.verificarAccesoRutaActual();
       },
       error: (err) => console.error('Error al cargar menús por rol', err)
     });
+  }
+
+  private verificarAccesoRutaActual() {
+    const currentUrl = this.router.url;
+    if (!this.usuario || !this.menuService.isRutaPermitida(currentUrl)) {
+      if (this.menuService.normalizarRuta(currentUrl) !== '' && this.menuService.normalizarRuta(currentUrl) !== 'inicio') {
+        this.router.navigate(['/inicio']);
+      }
+    }
   }
 
   getMenuIcon(nombre: string): string {
@@ -182,6 +214,15 @@ export class Layout implements OnInit {
   openLogin() {
     this.showLoginModal = true;
     this.showMenu = false;
+  }
+
+  openModificarFoto() {
+    this.showFotoModal = true;
+    this.showMenu = false;
+  }
+
+  closeModificarFoto() {
+    this.showFotoModal = false;
   }
 
   handleLoginClose(success: boolean) {

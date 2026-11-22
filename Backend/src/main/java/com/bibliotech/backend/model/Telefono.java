@@ -2,15 +2,7 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "telefonos")
 @IdClass(TelefonoId.class)
@@ -27,13 +19,44 @@ public class Telefono {
     // Cardinalidad N a 1: Cada teléfono pertenece a una Persona
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codper", referencedColumnName = "codper", insertable = false, updatable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private Persona persona;
 
     public Telefono(Integer codper, String numero) {
         this.codper = codper;
         this.numero = numero;
+    }
+
+    public Telefono() {
+    }
+
+    public Telefono(Integer codper, String numero, Persona persona) {
+        this.codper = codper;
+        this.numero = numero;
+        this.persona = persona;
+    }
+
+    public Integer getCodper() {
+        return codper;
+    }
+
+    public void setCodper(Integer codper) {
+        this.codper = codper;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
     }
 }

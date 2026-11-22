@@ -2,13 +2,9 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "MPRESTAMO")
 public class Mprestamo {
@@ -50,4 +46,95 @@ public class Mprestamo {
     @OneToMany(mappedBy = "prestamo", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("prestamo")
     private List<Dprestamo> detalles;
+
+    public Mprestamo() {
+    }
+
+    public Integer getCodp() {
+        return codp;
+    }
+
+    public void setCodp(Integer codp) {
+        this.codp = codp;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public LocalDate getFini() {
+        return fini;
+    }
+
+    public void setFini(LocalDate fini) {
+        this.fini = fini;
+    }
+
+    public LocalDate getFfin() {
+        return ffin;
+    }
+
+    public void setFfin(LocalDate ffin) {
+        this.ffin = ffin;
+    }
+
+    public Integer getTipopres() {
+        return tipopres;
+    }
+
+    public void setTipopres(Integer tipopres) {
+        this.tipopres = tipopres;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Integer getCi() {
+        return ci;
+    }
+
+    public void setCi(Integer ci) {
+        this.ci = ci;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public Dato getDato() {
+        return dato;
+    }
+
+    public void setDato(Dato dato) {
+        this.dato = dato;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public List<Dprestamo> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<Dprestamo> detalles) {
+        this.detalles = detalles;
+    }
 }

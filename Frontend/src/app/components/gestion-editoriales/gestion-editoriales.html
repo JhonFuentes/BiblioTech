@@ -1,24 +1,24 @@
 <div class="p-4 md:p-6 max-w-7xl mx-auto font-sans text-slate-700">
   <!-- Cabecera y Filtros (B-7) -->
   <div
-    class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 mb-4">
+    class="bg-white/70 backdrop-blur-md rounded-2xl p-4 md:p-5 shadow-sm border border-white/50 flex flex-col gap-4 mb-4">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm">
+      <div class="w-10 h-10 rounded-xl bg-[#E3F6F5] flex items-center justify-center text-[#3E6D9C] shadow-sm shrink-0">
         <lucide-icon name="building" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0">Gestión Editoriales</h3>
-        <p class="text-xs text-slate-500 m-0">Casas editoriales y sellos de publicación</p>
+        <h3 class="text-2xl font-extrabold text-[#2A2F63] m-0 leading-tight">Gestión de Editoriales</h3>
+        <p class="text-xs text-slate-500 m-0 mt-1">Casas editoriales y sellos de publicación</p>
       </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap gap-3 items-stretch sm:items-center w-full xl:w-auto justify-end">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center w-full justify-between pt-3 border-t border-slate-200/60">
       <!-- Filtro Nombre -->
       <div class="relative w-full sm:w-auto sm:flex-1 sm:min-w-[240px]">
-        <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></lucide-icon>
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center"><lucide-icon name="search" class="w-4 h-4"></lucide-icon></span>
         <input type="text"
           class="bg-white/90 border border-slate-300 rounded-lg py-2.5 pr-4 pl-10 text-sm transition-all duration-200 text-slate-700 w-full focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
-          [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" placeholder="Filtrar por Nombre de Editorial [Enter]...">
+          [(ngModel)]="filtroNombre" (keyup.enter)="aplicarFiltros()" (input)="aplicarFiltros()" placeholder="Filtrar por Nombre de Editorial...">
       </div>
 
       <!-- Filtro Estado  -->
@@ -64,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let e of editorialesPaginadas" class="hover:bg-slate-100/50 transition-colors border-b border-slate-100">
+        <tr *ngFor="let e of editorialesPaginadas" class="hover:bg-slate-100/50 transition-colors border-b border-slate-200">
           <td class="p-4 align-middle font-semibold text-slate-800">
             <div class="flex items-center gap-3">
               <span class="w-2.5 h-2.5 rounded-full" [ngClass]="e.estado === 1 ? 'bg-emerald-500' : 'bg-red-400'"></span>
@@ -74,28 +74,25 @@
           <td class="p-4 align-middle text-center">
             <span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase inline-flex items-center gap-1.5"
               [ngClass]="e.estado === 1 ? 'bg-[#E3F6F5] text-[#3E6D9C] border border-[#A7E0DB]' : 'bg-red-100 text-red-800 border border-red-200'">
-              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="e.estado === 1 ? 'bg-[#3E6D9C]' : 'bg-red-500'"></span>
+              <lucide-icon [name]="e.estado === 1 ? 'thumbs-up' : 'thumbs-down'" class="w-3.5 h-3.5"></lucide-icon>
               {{ e.estado === 1 ? 'Activo' : 'Baja' }}
             </span>
           </td>
           <td class="p-4 align-middle text-center relative">
-
+            <!-- Modo Pantalla Grande: Botones en fila -->
             <div class="hidden sm:flex items-center justify-center gap-2">
-              <!-- [M] Modificar -->
               <button
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-blue-50 hover:border-blue-200"
                 (click)="abrirModificar(e)" title="Modificar Datos de la Editorial (M)">
                 <lucide-icon name="pencil" class="w-4 h-4 text-blue-600"></lucide-icon>
               </button>
 
-              <!-- [B] Baja / Eliminar lógico -->
               <button *ngIf="e.estado === 1"
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-red-50 hover:border-red-200"
                 (click)="eliminar(e)" title="Dar de Baja / Eliminar Editorial (B)">
                 <lucide-icon name="trash" class="w-4 h-4 text-red-600"></lucide-icon>
               </button>
 
-              <!-- [H] Habilitar editorial dada de baja -->
               <button *ngIf="e.estado === 0"
                 class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center cursor-pointer transition-all duration-200 bg-white shadow-sm hover:-translate-y-0.5 hover:bg-emerald-50 hover:border-emerald-200"
                 (click)="habilitar(e)" title="Habilitar Editorial (H)">
@@ -103,7 +100,7 @@
               </button>
             </div>
 
-            <!-- Modo Móvil-->
+            <!-- Modo Móvil: Menú de Acciones con 3 puntos -->
             <div class="sm:hidden flex justify-center relative">
               <button
                 class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 transition-colors"
@@ -157,17 +154,22 @@
       Mostrando <span class="font-bold text-[#3E6D9C]">{{ editorialesPaginadas.length }}</span> de <span class="font-bold text-[#3E6D9C]">{{ editorialesFiltradas.length }}</span> editoriales
       <span class="text-slate-400 text-xs ml-1">({{ itemsPorPagina }} por pág.)</span>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5 flex-wrap justify-center">
       <button
         class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all hover:bg-[#E3F6F5] hover:text-[#3E6D9C] disabled:opacity-40 disabled:cursor-not-allowed text-xs sm:text-sm"
         (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">
-        &laquo; Anterior
+        &lt;&lt;
       </button>
-      <span class="px-2 font-bold text-[#3E6D9C] text-xs sm:text-sm">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button *ngFor="let pag of paginasArray"
+        (click)="paginaActual = pag"
+        [ngClass]="paginaActual === pag ? 'bg-[#3E6D9C] text-white border-[#3E6D9C]' : 'bg-white text-slate-600 border-slate-200 hover:bg-[#E3F6F5]'"
+        class="border py-1.5 px-3 rounded-lg font-bold text-xs sm:text-sm transition-colors cursor-pointer">
+        {{ pag }}
+      </button>
       <button
         class="bg-white border border-slate-200 py-1.5 px-3 rounded-lg font-semibold text-slate-600 cursor-pointer transition-all hover:bg-[#E3F6F5] hover:text-[#3E6D9C] disabled:opacity-40 disabled:cursor-not-allowed text-xs sm:text-sm"
         (click)="paginaActual = paginaActual + 1" [disabled]="paginaActual >= totalPaginas">
-        Siguiente &raquo;
+        &gt;&gt;
       </button>
     </div>
   </div>
@@ -177,9 +179,9 @@
 <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity"
   *ngIf="showFormModal">
   <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 w-11/12 max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-white/50 transform transition-all text-left">
-    <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+    <div class="flex items-center justify-between mb-6 border-b border-slate-200 pb-3">
       <h4 class="text-xl font-bold text-[#2A2F63] m-0">
-        {{ editMode ? 'Modificar Datos de la Editorial..' : 'Adicionar Editoriales..' }}
+        {{ editMode ? 'Modificar Datos de la Editorial' : 'Adicionar Todas las editoriales' }}
       </h4>
       <button (click)="cerrarModal()" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
         &times;
@@ -187,7 +189,7 @@
     </div>
 
     <div class="flex flex-col mb-6">
-      <label class="text-sm font-semibold text-slate-600 mb-2">Nombre de la Editorial:</label>
+      <label class="text-sm font-semibold text-slate-600 mb-2">Nombre de la Editorial: <span class="text-red-500 font-bold">*</span></label>
       <input type="text" maxlength="40"
         class="bg-white/90 border border-slate-300 rounded-lg py-2.5 px-4 text-sm transition-all duration-200 focus:outline-none focus:border-[#3E6D9C] focus:ring-2 focus:ring-[#3E6D9C]/20"
         [(ngModel)]="currentEditorial.nombre" placeholder="Ej: McGraw-Hill" (keyup.enter)="solicitarGuardar()">

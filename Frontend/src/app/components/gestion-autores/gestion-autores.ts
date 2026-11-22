@@ -145,6 +145,10 @@ export class GestionAutores implements OnInit {
     return Math.max(1, Math.ceil(this.autoresFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   // B-9.1 Adicionar
   abrirAdicionar() {
     this.editMode = false;
@@ -174,8 +178,8 @@ export class GestionAutores implements OnInit {
       this.mostrarAviso('Por favor ingrese el nombre del autor');
       return;
     }
-    if(this.currentAutor.am =='' && this.currentAutor.am == ''){
-      this.mostrarAviso('Por favor ingrese algun apellido');
+    if (!(this.currentAutor.ap || '').trim() && !(this.currentAutor.am || '').trim()) {
+      this.mostrarAviso('Por favor ingrese al menos un apellido');
       return;
     }
 

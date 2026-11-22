@@ -2,11 +2,7 @@ package com.bibliotech.backend.model;
 
 import jakarta.persistence.*;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 
 @Entity
 @Table(name = "AUTORES")
@@ -31,4 +27,55 @@ public class Autor {
 
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
+
+    public Autor() {
+    }
+
+    public Integer getCoda() {
+        return coda;
+    }
+
+    public void setCoda(Integer coda) {
+        this.coda = coda;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getAp() {
+        return ap;
+    }
+
+    public void setAp(String ap) {
+        this.ap = ap;
+    }
+
+    public String getAm() {
+        return am;
+    }
+
+    public void setAm(String am) {
+        this.am = am;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
 }

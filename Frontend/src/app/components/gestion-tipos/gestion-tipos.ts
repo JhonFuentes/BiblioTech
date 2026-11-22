@@ -20,7 +20,7 @@ export class GestionTipos implements OnInit {
   filtroNombre = '';
   filtroEstado = 'Todos'; // Activos, Bajas, Todos
   paginaActual = 1;
-  itemsPorPagina = 15;
+  itemsPorPagina = 10;
 
   menuAccionesAbierto: number | string | null = null;
 
@@ -65,10 +65,8 @@ export class GestionTipos implements OnInit {
       const width = window.innerWidth;
       if (width < 640) {
         this.itemsPorPagina = 5; // Móvil: 5 filas
-      } else if (width < 1024) {
-        this.itemsPorPagina = 10; // Tablet: 10 filas
       } else {
-        this.itemsPorPagina = 15; // Escritorio: 15 filas
+        this.itemsPorPagina = 10; // B-8 PDF: 10 filas
       }
       if (this.paginaActual > this.totalPaginas) {
         this.paginaActual = Math.max(1, this.totalPaginas);
@@ -137,6 +135,10 @@ export class GestionTipos implements OnInit {
 
   get totalPaginas(): number {
     return Math.max(1, Math.ceil(this.tiposFiltrados.length / this.itemsPorPagina));
+  }
+
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
   // B-8.1 Adicionar

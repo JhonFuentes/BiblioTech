@@ -1,11 +1,7 @@
 package com.bibliotech.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "AREAS")
 public class Area {
@@ -20,4 +16,31 @@ public class Area {
 
     @Column(name = "estado", nullable = false)
     private Integer estado = 1;
+
+    public Area() {
+    }
+
+    public Integer getCoda() {
+        return coda;
+    }
+
+    public void setCoda(Integer coda) {
+        this.coda = coda;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
 }

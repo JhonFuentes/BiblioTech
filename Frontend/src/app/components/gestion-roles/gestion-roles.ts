@@ -94,9 +94,17 @@ export class GestionRoles implements OnInit {
     return Math.max(1, Math.ceil(this.rolesFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasArray(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
   toggleMenuAcciones(r: Rol, event: Event) {
     event.stopPropagation();
     this.menuAccionesAbierto = this.menuAccionesAbierto === r.codr ? null : r.codr || null;
+  }
+
+  cerrarMenuAcciones() {
+    this.menuAccionesAbierto = null;
   }
 
   abrirAdicionar() {

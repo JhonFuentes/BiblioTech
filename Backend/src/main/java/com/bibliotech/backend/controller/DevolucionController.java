@@ -42,22 +42,32 @@ public class DevolucionController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
             @RequestParam(required = false) String filtroEstudiante,
-            @RequestParam(required = false) Integer codinv) {
+            @RequestParam(required = false) Integer codinv,
+            @RequestParam(required = false) Integer nroPrestamo,
+            @RequestParam(required = false, defaultValue = "1") Integer estadoPrestamo) {
 
         String f = (filtroEstudiante != null && !filtroEstudiante.trim().isEmpty()) ? filtroEstudiante.trim() : null;
         List<Mprestamo> prestamos = mprestamoRepository.findListByFilters(fechaInicio, fechaFin, f, 1);
 
         List<PrestamoDTO> result = new ArrayList<>();
         for (Mprestamo m : prestamos) {
+            if (nroPrestamo != null && !m.getCodp().equals(nroPrestamo)) {
+                continue;
+            }
             List<Dprestamo> dets = dprestamoRepository.findByCodp(m.getCodp());
-            // Filtrar solo ejemplares pendientes de devolver (estado = 1)
-            List<Dprestamo> pendientes = dets.stream().filter(d -> d.getEstado() == 1).toList();
+            // Filtrar según estadoPrestamo: 1 = Prestados (pendientes), 0 = Devueltos, -1 = Todos
+            List<Dprestamo> filtrados = dets.stream()
+                    .filter(d -> estadoPrestamo == null || estadoPrestamo == -1 || Objects.equals(d.getEstado(), estadoPrestamo))
+                    .toList();
 
             if (codinv != null) {
-                pendientes = pendientes.stream().filter(d -> d.getCodinv().equals(codinv)).toList();
+                boolean matchCodp = m.getCodp().equals(codinv);
+                if (!matchCodp) {
+                    filtrados = filtrados.stream().filter(d -> d.getCodinv().equals(codinv)).toList();
+                }
             }
 
-            if (!pendientes.isEmpty()) {
+            if (!filtrados.isEmpty()) {
                 PrestamoDTO dto = new PrestamoDTO();
                 dto.setCodp(m.getCodp());
                 dto.setFecha(m.getFecha());
@@ -75,7 +85,7 @@ public class DevolucionController {
                     dto.setEstudianteNombre("CI: " + m.getCi());
                 }
 
-                dto.setDetalles(pendientes.stream().map(d -> {
+                dto.setDetalles(filtrados.stream().map(d -> {
                     PrestamoDTO.DetallePrestamoDTO dd = new PrestamoDTO.DetallePrestamoDTO();
                     dd.setCodinv(d.getCodinv());
                     dd.setEstado(d.getEstado());

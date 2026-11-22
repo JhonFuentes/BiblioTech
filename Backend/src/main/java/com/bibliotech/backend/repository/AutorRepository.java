@@ -14,7 +14,9 @@ import java.util.List;
 public interface AutorRepository extends JpaRepository<Autor, Integer> {
 
     @Query("SELECT a FROM Autor a WHERE " +
-           "(cast(:filtro as string) IS NULL OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))) AND " +
+           "(cast(:filtro as string) IS NULL " +
+           " OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')) " +
+           " OR LOWER(CONCAT(COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''), ' ', COALESCE(a.nombre, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))) AND " +
            "(:estado IS NULL OR a.estado = :estado) " +
            "ORDER BY a.coda ASC")
     Page<Autor> findByFilters(
@@ -24,7 +26,9 @@ public interface AutorRepository extends JpaRepository<Autor, Integer> {
     );
 
     @Query("SELECT a FROM Autor a WHERE " +
-           "(cast(:filtro as string) IS NULL OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))) AND " +
+           "(cast(:filtro as string) IS NULL " +
+           " OR LOWER(CONCAT(COALESCE(a.nombre, ''), ' ', COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%')) " +
+           " OR LOWER(CONCAT(COALESCE(a.ap, ''), ' ', COALESCE(a.am, ''), ' ', COALESCE(a.nombre, ''))) LIKE LOWER(CONCAT('%', cast(:filtro as string), '%'))) AND " +
            "(:estado IS NULL OR a.estado = :estado) " +
            "ORDER BY a.coda ASC")
     List<Autor> findListByFilters(

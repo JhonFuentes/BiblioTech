@@ -57,6 +57,9 @@ public class AutorController {
         String nombre = autor.getNombre().trim();
         String ap = (autor.getAp() != null && !autor.getAp().trim().isEmpty()) ? autor.getAp().trim() : "";
         String am = (autor.getAm() != null && !autor.getAm().trim().isEmpty()) ? autor.getAm().trim() : "";
+        if (ap.isEmpty() && am.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Debe ingresar por lo menos un apellido para el autor"));
+        }
 
         List<Autor> existentes = autorRepository.findDuplicate(nombre, ap, am);
         if (!existentes.isEmpty()) {
@@ -92,6 +95,9 @@ public class AutorController {
         String nombre = autor.getNombre().trim();
         String ap = (autor.getAp() != null && !autor.getAp().trim().isEmpty()) ? autor.getAp().trim() : "";
         String am = (autor.getAm() != null && !autor.getAm().trim().isEmpty()) ? autor.getAm().trim() : "";
+        if (ap.isEmpty() && am.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Debe ingresar por lo menos un apellido para el autor"));
+        }
 
         List<Autor> existentes = autorRepository.findDuplicateExcludingCoda(nombre, ap, am, id);
         if (!existentes.isEmpty()) {

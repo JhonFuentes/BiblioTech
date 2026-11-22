@@ -2,13 +2,7 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "TIPOTEX")
 @IdClass(TipotexId.class)
@@ -38,5 +32,56 @@ public class Tipotex {
         this.codt = codt;
         this.codtipo = codtipo;
         this.docum = docum;
+    }
+
+    public Tipotex() {
+    }
+
+    public Tipotex(Integer codt, Integer codtipo, String docum, Tipo tipo, Texto texto) {
+        this.codt = codt;
+        this.codtipo = codtipo;
+        this.docum = docum;
+        this.tipo = tipo;
+        this.texto = texto;
+    }
+
+    public Integer getCodt() {
+        return codt;
+    }
+
+    public void setCodt(Integer codt) {
+        this.codt = codt;
+    }
+
+    public Integer getCodtipo() {
+        return codtipo;
+    }
+
+    public void setCodtipo(Integer codtipo) {
+        this.codtipo = codtipo;
+    }
+
+    public String getDocum() {
+        return docum;
+    }
+
+    public void setDocum(String docum) {
+        this.docum = docum;
+    }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public Texto getTexto() {
+        return texto;
+    }
+
+    public void setTexto(Texto texto) {
+        this.texto = texto;
     }
 }

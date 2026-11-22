@@ -73,6 +73,10 @@ export class AsignarRolusu implements OnInit {
     return Math.max(1, Math.ceil(this.usuariosFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasUsuariosArray(): number[] {
+    return Array.from({ length: this.totalPaginasUsuarios }, (_, i) => i + 1);
+  }
+
   seleccionarUsuario(u: Persona) {
     this.selectedUsuario = u;
     if (u.login) {
@@ -90,7 +94,7 @@ export class AsignarRolusu implements OnInit {
     });
   }
 
-  filtrarRoles() {
+  filtrarRoles(resetPage: boolean = true) {
     let temp = this.roles;
     if (this.filtroRol && this.filtroRol.trim()) {
       const q = this.filtroRol.toLowerCase().trim();
@@ -101,8 +105,12 @@ export class AsignarRolusu implements OnInit {
     } else if (this.filtroAsignado === 'NO') {
       temp = temp.filter(r => !r.asignado);
     }
-    this.rolesFiltrados = temp;
-    this.paginaRoles = 1;
+    this.rolesFiltrados = [...temp];
+    if (resetPage) {
+      this.paginaRoles = 1;
+    } else if (this.paginaRoles > this.totalPaginasRoles) {
+      this.paginaRoles = this.totalPaginasRoles;
+    }
   }
 
   get rolesPaginados(): AsignacionItem[] {
@@ -114,17 +122,24 @@ export class AsignarRolusu implements OnInit {
     return Math.max(1, Math.ceil(this.rolesFiltrados.length / this.itemsPorPagina));
   }
 
+  get paginasRolesArray(): number[] {
+    return Array.from({ length: this.totalPaginasRoles }, (_, i) => i + 1);
+  }
+
   toggleRol(r: AsignacionItem, event: Event) {
     if (!this.selectedUsuario || !this.selectedUsuario.login) return;
     const checked = (event.target as HTMLInputElement).checked;
     const codr = Number(r.id);
+    r.asignado = checked;
+    this.filtrarRoles(false);
     this.asignacionService.toggleRolUsu(this.selectedUsuario.login, codr, checked).subscribe({
       next: () => {
-        r.asignado = checked;
-        this.filtrarRoles();
+        this.filtrarRoles(false);
       },
       error: (err) => {
+        r.asignado = !checked;
         (event.target as HTMLInputElement).checked = !checked;
+        this.filtrarRoles(false);
         this.mostrarError(err?.error?.message || 'No se pudo actualizar la asignación del rol');
       }
     });

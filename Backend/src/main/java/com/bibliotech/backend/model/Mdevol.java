@@ -2,13 +2,9 @@ package com.bibliotech.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "MDEVOL")
 public class Mdevol {
@@ -41,4 +37,71 @@ public class Mdevol {
     @OneToMany(mappedBy = "devolucion", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("devolucion")
     private List<Ddevol> detalles;
+
+    public Mdevol() {
+    }
+
+    public Integer getCodd() {
+        return codd;
+    }
+
+    public void setCodd(Integer codd) {
+        this.codd = codd;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public Integer getCodp() {
+        return codp;
+    }
+
+    public void setCodp(Integer codp) {
+        this.codp = codp;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Mprestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(Mprestamo prestamo) {
+        this.prestamo = prestamo;
+    }
+
+    public List<Ddevol> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<Ddevol> detalles) {
+        this.detalles = detalles;
+    }
 }
